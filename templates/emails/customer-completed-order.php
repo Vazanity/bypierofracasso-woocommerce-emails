@@ -124,7 +124,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email );
 									<table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
 										<tr>
 											<td align="center" valign="middle" class="img-responsive">
-												<img src="<?php echo $theme_path . "/" . $completed_order_hero_bg_img ?>" border="0" width="600" alt="Header" class="block table-600">
+                                                <img src="<?php echo esc_url($plugin_path . '/' . $completed_order_hero_bg_img); ?>" border="0" width="600" alt="Header" class="block table-600">
 											</td>
 										</tr>
 									</table>

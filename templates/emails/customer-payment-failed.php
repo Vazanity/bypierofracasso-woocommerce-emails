@@ -1,14 +1,8 @@
 <?php
 /**
- * Customer On-Hold Order Email
+ * Customer Payment Failed Email
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-on-hold-order.php.
- *
- * HOWEVER, on occasion WooCommerce will need to update template files and you
- * (the theme developer) will need to copy the new files to your theme to
- * maintain compatibility. We try to do this as little as possible, but it does
- * happen. When this occurs the version of the template file will be bumped and
- * the readme will list any important changes.
+ * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-payment-failed.php.
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates/Emails
@@ -16,24 +10,12 @@
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
-// ************************************//
-//                Don't Touch
-// ************************************//
+$plugin_path = plugin_dir_url(__FILE__) . 'images';
+include('setting-wc-email.php');
 
-$plugin_path = plugin_dir_url(__FILE__) . 'images'; // Image Path
-
-// *************************************//
-//             Starto Setting File
-// *************************************//
-
-include('setting-wc-email.php'); // All Customization in This File
-
-/*
- * @hooked WC_Emails::email_header() Output the email header
- */
 do_action('woocommerce_email_header', $email_heading, $email);
 ?>
 
@@ -56,7 +38,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-16 font-weight-600 pb-5 font-space-0">
-                                                <?php echo __($on_hold_order_subtitle); ?>
+                                                <?php echo __('Payment Failed', 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -69,8 +51,8 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                 <table border="0" align="center" cellpadding="0" cellspacing="0">
                                                     <tr>
                                                         <td align="center" class="bg-FFFFFF block btn border-radius-4">
-                                                            <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($on_hold_order_btn, 'woocommerce'); ?>
+                                                            <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_checkout_payment_url()) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
+                                                                <?php echo __('TRY AGAIN', 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -110,7 +92,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                     <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
                                         <tr>
                                             <td align="center" valign="middle" class="img-responsive">
-                                                <img src="<?php echo esc_url($plugin_path . '/' . $on_hold_order_hero_bg_img); ?>" border="0" width="600" alt="Header" class="block table-600">
+                                                <img src="<?php echo esc_url($plugin_path . '/email-header-cust-failed.png'); ?>" border="0" width="600" alt="Header" class="block table-600">
                                             </td>
                                         </tr>
                                     </table>
@@ -148,9 +130,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-20">
                                                 <?php
                                                 if ($order instanceof WC_Order) {
-                                                    echo __($on_hold_order_greeting . " " . esc_html($order->get_billing_first_name()) . ',');
+                                                    echo __('Hello ' . esc_html($order->get_billing_first_name()) . ',', 'bypierofracasso-woocommerce-emails');
                                                 } else {
-                                                    echo __($on_hold_order_greeting . " Customer,");
+                                                    echo __('Hello Customer,', 'bypierofracasso-woocommerce-emails');
                                                 }
                                                 ?>
                                             </td>
@@ -158,14 +140,19 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <tr>
                                             <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20" style="padding:0px;">
                                                 <?php
+                                                echo __('Unfortunately, we couldn\'t complete your order due to an issue with your payment method.', 'bypierofracasso-woocommerce-emails');
                                                 if ($additional_content) {
-                                                    echo __(wp_kses_post(wptexturize($additional_content)));
+                                                    echo '<br><br>' . wp_kses_post(wptexturize($additional_content));
                                                 }
                                                 if ($order instanceof WC_Order && $order->get_customer_note() != "") {
                                                     echo __('<br><br> <strong>Note</strong>: ', 'woocommerce');
                                                     echo wp_kses_post($order->get_customer_note());
                                                 }
                                                 ?>
+                                                <br><br>
+                                                <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_checkout_payment_url()) : '#'; ?>" class="font-4B7BEC">
+                                                    <?php echo __('Try a different payment method', 'bypierofracasso-woocommerce-emails'); ?>
+                                                </a>
                                             </td>
                                         </tr>
                                         <tr>
@@ -223,23 +210,8 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <!-- Dividers : Divider -->
 
 <?php
-/*
- * @hooked WC_Emails::customer_details() Shows customer details
- * @hooked WC_Emails::email_address() Shows email address
- */
 do_action('woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email);
-
-/*
- * @hooked WC_Emails::order_details() Shows the order details table.
- * @hooked WC_Structured_Data::generate_order_data() Generates structured data.
- * @hooked WC_Structured_Data::output_structured_data() Outputs structured data.
- * @since 2.5.0
- */
 do_action('woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email);
-
-/*
- * @hooked WC_Emails::order_meta() Shows order meta data.
- */
 do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $email);
 ?>
 
@@ -265,8 +237,8 @@ do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $
                                                 <table border="0" align="center" cellpadding="0" cellspacing="0">
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
-                                                            <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($on_hold_order_btn, 'woocommerce'); ?>
+                                                            <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_checkout_payment_url()) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
+                                                                <?php echo __('TRY AGAIN', 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -290,9 +262,4 @@ do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $
 </table>
 <!-- Buttons : Button -->
 
-<?php
-/*
- * @hooked WC_Emails::email_footer() Output the email footer
- */
-do_action('woocommerce_email_footer', $email);
-?>
+<?php do_action('woocommerce_email_footer', $email); ?>
