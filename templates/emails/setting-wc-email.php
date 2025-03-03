@@ -17,10 +17,11 @@ if (!defined('ABSPATH')) {
 // ********************************************************//
 //            Customer Order Completed
 // ********************************************************//
-$completed_order_subtitle      = __('Your order has been delivered', 'bypierofracasso-woocommerce-emails'); // Header SubTitle
+$completed_order_subtitle      = __('Your order is complete!', 'bypierofracasso-woocommerce-emails'); // Header SubTitle
 $completed_order_btn           = __('VIEW ORDER', 'bypierofracasso-woocommerce-emails'); // Button
 $completed_order_hero_bg_img   = 'email-header-cust-completed.png'; // Header Image File Name
 $completed_order_greeting      = __('Hello', 'bypierofracasso-woocommerce-emails'); // Greeting Before User First Name
+$completed_order_message       = __('Your order at byPieroFracasso is now complete! If you haven’t received it yet, it will be with you shortly. We hope you love your new fragrance! If you have any questions, feel free to reach out.', 'bypierofracasso-woocommerce-emails'); // Custom message
 
 // ***************************************************//
 //      Customer Order Received
@@ -28,6 +29,7 @@ $completed_order_greeting      = __('Hello', 'bypierofracasso-woocommerce-emails
 $order_received_subtitle       = __('We have received your order!', 'bypierofracasso-woocommerce-emails'); // Header SubTitle
 $order_received_hero_bg_img    = 'email-header-cust-order-received.png'; // Header Image File Name
 $order_received_greeting       = __('Hello', 'bypierofracasso-woocommerce-emails'); // Greeting Before User First Name
+$order_received_message        = __('Thank you for your order! We’re preparing it now and will notify you once it ships.', 'woocommerce');
 $order_received_btn            = __('VIEW ORDER', 'bypierofracasso-woocommerce-emails'); // Button
 
 // ***************************************************//
@@ -44,7 +46,8 @@ $pending_order_btn             = __('PAY NOW', 'bypierofracasso-woocommerce-emai
 $shipped_order_subtitle        = __('Your order is on its way!', 'bypierofracasso-woocommerce-emails'); // Header SubTitle
 $shipped_order_hero_bg_img     = 'email-header-cust-shipped.png'; // Header Image File Name
 $shipped_order_greeting        = __('Hello', 'bypierofracasso-woocommerce-emails'); // Greeting Before User First Name
-$shipped_order_btn             = __('TRACK ORDER', 'bypierofracasso-woocommerce-emails'); // Button
+$shipped_order_message         = __('Your Order is on its way and will arrive soon'); // Email text
+//$shipped_order_btn             = __('TRACK ORDER', 'bypierofracasso-woocommerce-emails'); // Button
 
 // ********************************************************//
 //            Customer Invoice
@@ -168,16 +171,16 @@ $menu_link_4                   = 'http://example.com/';
 // ***********************************************//
 //            Other Product Customization
 // ***********************************************//
-$other_product_show            = 'NO'; // Other product Show 'YES' or 'NO', Case Sensitive
-$other_product_title           = __('Other Product', 'bypierofracasso-woocommerce-emails');
+$other_product_show            = 'YES'; // Other product Show 'YES' or 'NO', Case Sensitive
+$other_product_title           = __('Your Fragrance Journey Starts Here', 'bypierofracasso-woocommerce-emails');
 $other_product_1_img           = 'transaction@other-product-1.png'; // Image file name
-$other_product_1_link          = 'http://example.com';
-$other_product_1_title         = __('Candy Illustrations', 'bypierofracasso-woocommerce-emails');
-$other_product_1_price         = __('$29', 'bypierofracasso-woocommerce-emails');
+$other_product_1_link          = 'https://bypierofracasso.com/product/samples/';
+$other_product_1_title         = __('Try Our Samples', 'bypierofracasso-woocommerce-emails');
+$other_product_1_price         = __('Six for CHF 18.00', 'bypierofracasso-woocommerce-emails');
 $other_product_2_img           = 'transaction@other-product-2.png';
-$other_product_2_link          = 'http://example.com';
-$other_product_2_title         = __('Stubborn Illustrations', 'bypierofracasso-woocommerce-emails');
-$other_product_2_price         = __('$39', 'bypierofracasso-woocommerce-emails');
+$other_product_2_link          = 'https://bypierofracasso.com/product/gift-card/';
+$other_product_2_title         = __('Our Gift Cards', 'bypierofracasso-woocommerce-emails');
+$other_product_2_price         = __('CHF 90.00 - CHF 280.00', 'bypierofracasso-woocommerce-emails');
 
 // ***********************************************//
 //            Banner Customization
@@ -199,7 +202,7 @@ $footer_app_2_link             = 'http://example.com';
 // ***********************************************//
 //            Footer Info Customization
 // ***********************************************//
-$footer_info                   = __("If you have any questions, please contact us at <a href='mailto:info@bypierofracasso.com'>info@bypierofracasso.com</a>. <br> © byPieroFracasso | All rights reserved.", 'bypierofracasso-woocommerce-emails');
+$footer_info                   = __("If you have any questions or problems with your delivery, please visit our <br><a href='https://bypierofracasso.com/support'>Support Page</a>.<br> © byPieroFracasso | All rights reserved.", 'bypierofracasso-woocommerce-emails');
 
 // ***********************************************//
 //            Footer Social Icon Customization
@@ -223,7 +226,7 @@ $footer_link_name_1            = __('FAQ', 'bypierofracasso-woocommerce-emails')
 $footer_link_1                 = 'https://bypierofracasso.com/faq/';
 $footer_link_name_2            = __('TERMS & CONDITIONS', 'bypierofracasso-woocommerce-emails');
 $footer_link_2                 = 'https://bypierofracasso.com/terms-conditions/';
-$footer_link_name_3            = __('RETURNS', 'bypierofracasso-woocommerce-emails');
-$footer_link_3                 = '';
+$footer_link_name_3            = __('SUPPORT', 'bypierofracasso-woocommerce-emails');
+$footer_link_3                 = 'https://bypierofracasso.com/support/';
 $footer_link_name_4            = __('CONTACT', 'bypierofracasso-woocommerce-emails');
 $footer_link_4                 = 'https://bypierofracasso.com/contact-us/';

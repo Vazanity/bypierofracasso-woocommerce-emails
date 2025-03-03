@@ -4,12 +4,6 @@
  *
  * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-order-received.php.
  *
- * HOWEVER, on occasion WooCommerce will need to update template files and you
- * (the theme developer) will need to copy the new files to your theme to
- * maintain compatibility. We try to do this as little as possible, but it does
- * happen. When this occurs the version of the template file will be bumped and
- * the readme will list any important changes.
- *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates/Emails
  * @version 1.0.0
@@ -19,21 +13,9 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-// ************************************//
-//                Don't Touch
-// ************************************//
+$plugin_path = plugin_dir_url(__FILE__) . 'images';
+include('setting-wc-email.php');
 
-$plugin_path = plugin_dir_url(__FILE__) . 'images'; // Image Path
-
-// *************************************//
-//             Starto Setting File
-// *************************************//
-
-include('setting-wc-email.php'); // All Customization in This File
-
-/*
- * @hooked WC_Emails::email_header() Output the email header
- */
 do_action('woocommerce_email_header', $email_heading, $email);
 ?>
 
@@ -41,15 +23,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <!-- 600 -->
             <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
                 <tr>
                     <td align="center" bgcolor="#4B7BEC" class="bg-4B7BEC">
-                        <!-- 520 -->
                         <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
                             <tr>
                                 <td align="center" class="container-padding">
-                                    <!-- Content -->
                                     <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
                                         <tr>
                                             <td class="spacer-30"> </td>
@@ -84,11 +63,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                 </td>
                             </tr>
                         </table>
-                        <!-- End 520 -->
                     </td>
                 </tr>
             </table>
-            <!-- End 600 -->
         </td>
     </tr>
 </table>
@@ -98,15 +75,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <!-- 600 -->
             <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
                 <tr>
                     <td align="center" bgcolor="#4B7BEC" class="bg-4B7BEC">
-                        <!-- 100% -->
                         <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
                             <tr>
                                 <td align="center">
-                                    <!-- Content -->
                                     <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
                                         <tr>
                                             <td align="center" valign="middle" class="img-responsive">
@@ -117,11 +91,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                 </td>
                             </tr>
                         </table>
-                        <!-- 100% -->
                     </td>
                 </tr>
             </table>
-            <!-- End 600 -->
         </td>
     </tr>
 </table>
@@ -131,15 +103,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <!-- 600 -->
             <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
                 <tr>
                     <td align="center" bgcolor="#FFFFFF" class="bg-FFFFFF">
-                        <!-- 520 -->
                         <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
                             <tr>
                                 <td align="center" class="container-padding">
-                                    <!-- Content -->
                                     <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
                                         <tr>
                                             <td class="spacer-30"> </td>
@@ -158,8 +127,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <tr>
                                             <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20" style="padding:0px;">
                                                 <?php
+                                                echo __($order_received_message);
                                                 if (isset($additional_content) && $additional_content) {
-                                                    echo __(wp_kses_post(wptexturize($additional_content)));
+                                                    echo '<br><br>' . wp_kses_post(wptexturize($additional_content));
                                                 }
                                                 if ($order instanceof WC_Order && $order->get_customer_note() != "") {
                                                     echo __('<br><br> <strong>Note</strong>: ', 'woocommerce');
@@ -175,11 +145,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                 </td>
                             </tr>
                         </table>
-                        <!-- End 520 -->
                     </td>
                 </tr>
             </table>
-            <!-- End 600 -->
         </td>
     </tr>
 </table>
@@ -189,15 +157,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <!-- 600 -->
             <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
                 <tr>
                     <td align="center" bgcolor="#FFFFFF" class="bg-FFFFFF">
-                        <!-- 520 -->
                         <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
                             <tr>
                                 <td align="center" class="container-padding">
-                                    <!-- Content -->
                                     <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
                                         <tr>
                                             <td class="spacer-15"> </td>
@@ -208,56 +173,55 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <tr>
                                             <td class="spacer-15"> </td>
                                         </tr>
+                                        <?php if ($order instanceof WC_Order) : ?>
+                                            <?php
+                                            do_action('woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email);
+                                            // Add custom fields not covered by the default action
+                                            echo '<table border="0" width="100%" cellpadding="5" cellspacing="0" class="table-100pc">';
+                                            echo '<tr><td class="font-primary font-595959 font-16 font-weight-600">' . __('Payment Status:', 'woocommerce') . '</td>';
+                                            echo '<td class="font-primary font-595959 font-16">' . esc_html(ucfirst($order->get_status())) . '</td></tr>';
+                                            echo '<tr><td class="font-primary font-595959 font-16 font-weight-600">' . __('Payment Method:', 'woocommerce') . '</td>';
+                                            echo '<td class="font-primary font-595959 font-16">' . esc_html($order->get_payment_method_title()) . '</td></tr>';
+                                            echo '<tr><td class="font-primary font-595959 font-16 font-weight-600">' . __('Subtotal:', 'woocommerce') . '</td>';
+                                            echo '<td class="font-primary font-595959 font-16">' . wc_price($order->get_subtotal()) . '</td></tr>';
+                                            echo '<tr><td class="font-primary font-595959 font-16 font-weight-600">' . __('Total:', 'woocommerce') . '</td>';
+                                            echo '<td class="font-primary font-595959 font-16">' . wc_price($order->get_total()) . '</td></tr>';
+                                            echo '</table>';
+                                            do_action('woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email);
+                                            do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $email);
+                                            ?>
+                                        <?php else : ?>
+                                            <tr>
+                                                <td align="left" class="font-primary font-595959 font-16 font-weight-400">
+                                                    <?php echo __('[Order Details Placeholder]', 'woocommerce'); ?>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
+                                        <tr>
+                                            <td class="spacer-15"> </td>
+                                        </tr>
                                     </table>
                                 </td>
                             </tr>
                         </table>
-                        <!-- End 520 -->
                     </td>
                 </tr>
             </table>
-            <!-- End 600 -->
         </td>
     </tr>
 </table>
 <!-- Dividers : Divider -->
 
-<?php
-/*
- * @hooked WC_Emails::customer_details() Shows customer details
- * @hooked WC_Emails::email_address() Shows email address
- */
-do_action('woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email);
-
-/*
- * @hooked WC_Emails::order_details() Shows the order details table.
- * @hooked WC_Structured_Data::generate_order_data() Generates structured data.
- * @hooked WC_Structured_Data::output_structured_data() Outputs structured data.
- * @since 2.5.0
- */
-if ($order instanceof WC_Order) {
-    do_action('woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email);
-}
-
-/*
- * @hooked WC_Emails::order_meta() Shows order meta data.
- */
-do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $email);
-?>
-
 <!-- Buttons : Button -->
 <table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <!-- 600 -->
             <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
                 <tr>
                     <td align="center" bgcolor="#FFFFFF" class="bg-FFFFFF">
-                        <!-- 520 -->
                         <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
                             <tr>
                                 <td align="center" class="container-padding">
-                                    <!-- Content -->
                                     <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
                                         <tr>
                                             <td class="spacer-20"> </td>
@@ -282,19 +246,14 @@ do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $
                                 </td>
                             </tr>
                         </table>
-                        <!-- End 520 -->
                     </td>
                 </tr>
             </table>
-            <!-- End 600 -->
         </td>
     </tr>
 </table>
 <!-- Buttons : Button -->
 
 <?php
-/*
- * @hooked WC_Emails::email_footer() Output the email footer
- */
 do_action('woocommerce_email_footer', $email);
 ?>
