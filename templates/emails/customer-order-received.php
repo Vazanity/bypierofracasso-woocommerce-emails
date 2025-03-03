@@ -158,7 +158,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <tr>
                                             <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20" style="padding:0px;">
                                                 <?php
-                                                if ($additional_content) {
+                                                if (isset($additional_content) && $additional_content) {
                                                     echo __(wp_kses_post(wptexturize($additional_content)));
                                                 }
                                                 if ($order instanceof WC_Order && $order->get_customer_note() != "") {
@@ -235,7 +235,9 @@ do_action('woocommerce_email_customer_details', $order, $sent_to_admin, $plain_t
  * @hooked WC_Structured_Data::output_structured_data() Outputs structured data.
  * @since 2.5.0
  */
-do_action('woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email);
+if ($order instanceof WC_Order) {
+    do_action('woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email);
+}
 
 /*
  * @hooked WC_Emails::order_meta() Shows order meta data.

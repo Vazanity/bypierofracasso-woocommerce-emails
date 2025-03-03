@@ -1,14 +1,8 @@
 <?php
 /**
- * Customer Pending Order Email
+ * Customer Order Shipped Email
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-pending-order.php.
- *
- * HOWEVER, on occasion WooCommerce will need to update template files and you
- * (the theme developer) will need to copy the new files to your theme to
- * maintain compatibility. We try to do this as little as possible, but it does
- * happen. When this occurs the version of the template file will be bumped and
- * the readme will list any important changes.
+ * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-order-shipped.php.
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates/Emails
@@ -56,7 +50,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-16 font-weight-600 pb-5 font-space-0">
-                                                <?php echo __($pending_order_subtitle); ?>
+                                                <?php echo __($shipped_order_subtitle); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -70,7 +64,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-FFFFFF block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($pending_order_btn, 'woocommerce'); ?>
+                                                                <?php echo __($shipped_order_btn, 'woocommerce'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -110,7 +104,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                     <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
                                         <tr>
                                             <td align="center" valign="middle" class="img-responsive">
-                                                <img src="<?php echo esc_url($plugin_path . '/' . $pending_order_hero_bg_img); ?>" border="0" width="600" alt="Header" class="block table-600">
+                                                <img src="<?php echo esc_url($plugin_path . '/' . $shipped_order_hero_bg_img); ?>" border="0" width="600" alt="Header" class="block table-600">
                                             </td>
                                         </tr>
                                     </table>
@@ -148,9 +142,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-20">
                                                 <?php
                                                 if ($order instanceof WC_Order) {
-                                                    echo __($pending_order_greeting . " " . esc_html($order->get_billing_first_name()) . ',');
+                                                    echo __($shipped_order_greeting . " " . esc_html($order->get_billing_first_name()) . ',');
                                                 } else {
-                                                    echo __($pending_order_greeting . " Customer,");
+                                                    echo __($shipped_order_greeting . " Customer,");
                                                 }
                                                 ?>
                                             </td>
@@ -158,8 +152,14 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <tr>
                                             <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20" style="padding:0px;">
                                                 <?php
-                                                if ($additional_content) {
+                                                if (isset($additional_content) && $additional_content) {
                                                     echo __(wp_kses_post(wptexturize($additional_content)));
+                                                }
+                                                if ($order instanceof WC_Order) {
+                                                    echo '<br><br>';
+                                                    echo '<strong>' . __('Order Number:', 'woocommerce') . '</strong> ' . esc_html($order->get_order_number()) . '<br>';
+                                                    echo '<strong>' . __('Order Date:', 'woocommerce') . '</strong> ' . esc_html(wc_format_datetime($order->get_date_created())) . '<br>';
+                                                    echo '<strong>' . __('Billing Address:', 'woocommerce') . '</strong><br>' . wp_kses_post($order->get_formatted_billing_address());
                                                 }
                                                 if ($order instanceof WC_Order && $order->get_customer_note() != "") {
                                                     echo __('<br><br> <strong>Note</strong>: ', 'woocommerce');
@@ -235,7 +235,9 @@ do_action('woocommerce_email_customer_details', $order, $sent_to_admin, $plain_t
  * @hooked WC_Structured_Data::output_structured_data() Outputs structured data.
  * @since 2.5.0
  */
-do_action('woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email);
+if ($order instanceof WC_Order) {
+    do_action('woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email);
+}
 
 /*
  * @hooked WC_Emails::order_meta() Shows order meta data.
@@ -266,7 +268,7 @@ do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($pending_order_btn, 'woocommerce'); ?>
+                                                                <?php echo __($shipped_order_btn, 'woocommerce'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
