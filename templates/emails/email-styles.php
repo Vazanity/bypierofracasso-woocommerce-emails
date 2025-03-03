@@ -515,6 +515,4 @@ a[x-apple-data-detectors] {
 		display: none!important;
 	}
 }
-
-
 <?php
