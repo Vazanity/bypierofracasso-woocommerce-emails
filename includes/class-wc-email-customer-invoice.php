@@ -11,6 +11,7 @@ class WC_Email_Customer_Invoice extends WC_Email {
         $this->description = __('Sent to customers with invoice details.', 'bypierofracasso-woocommerce-emails');
         $this->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
         $this->template_html = 'customer-invoice.php';
+        $this->template_plain = 'plain/customer-invoice.php'; // Added
         $this->placeholders = array(
             '{order_number}' => '',
             '{order_date}'   => '',
@@ -54,6 +55,23 @@ class WC_Email_Customer_Invoice extends WC_Email {
                 'additional_content' => $this->get_additional_content(),
                 'sent_to_admin'      => false,
                 'plain_text'         => false,
+                'email'              => $this,
+            ),
+            '',
+            $this->template_base
+        );
+    }
+
+    // Add plain text content method
+    public function get_content_plain() {
+        return wc_get_template_html(
+            $this->template_plain,
+            array(
+                'order'              => $this->object,
+                'email_heading'      => $this->get_heading(),
+                'additional_content' => $this->get_additional_content(),
+                'sent_to_admin'      => false,
+                'plain_text'         => true,
                 'email'              => $this,
             ),
             '',

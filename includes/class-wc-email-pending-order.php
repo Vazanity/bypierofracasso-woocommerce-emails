@@ -3,25 +3,36 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class WC_Email_Pending_Order extends WC_Email {
-    public function __construct() {
-        $this->id             = 'pending_order';
-        $this->title          = __('Zahlung ausstehend', 'woocommerce');
-        $this->description    = __('Diese E-Mail wird gesendet, wenn eine Bestellung als „Zahlung ausstehend“ markiert wird.', 'woocommerce');
-        $this->heading        = __('Bitte überweise den Betrag per QR-Bankzahlung', 'woocommerce');
-        $this->subject        = __('Deine Bestellung bei byPieroFracasso – Zahlung ausstehend', 'woocommerce');
+class WC_Email_Pending_Order extends WC_Email
+{
+    public function __construct()
+    {
+        $this->id = 'pending_order';
+        $this->title = __('Zahlung ausstehend', 'woocommerce');
+        $this->description = __('Diese E-Mail wird gesendet, wenn eine Bestellung als „Zahlung ausstehend“ markiert wird.', 'woocommerce');
+        $this->heading = __('Bitte überweise den Betrag per QR-Bankzahlung', 'woocommerce');
+        $this->subject = __('Deine Bestellung bei byPieroFracasso – Zahlung ausstehend', 'woocommerce');
 
-        $this->template_html  = 'emails/customer-pending-order.php';
-        $this->template_plain = 'emails/plain/customer-pending-order.php';
-        
+        $this->template_html = 'customer-pending-order.php'; // Fixed path
+        $this->template_plain = 'plain/customer-pending-order.php'; // Fixed path
+
         $this->customer_email = true;
 
-        add_action('woocommerce_order_status_pending_notification', array($this, 'trigger'), 10, 2);
+        add_action('woocommerce_order_status_changed', array($this, 'bpf_handle_custom_email_trigger'), 9999, 4);
 
         parent::__construct();
     }
 
-    public function trigger($order_id, $order = false) {
+    // When order status changed
+    public function bpf_handle_custom_email_trigger($order_id, $old_status, $new_status, $order)
+    {
+        if ('pending-payment' == $new_status) { // Fixed status check
+            $this->trigger($order_id, $order);
+        }
+    }
+
+    public function trigger($order_id, $order = false)
+    {
         if (!$order_id) {
             return;
         }
@@ -36,26 +47,28 @@ class WC_Email_Pending_Order extends WC_Email {
         $this->restore_locale();
     }
 
-    public function get_content_html() {
+    public function get_content_html()
+    {
         ob_start();
         wc_get_template($this->template_html, array(
-            'order'         => $this->object,
+            'order' => $this->object,
             'email_heading' => $this->get_heading(),
             'sent_to_admin' => false,
-            'plain_text'    => false,
-            'email'         => $this,
+            'plain_text' => false,
+            'email' => $this,
         ));
         return ob_get_clean();
     }
 
-    public function get_content_plain() {
+    public function get_content_plain()
+    {
         ob_start();
         wc_get_template($this->template_plain, array(
-            'order'         => $this->object,
+            'order' => $this->object,
             'email_heading' => $this->get_heading(),
             'sent_to_admin' => false,
-            'plain_text'    => true,
-            'email'         => $this,
+            'plain_text' => true,
+            'email' => $this,
         ));
         return ob_get_clean();
     }
