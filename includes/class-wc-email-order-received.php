@@ -41,11 +41,18 @@ class WC_Email_Order_Received extends WC_Email
             $order = wc_get_order($order_id);
         }
 
-        $this->setup_locale();
-        $this->recipient = $order->get_billing_email();
-        $this->send($this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments());
-        $this->restore_locale();
+        if (is_a($order, 'WC_Order')) {
+            $this->object = $order; // ← Important fix to correctly assign the order object
+            $this->setup_locale();
+            $this->recipient = $order->get_billing_email();
+
+            if ($this->is_enabled() && $this->get_recipient()) {
+                $this->send($this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments());
+            }
+            $this->restore_locale();
+        }
     }
+
 
     public function get_content_html()
     {

@@ -2,7 +2,6 @@
 /**
  * Customer Payment Failed Email
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-payment-failed.php.
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates/Emails

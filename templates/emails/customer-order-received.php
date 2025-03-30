@@ -2,7 +2,6 @@
 /**
  * Customer Order Received Email
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-order-received.php.
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates/Emails
@@ -14,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 $plugin_path = plugin_dir_url(__FILE__) . 'images';
-include('setting-wc-email.php');
+include(plugin_dir_path(__FILE__) . 'setting-wc-email.php');
 
 do_action('woocommerce_email_header', $email_heading, $email);
 ?>
@@ -173,29 +172,20 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <tr>
                                             <td class="spacer-15"> </td>
                                         </tr>
-                                        <?php if ($order instanceof WC_Order) : ?>
-                                            <?php
-                                            do_action('woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email);
-                                            // Add custom fields not covered by the default action
-                                            echo '<table border="0" width="100%" cellpadding="5" cellspacing="0" class="table-100pc">';
-                                            echo '<tr><td class="font-primary font-595959 font-16 font-weight-600">' . __('Payment Status:', 'woocommerce') . '</td>';
-                                            echo '<td class="font-primary font-595959 font-16">' . esc_html(ucfirst($order->get_status())) . '</td></tr>';
-                                            echo '<tr><td class="font-primary font-595959 font-16 font-weight-600">' . __('Payment Method:', 'woocommerce') . '</td>';
-                                            echo '<td class="font-primary font-595959 font-16">' . esc_html($order->get_payment_method_title()) . '</td></tr>';
-                                            echo '<tr><td class="font-primary font-595959 font-16 font-weight-600">' . __('Subtotal:', 'woocommerce') . '</td>';
-                                            echo '<td class="font-primary font-595959 font-16">' . wc_price($order->get_subtotal()) . '</td></tr>';
-                                            echo '<tr><td class="font-primary font-595959 font-16 font-weight-600">' . __('Total:', 'woocommerce') . '</td>';
-                                            echo '<td class="font-primary font-595959 font-16">' . wc_price($order->get_total()) . '</td></tr>';
-                                            echo '</table>';
-                                            do_action('woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email);
-                                            do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $email);
-                                            ?>
-                                        <?php else : ?>
-                                            <tr>
-                                                <td align="left" class="font-primary font-595959 font-16 font-weight-400">
-                                                    <?php echo __('[Order Details Placeholder]', 'woocommerce'); ?>
-                                                </td>
-                                            </tr>
+                                            <?php if ($order instanceof WC_Order) : ?>
+                                                <?php
+                                                do_action('woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email);
+                                                do_action('woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email);
+                                                do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $email);
+                                                ?>
+                                            <?php else : ?>
+                                                <tr>
+                                                    <td align="left" class="font-primary font-595959 font-16 font-weight-400">
+                                                        <?php echo __('[Order Details Placeholder]', 'woocommerce'); ?>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
                                         <?php endif; ?>
                                         <tr>
                                             <td class="spacer-15"> </td>

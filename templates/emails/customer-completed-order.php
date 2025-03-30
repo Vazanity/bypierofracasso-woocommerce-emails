@@ -2,7 +2,6 @@
 /**
  * Customer Completed Order Email
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-completed-order.php.
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates/Emails

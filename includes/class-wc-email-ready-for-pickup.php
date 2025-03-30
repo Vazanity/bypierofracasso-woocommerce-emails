@@ -19,18 +19,11 @@ class WC_Email_Ready_For_Pickup extends WC_Email
             '{order_number}' => '',
         );
 
-        // Triggers for this email
-//        add_action('woocommerce_order_status_wc-ready-for-pickup', array($this, 'trigger'), 10, 2);
+        $this->customer_email = true; // Ensures email goes to customer
+
         add_action('woocommerce_order_status_changed', array($this, 'bpf_handle_custom_email_trigger'), 9999, 4);
 
-        // Call parent constructor
         parent::__construct();
-
-        // Other settings
-        $this->recipient = $this->get_option('recipient');
-        if (!$this->recipient) {
-            $this->recipient = get_option('admin_email');
-        }
     }
 
     // When order status changed

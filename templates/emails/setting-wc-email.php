@@ -29,7 +29,7 @@ $completed_order_message       = __('Your order at byPieroFracasso is now comple
 $order_received_subtitle       = __('We have received your order!', 'bypierofracasso-woocommerce-emails'); // Header SubTitle
 $order_received_hero_bg_img    = 'email-header-cust-order-received.png'; // Header Image File Name
 $order_received_greeting       = __('Hello', 'bypierofracasso-woocommerce-emails'); // Greeting Before User First Name
-$order_received_message        = __('Thank you for your order! We’re preparing it now and will notify you once it ships.', 'woocommerce');
+$order_received_message        = __('Thank you for your order! We’ve received it successfully and will review it shortly. You’ll receive an update once your order is being processed.', 'woocommerce');
 $order_received_btn            = __('VIEW ORDER', 'bypierofracasso-woocommerce-emails'); // Button
 
 // ***************************************************//
@@ -46,8 +46,16 @@ $pending_order_btn             = __('PAY NOW', 'bypierofracasso-woocommerce-emai
 $shipped_order_subtitle        = __('Your order is on its way!', 'bypierofracasso-woocommerce-emails'); // Header SubTitle
 $shipped_order_hero_bg_img     = 'email-header-cust-shipped.png'; // Header Image File Name
 $shipped_order_greeting        = __('Hello', 'bypierofracasso-woocommerce-emails'); // Greeting Before User First Name
-$shipped_order_message         = __('Your Order is on its way and will arrive soon'); // Email text
+$shipped_order_message         = __('Good news! Your order is on its way and will reach you shortly. Thank you for choosing us!'); // Email text
 //$shipped_order_btn             = __('TRACK ORDER', 'bypierofracasso-woocommerce-emails'); // Button
+
+// ***************************************************//
+//      Customer Order Ready for Pickup
+// ***************************************************//
+$pickup_order_subtitle        = __('Your order is ready for pickup!', 'bypierofracasso-woocommerce-emails'); // Header SubTitle
+$pickup_order_hero_bg_img     = 'email-header-cust-shipped.png'; // Header Image File Name
+$pickup_order_greeting        = __('Hello', 'bypierofracasso-woocommerce-emails'); // Greeting Before User First Name
+$pickup_order_message         = __('e are pleased to inform you that your order is now ready for pickup! The pickup location is provided below. Thank you for shopping with us — we look forward to seeing you soon!'); // Email text
 
 // ********************************************************//
 //            Customer Invoice
@@ -140,7 +148,8 @@ $admin_failed_order_greeting    = __('Hello', 'bypierofracasso-woocommerce-email
 $admin_new_order_subtitle       = __('A new customer order has been placed.', 'bypierofracasso-woocommerce-emails'); // Header SubTitle
 $admin_new_order_btn            = __('VIEW ORDER', 'bypierofracasso-woocommerce-emails'); // Button
 $admin_new_order_hero_bg_img    = 'email-header-admin-new-order.png'; // Header Image File Name
-$admin_new_order_greeting       = __('Hello', 'bypierofracasso-woocommerce-emails'); // Greeting Before User First Name
+$admin_new_order_greeting       = __('Hello Piero & Mario', 'bypierofracasso-woocommerce-emails'); // Greeting Before User First Name
+$admin_new_order_message        = __('Someone just bought a product. Please review it and change its status promptly.'); // Email text
 
 // ***********************************************//
 //            Top Offer Customization

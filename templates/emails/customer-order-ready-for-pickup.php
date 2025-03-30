@@ -2,13 +2,6 @@
 /**
  * Customer Order Ready for Pickup Email
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-order-ready-for-pickup.php.
- *
- * HOWEVER, on occasion WooCommerce will need to update template files and you
- * (the theme developer) will need to copy the new files to your theme to
- * maintain compatibility. We try to do this as little as possible, but it does
- * happen. When this occurs the version of the template file will be bumped and
- * the readme will list any important changes.
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates/Emails
@@ -29,6 +22,7 @@ $plugin_path = plugin_dir_url(__FILE__) . 'images'; // Image Path
 //             Starto Setting File
 // *************************************//
 
+$plugin_path = plugin_dir_url(__FILE__) . 'images';
 include('setting-wc-email.php'); // All Customization in This File
 
 /*
@@ -56,7 +50,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-16 font-weight-600 pb-5 font-space-0">
-                                                <?php echo __('Your order is ready for pickup!', 'bypierofracasso-woocommerce-emails'); ?>
+                                                <?php echo __($pickup_order_subtitle); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -148,9 +142,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-20">
                                                 <?php
                                                 if ($order instanceof WC_Order) {
-                                                    echo __('Hello ' . esc_html($order->get_billing_first_name()) . ',', 'bypierofracasso-woocommerce-emails');
+                                                    echo __($pickup_order_greeting . " " . esc_html($order->get_billing_first_name()) . ',');
                                                 } else {
-                                                    echo __('Hello Customer,', 'bypierofracasso-woocommerce-emails');
+                                                    echo __($pickup_order_greeting . " Customer,");
                                                 }
                                                 ?>
                                             </td>
@@ -158,6 +152,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <tr>
                                             <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20" style="padding:0px;">
                                                 <?php
+                                                echo __($pickup_order_message);
                                                 if ($additional_content) {
                                                     echo __(wp_kses_post(wptexturize($additional_content)));
                                                 }

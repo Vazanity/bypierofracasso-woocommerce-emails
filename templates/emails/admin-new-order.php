@@ -2,13 +2,6 @@
 /**
  * Admin New Order Email
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/emails/admin-new-order.php.
- *
- * HOWEVER, on occasion WooCommerce will need to update template files and you
- * (the theme developer) will need to copy the new files to your theme to
- * maintain compatibility. We try to do this as little as possible, but it does
- * happen. When this occurs the version of the template file will be bumped and
- * the readme will list any important changes.
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates/Emails
@@ -29,7 +22,7 @@ $plugin_path = plugin_dir_url(__FILE__) . 'images'; // Image Path
 //             Starto Setting File
 // *************************************//
 
-include('setting-wc-email.php'); // All Customization in This File
+include(plugin_dir_path(__FILE__) . 'setting-wc-email.php');  // All Customization in This File
 
 /*
  * @hooked WC_Emails::email_header() Output the email header
@@ -148,7 +141,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-20">
                                                 <?php
                                                 if ($order instanceof WC_Order) {
-                                                    echo __($admin_new_order_greeting . " " . $order->get_billing_first_name() . ',');
+                                                    echo __($admin_new_order_greeting . ',', 'bypierofracasso-woocommerce-emails');
                                                 } else {
                                                     echo __($admin_new_order_greeting . " Admin,");
                                                 }
@@ -158,6 +151,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <tr>
                                             <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20" style="padding:0px;">
                                                 <?php
+                                                    echo __($admin_new_order_message);
                                                 if ($additional_content) {
                                                     echo __(wp_kses_post(wptexturize($additional_content)));
                                                 }
