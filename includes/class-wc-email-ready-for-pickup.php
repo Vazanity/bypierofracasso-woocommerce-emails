@@ -9,8 +9,8 @@ class WC_Email_Ready_For_Pickup extends WC_Email
     public function __construct()
     {
         $this->id = 'wc_email_ready_for_pickup';
-        $this->title = __('Ready for Pickup', 'bypierofracasso-woocommerce-emails');
-        $this->description = __('Sent when an order is marked as Ready for Pickup.', 'bypierofracasso-woocommerce-emails');
+        $this->title = __('Ready for Pickup', 'woocommerce');
+        $this->description = __('Sent when an order is marked as Ready for Pickup.', 'woocommerce');
         $this->template_html = 'customer-order-ready-for-pickup.php';
         $this->template_plain = 'plain/ready-for-pickup.php';
         $this->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
@@ -86,36 +86,36 @@ class WC_Email_Ready_For_Pickup extends WC_Email
     {
         $this->form_fields = array(
             'enabled' => array(
-                'title' => __('Enable/Disable', 'bypierofracasso-woocommerce-emails'),
+                'title' => __('Enable/Disable', 'woocommerce'),
                 'type' => 'checkbox',
-                'label' => __('Enable this email notification', 'bypierofracasso-woocommerce-emails'),
+                'label' => __('Enable this email notification', 'woocommerce'),
                 'default' => 'yes',
             ),
             'recipient' => array(
-                'title' => __('Recipient(s)', 'bypierofracasso-woocommerce-emails'),
+                'title' => __('Recipient(s)', 'woocommerce'),
                 'type' => 'text',
-                'description' => sprintf(__('Enter recipients (comma separated) for this email. Defaults to %s.', 'bypierofracasso-woocommerce-emails'), '<code>' . esc_attr(get_option('admin_email')) . '</code>'),
+                'description' => sprintf(__('Enter recipients (comma separated) for this email. Defaults to %s.', 'woocommerce'), '<code>' . esc_attr(get_option('admin_email')) . '</code>'),
                 'placeholder' => '',
                 'default' => '',
             ),
             'subject' => array(
-                'title' => __('Subject', 'bypierofracasso-woocommerce-emails'),
+                'title' => __('Subject', 'woocommerce'),
                 'type' => 'text',
-                'description' => sprintf(__('Defaults to %s', 'bypierofracasso-woocommerce-emails'), '<code>' . $this->get_default_subject() . '</code>'),
+                'description' => sprintf(__('Defaults to %s', 'woocommerce'), '<code>' . $this->get_default_subject() . '</code>'),
                 'placeholder' => $this->get_default_subject(),
                 'default' => '',
             ),
             'heading' => array(
-                'title' => __('Email Heading', 'bypierofracasso-woocommerce-emails'),
+                'title' => __('Email Heading', 'woocommerce'),
                 'type' => 'text',
-                'description' => sprintf(__('Defaults to %s', 'bypierofracasso-woocommerce-emails'), '<code>' . $this->get_default_heading() . '</code>'),
+                'description' => sprintf(__('Defaults to %s', 'woocommerce'), '<code>' . $this->get_default_heading() . '</code>'),
                 'placeholder' => $this->get_default_heading(),
                 'default' => '',
             ),
             'email_type' => array(
-                'title' => __('Email Type', 'bypierofracasso-woocommerce-emails'),
+                'title' => __('Email Type', 'woocommerce'),
                 'type' => 'select',
-                'description' => __('Choose which format of email to send.', 'bypierofracasso-woocommerce-emails'),
+                'description' => __('Choose which format of email to send.', 'woocommerce'),
                 'default' => 'html',
                 'class' => 'email_type',
                 'options' => $this->get_email_type_options(),
@@ -126,11 +126,11 @@ class WC_Email_Ready_For_Pickup extends WC_Email
 
     public function get_default_subject()
     {
-        return __('Your order is ready for pickup #{order_number}', 'bypierofracasso-woocommerce-emails');
+        return __('Your order is ready for pickup #{order_number}', 'woocommerce');
     }
 
     public function get_default_heading()
     {
-        return __('Order Ready for Pickup', 'bypierofracasso-woocommerce-emails');
+        return __('Order Ready for Pickup', 'woocommerce');
     }
 }

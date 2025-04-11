@@ -3,7 +3,7 @@
 Plugin Name: byPieroFracasso WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
-Version: 1.0.22
+Version: 1.0.23
 Author: byPieroFracasso
 Author URI: https://bypierofracasso.com/
 License: GPLv2 or later

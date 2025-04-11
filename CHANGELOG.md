@@ -2,6 +2,23 @@
 
 All notable changes to the byPieroFracasso WooCommerce Emails plugin will be documented in this file.
 
+## [1.0.23] - 2025-04-11
+### Fixed
+  - Updated class-files to comply with WPML textdomains:
+    - class-wc-email-customer-invoice.php
+    - class-wc-email-shipped-order.php
+    - class-wc-email-ready-for-pickup.php
+  - Updated class file class-wc-email-customer-invoice.php, text was german, should be english as main language.
+  - Bumped plugin version to 1.0.23.
+
+## [1.0.22] - 2025-03-30
+### Fixed
+  - Updated all email template texts for better clarity and customer engagement.
+  - Fixed issue with "Order Shipped" and "Ready for Pickup" emails being incorrectly sent to admin; now correctly sent to customers.
+  - Added centralized text definitions in wc-settings.php; all email texts are now managed from this single file.
+  - Bumped plugin version to 1.0.22.
+  - Included minor improvements, code tweaks, and bug fixes for stability and performance.
+
 ## [1.0.21] - 2025-03-28
 ### Fixed
 - Prevented the "Customer Processing Order" email from being sent automatically after the "Order Received" email when the order status is `wc-received` (by Umair).

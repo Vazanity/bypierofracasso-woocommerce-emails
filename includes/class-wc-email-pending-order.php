@@ -8,10 +8,10 @@ class WC_Email_Pending_Order extends WC_Email
     public function __construct()
     {
         $this->id = 'pending_order';
-        $this->title = __('Zahlung ausstehend', 'woocommerce');
-        $this->description = __('Diese E-Mail wird gesendet, wenn eine Bestellung als „Zahlung ausstehend“ markiert wird.', 'woocommerce');
-        $this->heading = __('Bitte überweise den Betrag per QR-Bankzahlung', 'woocommerce');
-        $this->subject = __('Deine Bestellung bei byPieroFracasso – Zahlung ausstehend', 'woocommerce');
+        $this->title = __('Payment pending', 'woocommerce');
+        $this->description = __('This email is sent when an order is marked as “payment pending”.', 'woocommerce');
+        $this->heading = __('Please transfer the amount by QR bank payment', 'woocommerce');
+        $this->subject = __('Your order with byPieroFracasso - Payment pending', 'woocommerce');
 
         $this->template_html = 'customer-pending-order.php'; // Fixed path
         $this->template_plain = 'plain/customer-pending-order.php'; // Fixed path
