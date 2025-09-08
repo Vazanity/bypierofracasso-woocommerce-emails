@@ -63,7 +63,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-FFFFFF block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($customer_note_btn, 'woocommerce'); ?>
+                                                                <?php echo __($customer_note_btn, 'piero-fracasso-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -256,7 +256,7 @@ do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($customer_note_btn, 'woocommerce'); ?>
+                                                                <?php echo __($customer_note_btn, 'piero-fracasso-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>

@@ -34,7 +34,7 @@ class PFP_Email_Manager {
         $email_classes['customer_payment_failed'] = new WC_Email_Customer_Payment_Failed();
 
         // Debug: Log the registered email classes
-        error_log("Registered email classes: " . implode(', ', array_keys($email_classes)));
+        bypf_log('Registered email classes: ' . implode(', ', array_keys($email_classes)));
 
         if (isset($email_classes['WC_Email_Customer_Invoice'])) {
             $email_classes['WC_Email_Customer_Invoice']->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
@@ -74,7 +74,7 @@ class PFP_Email_Manager {
         if (isset($email_classes['WC_Email_Failed_Order'])) {
             $email_classes['WC_Email_Failed_Order']->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
             $email_classes['WC_Email_Failed_Order']->template_html = 'admin-failed-order.php';
-            $email_classes['WC_Email_Failed_Order']->title = 'Admin Failed Order';
+            $email_classes['WC_Email_Failed_Order']->title = __('Admin Failed Order', 'piero-fracasso-emails');
         }
 
         return $email_classes;

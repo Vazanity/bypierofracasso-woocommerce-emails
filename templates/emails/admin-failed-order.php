@@ -62,7 +62,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-FFFFFF block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($admin_failed_order_btn, 'woocommerce'); ?>
+                                                                <?php echo __($admin_failed_order_btn, 'piero-fracasso-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -154,7 +154,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     echo __(wp_kses_post(wptexturize($additional_content)));
                                                 }
                                                 if ($order instanceof WC_Order && $order->get_customer_note() != "") {
-                                                    echo __('<br><br> <strong>Note</strong>: ', 'woocommerce');
+                                                    echo __('<br><br> <strong>Note</strong>: ', 'piero-fracasso-emails');
                                                     echo wp_kses_post($order->get_customer_note());
                                                 }
                                                 ?>
@@ -258,7 +258,7 @@ do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($admin_failed_order_btn, 'woocommerce'); ?>
+                                                                <?php echo __($admin_failed_order_btn, 'piero-fracasso-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>

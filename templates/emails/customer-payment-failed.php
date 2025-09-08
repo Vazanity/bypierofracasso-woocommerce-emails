@@ -144,7 +144,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     echo '<br><br>' . wp_kses_post(wptexturize($additional_content));
                                                 }
                                                 if ($order instanceof WC_Order && $order->get_customer_note() != "") {
-                                                    echo __('<br><br> <strong>Note</strong>: ', 'woocommerce');
+                                                    echo __('<br><br> <strong>Note</strong>: ', 'piero-fracasso-emails');
                                                     echo wp_kses_post($order->get_customer_note());
                                                 }
                                                 ?>
