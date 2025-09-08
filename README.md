@@ -39,3 +39,14 @@ The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress 
     define('WP_DEBUG', true);
     define('WP_DEBUG_LOG', true);
     define('WP_DEBUG_DISPLAY', false);
+    ```
+    This keeps logs in `wp-content/debug.log` without exposing errors to visitors.
+
+### JimSoft Migration
+The plugin replaces the legacy *JimSoft QR-Invoice* extension. If that plugin is active, a warning is shown and QR features are disabled to avoid conflicts. Please deactivate JimSoft before using this plugin.
+
+### Deployment
+WordPress 5.5+ supports replacing the plugin by uploading a ZIP with the same folder name. Increase the version (currently `1.1.1`) so WordPress detects the update. JimSoft can remain installed but must stay deactivated.
+
+### Error Handling
+If required QR invoice settings (e.g. CHF currency or QR-IBAN) are missing, PDF attachments are skipped gracefully and a log entry is written – no fatal errors occur.
