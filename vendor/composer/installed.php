@@ -3,7 +3,7 @@
         'name' => 'bypierofracasso/woocommerce-emails',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '0f0f2fdc6164c2f6f031255e8fb3a8fe52ab0b64',
+        'reference' => 'cb6e0529fedfd55e7c50fe73222d70189284b5fb',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'bypierofracasso/woocommerce-emails' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '0f0f2fdc6164c2f6f031255e8fb3a8fe52ab0b64',
+            'reference' => 'cb6e0529fedfd55e7c50fe73222d70189284b5fb',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
