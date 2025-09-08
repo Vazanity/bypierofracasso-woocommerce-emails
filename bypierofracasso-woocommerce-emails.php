@@ -3,7 +3,7 @@
 Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
-Version: 1.1.2
+Version: 1.1.3
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
 License: GPLv2 or later
@@ -15,13 +15,20 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.1.2');
+define('BYPF_EMAILS_VERSION', '1.1.3');
 
 function bypf_log($message, $level = 'debug')
 {
-    if (defined('WP_DEBUG') && WP_DEBUG) {
-        $logger = wc_get_logger();
-        $logger->log($level, $message, array('source' => 'bypf-emails'));
+    if (!defined('WP_DEBUG') || !WP_DEBUG) {
+        return;
+    }
+
+    if (function_exists('wc_get_logger')) {
+        wc_get_logger()->log($level, $message, array('source' => 'bypf-emails'));
+    } elseif (function_exists('error_log')) {
+        error_log('bypf-emails [' . $level . ']: ' . $message);
+    } else {
+        trigger_error('bypf-emails [' . $level . ']: ' . $message, E_USER_NOTICE);
     }
 }
 
@@ -45,11 +52,6 @@ function bypf_emails_load_autoloader()
     return false;
 }
 
-bypf_emails_load_autoloader();
-
-require_once plugin_dir_path(__FILE__) . 'includes/class-email-manager.php';
-require_once plugin_dir_path(__FILE__) . 'templates/emails/setting-wc-email.php';
-
 function bypf_is_jimsoft_active()
 {
     include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -68,40 +70,36 @@ function bypf_is_jimsoft_active()
     return false;
 }
 
-function bypierofracasso_woocommerce_emails_init()
+function bypf_emails_activation()
 {
-    if (!class_exists('WooCommerce')) {
-        bypf_log('Piero Fracasso Emails: WooCommerce not active.', 'error');
-        return;
-    }
-
-    if (bypf_is_jimsoft_active()) {
-        bypf_log('Piero Fracasso Emails: JimSoft extension detected; plugin initialization skipped.', 'warning');
-        add_action('admin_notices', function () {
-            echo '<div class="notice notice-warning"><p>' . esc_html__(
-                'JimSoft QR invoice plugin is active. Please deactivate it; functionality is now provided by Piero Fracasso Perfumes WooCommerce Emails.',
-                'piero-fracasso-emails'
-            ) . '</p></div>';
-        });
-        return;
-    }
-
-    if (class_exists('PFP_Email_Manager')) {
-        new PFP_Email_Manager();
+    include_once ABSPATH . 'wp-admin/includes/plugin.php';
+    if (!is_plugin_active('woocommerce/woocommerce.php')) {
+        add_option('bypf_emails_wc_missing', true);
+        deactivate_plugins(plugin_basename(__FILE__));
     }
 }
 
-add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_init', 11);
+function bypf_emails_activation_notice()
+{
+    if (get_option('bypf_emails_wc_missing')) {
+        echo '<div class="notice notice-error"><p>' . esc_html__(
+            'WooCommerce must be active to use Piero Fracasso Perfumes WooCommerce Emails plugin.',
+            'piero-fracasso-emails'
+        ) . '</p></div>';
+        delete_option('bypf_emails_wc_missing');
+    }
+}
+
+register_activation_hook(__FILE__, 'bypf_emails_activation');
+add_action('admin_notices', 'bypf_emails_activation_notice');
 
 // Debug: Confirm plugin is active on admin page loads
-add_action('admin_init', 'bypierofracasso_debug_plugin_active');
 function bypierofracasso_debug_plugin_active()
 {
     bypf_log('Piero Fracasso Perfumes WooCommerce Emails plugin (v' . BYPF_EMAILS_VERSION . ') is active on admin page load.');
 }
 
 // Debug: Log order save at the WordPress level
-add_action('save_post_shop_order', 'bypierofracasso_debug_save_post', 10, 3);
 function bypierofracasso_debug_save_post($post_id, $post, $update)
 {
     if (!$update || !function_exists('wc_get_order')) {
@@ -119,7 +117,6 @@ function bypierofracasso_debug_save_post($post_id, $post, $update)
 }
 
 // Trigger emails using woocommerce_order_status_changed hook
-add_action('woocommerce_order_status_changed', 'bypierofracasso_handle_custom_email_trigger', 9999, 4);
 function bypierofracasso_handle_custom_email_trigger($order_id, $old_status, $new_status, $order)
 {
     if (!function_exists('WC')) {
@@ -152,7 +149,6 @@ function bypierofracasso_handle_custom_email_trigger($order_id, $old_status, $ne
 }
 
 // Debug: Log before order save
-add_action('woocommerce_before_order_object_save', 'bypierofracasso_debug_before_save', 999, 2);
 function bypierofracasso_debug_before_save($order, $data_store)
 {
     bypf_log("woocommerce_before_order_object_save hook fired for order {$order->get_id()}");
@@ -171,7 +167,6 @@ function bypierofracasso_debug_before_save($order, $data_store)
 }
 
 // Debug: Log after order save
-add_action('woocommerce_after_order_object_save', 'bypierofracasso_debug_after_save', 999, 2);
 function bypierofracasso_debug_after_save($order, $data_store)
 {
     bypf_log("woocommerce_after_order_object_save hook fired for order {$order->get_id()}");
@@ -179,7 +174,7 @@ function bypierofracasso_debug_after_save($order, $data_store)
     bypf_log("Order {$order->get_id()} - Status after save: $status");
 }
 
-add_filter('woocommerce_locate_template', 'bypierofracasso_override_woocommerce_emails', 10, 3);
+// Override WooCommerce email templates
 function bypierofracasso_override_woocommerce_emails($template, $template_name, $template_path)
 {
     $plugin_path = plugin_dir_path(__FILE__) . 'templates/emails/';
@@ -192,13 +187,13 @@ function bypierofracasso_override_woocommerce_emails($template, $template_name, 
     return $template;
 }
 
-add_action('plugins_loaded', 'bypierofracasso_load_textdomain');
+// Load translations
 function bypierofracasso_load_textdomain()
 {
     load_plugin_textdomain('piero-fracasso-emails', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 }
 
-add_action('woocommerce_email_header', 'bypierofracasso_add_email_styles', 20);
+// Add inline email styles
 function bypierofracasso_add_email_styles($email)
 {
     ob_start();
@@ -207,8 +202,7 @@ function bypierofracasso_add_email_styles($email)
     echo '<style type="text/css">' . wp_strip_all_tags($css) . '</style>';
 }
 
-// Register Custom Order Statuses using Modern WooCommerce Hook
-add_filter('woocommerce_register_shop_order_post_statuses', 'bypierofracasso_register_custom_statuses');
+// Register custom order statuses
 function bypierofracasso_register_custom_statuses($statuses)
 {
     $statuses['wc-received'] = array(
@@ -254,7 +248,7 @@ function bypierofracasso_register_custom_statuses($statuses)
     return $statuses;
 }
 
-add_filter('wc_order_statuses', 'bypierofracasso_add_custom_order_statuses');
+// Make custom statuses available in WooCommerce
 function bypierofracasso_add_custom_order_statuses($order_statuses)
 {
     $order_statuses['wc-received'] = _x('Received', 'Order status', 'piero-fracasso-emails');
@@ -266,7 +260,6 @@ function bypierofracasso_add_custom_order_statuses($order_statuses)
 }
 
 // Ensure Bulk Actions Recognize Custom Statuses
-add_filter('bulk_actions-edit-shop_order', 'bypierofracasso_add_bulk_order_statuses');
 function bypierofracasso_add_bulk_order_statuses($actions)
 {
     $actions['mark_wc-shipped'] = __('Change status to Shipped', 'piero-fracasso-emails');
@@ -276,7 +269,7 @@ function bypierofracasso_add_bulk_order_statuses($actions)
 }
 
 
-add_action('woocommerce_new_order', 'bypierofracasso_maybe_set_invoice_status', 20, 1);
+// Set Invoice status for applicable payment methods
 function bypierofracasso_maybe_set_invoice_status($order_id){
     $order = wc_get_order($order_id);
     if(!$order){
@@ -316,7 +309,6 @@ function bypierofracasso_maybe_set_invoice_status($order_id){
 //}
 
 // Hook to modify the order status after payment completion
-add_filter('woocommerce_payment_complete_order_status', 'bypierofracasso_order_status_after_payment', 10, 2);
 function bypierofracasso_order_status_after_payment($order_status, $order_id)
 {
     $order = wc_get_order($order_id);
@@ -341,7 +333,6 @@ function bypierofracasso_order_status_after_payment($order_status, $order_id)
 //}
 
 // Hook to send the Processing Order email when an order status changes to "Processing"
-add_action('woocommerce_order_status_processing', 'send_bypierofracasso_processing_email', 10, 2);
 function send_bypierofracasso_processing_email($order_id, $order)
 {
     $mailer = WC()->mailer();
@@ -353,7 +344,6 @@ function send_bypierofracasso_processing_email($order_id, $order)
 }
 
 // Hook to send the New Order email to the admin when an order is placed
-add_action('woocommerce_new_order', 'bypierofracasso_send_new_order_email_to_admin', 10, 1);
 function bypierofracasso_send_new_order_email_to_admin($order_id)
 {
     $mailer = WC()->mailer();
@@ -365,7 +355,6 @@ function bypierofracasso_send_new_order_email_to_admin($order_id)
 }
 
 // Manual Trigger for Debugging
-add_action('admin_init', 'bypierofracasso_manual_email_trigger');
 function bypierofracasso_manual_email_trigger()
 {
     if (isset($_GET['bypf_trigger_email']) && current_user_can('manage_woocommerce')) {
@@ -426,3 +415,60 @@ function bypierofracasso_manual_email_trigger()
         }
     }
 }
+
+function bypierofracasso_woocommerce_emails_bootstrap()
+{
+    if (!did_action('woocommerce_loaded') && !class_exists('WooCommerce') && !function_exists('wc')) {
+        add_action('admin_notices', function () {
+            echo '<div class="notice notice-warning"><p>' . esc_html__(
+                'WooCommerce is required for Piero Fracasso Perfumes WooCommerce Emails plugin to work.',
+                'piero-fracasso-emails'
+            ) . '</p></div>';
+        });
+        return;
+    }
+
+    if (!bypf_emails_load_autoloader()) {
+        return;
+    }
+
+    require_once plugin_dir_path(__FILE__) . 'includes/class-email-manager.php';
+    require_once plugin_dir_path(__FILE__) . 'templates/emails/setting-wc-email.php';
+
+    if (bypf_is_jimsoft_active()) {
+        bypf_log('Piero Fracasso Emails: JimSoft extension detected; plugin initialization skipped.', 'warning');
+        add_action('admin_notices', function () {
+            echo '<div class="notice notice-warning"><p>' . esc_html__(
+                'JimSoft QR invoice plugin is active. Please deactivate it; functionality is now provided by Piero Fracasso Perfumes WooCommerce Emails.',
+                'piero-fracasso-emails'
+            ) . '</p></div>';
+        });
+        return;
+    }
+
+    if (class_exists('PFP_Email_Manager')) {
+        new PFP_Email_Manager();
+    }
+
+    bypierofracasso_load_textdomain();
+    add_action('woocommerce_email_header', 'bypierofracasso_add_email_styles', 20);
+    add_filter('woocommerce_locate_template', 'bypierofracasso_override_woocommerce_emails', 10, 3);
+    add_filter('woocommerce_register_shop_order_post_statuses', 'bypierofracasso_register_custom_statuses');
+    add_filter('wc_order_statuses', 'bypierofracasso_add_custom_order_statuses');
+    add_filter('bulk_actions-edit-shop_order', 'bypierofracasso_add_bulk_order_statuses');
+    add_action('woocommerce_new_order', 'bypierofracasso_maybe_set_invoice_status', 20, 1);
+    add_filter('woocommerce_payment_complete_order_status', 'bypierofracasso_order_status_after_payment', 10, 2);
+    add_action('woocommerce_order_status_processing', 'send_bypierofracasso_processing_email', 10, 2);
+    add_action('woocommerce_new_order', 'bypierofracasso_send_new_order_email_to_admin', 10, 1);
+    add_action('woocommerce_order_status_changed', 'bypierofracasso_handle_custom_email_trigger', 9999, 4);
+
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        add_action('admin_init', 'bypierofracasso_debug_plugin_active');
+        add_action('save_post_shop_order', 'bypierofracasso_debug_save_post', 10, 3);
+        add_action('woocommerce_before_order_object_save', 'bypierofracasso_debug_before_save', 999, 2);
+        add_action('woocommerce_after_order_object_save', 'bypierofracasso_debug_after_save', 999, 2);
+        add_action('admin_init', 'bypierofracasso_manual_email_trigger');
+    }
+}
+
+add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_bootstrap', 20);
