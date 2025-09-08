@@ -11,7 +11,7 @@ class WC_Email_Pending_Order extends WC_Email
         $this->title = __('Payment pending', 'woocommerce');
         $this->description = __('This email is sent when an order is marked as “payment pending”.', 'woocommerce');
         $this->heading = __('Please transfer the amount by QR bank payment', 'woocommerce');
-        $this->subject = __('Your order with byPieroFracasso - Payment pending', 'woocommerce');
+        $this->subject = __('Your order with Piero Fracasso Perfumes - Payment pending', 'woocommerce');
 
         $this->template_html = 'customer-pending-order.php'; // Fixed path
         $this->template_plain = 'plain/customer-pending-order.php'; // Fixed path

@@ -141,7 +141,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-20">
                                                 <?php
                                                 if ($order instanceof WC_Order) {
-                                                    echo __($admin_new_order_greeting . ',', 'bypierofracasso-woocommerce-emails');
+                                                    echo __($admin_new_order_greeting . ',', 'piero-fracasso-emails');
                                                 } else {
                                                     echo __($admin_new_order_greeting . " Admin,");
                                                 }

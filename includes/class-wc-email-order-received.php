@@ -11,7 +11,7 @@ class WC_Email_Order_Received extends WC_Email
         $this->title = __('Bestellung erhalten', 'woocommerce');
         $this->description = __('Diese E-Mail wird gesendet, wenn eine Bestellung aufgegeben wurde.', 'woocommerce');
         $this->heading = __('Vielen Dank für deine Bestellung!', 'woocommerce');
-        $this->subject = __('Deine Bestellung bei byPieroFracasso wurde erhalten', 'woocommerce');
+        $this->subject = __('Deine Bestellung bei Piero Fracasso Perfumes wurde erhalten', 'woocommerce');
 
         $this->template_html = 'customer-order-received.php'; // Fixed path
         $this->template_plain = 'plain/customer-order-received.php'; // Fixed path

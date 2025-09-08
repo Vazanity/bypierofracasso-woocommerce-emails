@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: byPieroFracasso WooCommerce Emails
+Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
-Version: 1.0.23
-Author: byPieroFracasso
+Version: 1.1.0
+Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
 License: GPLv2 or later
-Text Domain: bypierofracasso-woocommerce-emails
+Text Domain: piero-fracasso-emails
 Domain Path: /languages
 */
 
@@ -15,14 +15,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.0.22');
+define('BYPF_EMAILS_VERSION', '1.1.0');
 
 require_once plugin_dir_path(__FILE__) . 'includes/class-email-manager.php';
 require_once plugin_dir_path(__FILE__) . 'templates/emails/setting-wc-email.php';
 
 function bypierofracasso_woocommerce_emails_init()
 {
-    new byPieroFracasso_Email_Manager();
+    new PFP_Email_Manager();
 }
 
 add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_init');
@@ -31,7 +31,7 @@ add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_init');
 add_action('admin_init', 'bypierofracasso_debug_plugin_active');
 function bypierofracasso_debug_plugin_active()
 {
-    error_log("byPieroFracasso WooCommerce Emails plugin (v" . BYPF_EMAILS_VERSION . ") is active on admin page load.");
+    error_log("Piero Fracasso Perfumes WooCommerce Emails plugin (v" . BYPF_EMAILS_VERSION . ") is active on admin page load.");
 }
 
 // Debug: Log order save at the WordPress level
@@ -123,7 +123,7 @@ function bypierofracasso_override_woocommerce_emails($template, $template_name, 
 add_action('plugins_loaded', 'bypierofracasso_load_textdomain');
 function bypierofracasso_load_textdomain()
 {
-    load_plugin_textdomain('bypierofracasso-woocommerce-emails', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+    load_plugin_textdomain('piero-fracasso-emails', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 }
 
 add_action('woocommerce_email_header', 'bypierofracasso_add_email_styles', 20);
@@ -140,36 +140,44 @@ add_filter('woocommerce_register_shop_order_post_statuses', 'bypierofracasso_reg
 function bypierofracasso_register_custom_statuses($statuses)
 {
     $statuses['wc-received'] = array(
-        'label' => _x('Received', 'Order status', 'bypierofracasso-woocommerce-emails'),
+        'label' => _x('Received', 'Order status', 'piero-fracasso-emails'),
         'public' => true,
         'exclude_from_search' => false,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
-        'label_count' => _n_noop('Received <span class="count">(%s)</span>', 'Received <span class="count">(%s)</span>', 'bypierofracasso-woocommerce-emails'),
+        'label_count' => _n_noop('Received <span class="count">(%s)</span>', 'Received <span class="count">(%s)</span>', 'piero-fracasso-emails'),
     );
     $statuses['wc-pending-payment'] = array(
-        'label' => _x('Pending Payment', 'Order status', 'bypierofracasso-woocommerce-emails'),
+        'label' => _x('Pending Payment', 'Order status', 'piero-fracasso-emails'),
         'public' => true,
         'exclude_from_search' => false,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
-        'label_count' => _n_noop('Pending Payment <span class="count">(%s)</span>', 'Pending Payment <span class="count">(%s)</span>', 'bypierofracasso-woocommerce-emails'),
+        'label_count' => _n_noop('Pending Payment <span class="count">(%s)</span>', 'Pending Payment <span class="count">(%s)</span>', 'piero-fracasso-emails'),
     );
     $statuses['wc-shipped'] = array(
-        'label' => _x('Shipped', 'Order status', 'bypierofracasso-woocommerce-emails'),
+        'label' => _x('Shipped', 'Order status', 'piero-fracasso-emails'),
         'public' => true,
         'exclude_from_search' => false,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
-        'label_count' => _n_noop('Shipped <span class="count">(%s)</span>', 'Shipped <span class="count">(%s)</span>', 'bypierofracasso-woocommerce-emails'),
+        'label_count' => _n_noop('Shipped <span class="count">(%s)</span>', 'Shipped <span class="count">(%s)</span>', 'piero-fracasso-emails'),
     );
     $statuses['wc-ready-for-pickup'] = array(
-        'label' => _x('Ready for Pickup', 'Order status', 'bypierofracasso-woocommerce-emails'),
+        'label' => _x('Ready for Pickup', 'Order status', 'piero-fracasso-emails'),
         'public' => true,
         'exclude_from_search' => false,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
-        'label_count' => _n_noop('Ready for Pickup <span class="count">(%s)</span>', 'Ready for Pickup <span class="count">(%s)</span>', 'bypierofracasso-woocommerce-emails'),
+        'label_count' => _n_noop('Ready for Pickup <span class="count">(%s)</span>', 'Ready for Pickup <span class="count">(%s)</span>', 'piero-fracasso-emails'),
+    );
+    $statuses['wc-invoice'] = array(
+        'label' => _x('Invoice', 'Order status', 'piero-fracasso-emails'),
+        'public' => true,
+        'exclude_from_search' => false,
+        'show_in_admin_all_list' => true,
+        'show_in_admin_status_list' => true,
+        'label_count' => _n_noop('Invoice <span class="count">(%s)</span>', 'Invoice <span class="count">(%s)</span>', 'piero-fracasso-emails'),
     );
     return $statuses;
 }
@@ -177,10 +185,11 @@ function bypierofracasso_register_custom_statuses($statuses)
 add_filter('wc_order_statuses', 'bypierofracasso_add_custom_order_statuses');
 function bypierofracasso_add_custom_order_statuses($order_statuses)
 {
-    $order_statuses['wc-received'] = _x('Received', 'Order status', 'bypierofracasso-woocommerce-emails');
-    $order_statuses['wc-pending-payment'] = _x('Pending Payment', 'Order status', 'bypierofracasso-woocommerce-emails');
-    $order_statuses['wc-shipped'] = _x('Shipped', 'Order status', 'bypierofracasso-woocommerce-emails');
-    $order_statuses['wc-ready-for-pickup'] = _x('Ready for Pickup', 'Order status', 'bypierofracasso-woocommerce-emails');
+    $order_statuses['wc-received'] = _x('Received', 'Order status', 'piero-fracasso-emails');
+    $order_statuses['wc-pending-payment'] = _x('Pending Payment', 'Order status', 'piero-fracasso-emails');
+    $order_statuses['wc-shipped'] = _x('Shipped', 'Order status', 'piero-fracasso-emails');
+    $order_statuses['wc-ready-for-pickup'] = _x('Ready for Pickup', 'Order status', 'piero-fracasso-emails');
+    $order_statuses['wc-invoice'] = _x('Invoice', 'Order status', 'piero-fracasso-emails');
     return $order_statuses;
 }
 
@@ -188,11 +197,26 @@ function bypierofracasso_add_custom_order_statuses($order_statuses)
 add_filter('bulk_actions-edit-shop_order', 'bypierofracasso_add_bulk_order_statuses');
 function bypierofracasso_add_bulk_order_statuses($actions)
 {
-    $actions['mark_wc-shipped'] = __('Change status to Shipped', 'bypierofracasso-woocommerce-emails');
-    $actions['mark_wc-ready-for-pickup'] = __('Change status to Ready for Pickup', 'bypierofracasso-woocommerce-emails');
+    $actions['mark_wc-shipped'] = __('Change status to Shipped', 'piero-fracasso-emails');
+    $actions['mark_wc-ready-for-pickup'] = __('Change status to Ready for Pickup', 'piero-fracasso-emails');
+    $actions['mark_wc-invoice'] = __('Change status to Invoice', 'piero-fracasso-emails');
     return $actions;
 }
 
+
+add_action('woocommerce_new_order', 'bypierofracasso_maybe_set_invoice_status', 20, 1);
+function bypierofracasso_maybe_set_invoice_status($order_id){
+    $order = wc_get_order($order_id);
+    if(!$order){
+        return;
+    }
+    $invoice_methods = apply_filters('pfp_invoice_payment_methods', array('invoice','bacs'));
+    if(in_array($order->get_payment_method(), $invoice_methods, true)){
+        if($order->has_status('on-hold') || $order->has_status('pending')){
+            $order->update_status('invoice');
+        }
+    }
+}
 // Set Initial Status to "Received" After Payment
 //add_action('woocommerce_payment_complete', 'bypierofracasso_set_initial_received_status', 10, 1);
 //function bypierofracasso_set_initial_received_status($order_id)
@@ -200,7 +224,7 @@ function bypierofracasso_add_bulk_order_statuses($actions)
 //    $order = wc_get_order($order_id);
 //    if ($order && !$order->has_status('received')) { // Remove 'wc-' prefix
 //        error_log("Setting order $order_id to received after payment");
-//        $order->update_status('wc-received', __('Order set to Received after payment.', 'bypierofracasso-woocommerce-emails')); // Keep 'wc-' for update_status
+//        $order->update_status('wc-received', __('Order set to Received after payment.', 'piero-fracasso-emails')); // Keep 'wc-' for update_status
 //        $email = WC()->mailer()->get_emails()['WC_Email_Order_Received'];
 //        if ($email && $email->is_enabled()) {
 //            $email->trigger($order_id);

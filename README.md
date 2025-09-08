@@ -1,7 +1,7 @@
-# byPieroFracasso WooCommerce Emails
+# Piero Fracasso Perfumes WooCommerce Emails
 
 ## Overview
-The **byPieroFracasso WooCommerce Emails** plugin is a custom WordPress plugin designed to enhance the email functionality of WooCommerce for the byPieroFracasso online store. It introduces custom order statuses, corresponding email notifications, and overrides default WooCommerce email templates with branded versions. The plugin also disables unnecessary default WooCommerce emails to streamline notifications.
+The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress plugin designed to enhance the email functionality of WooCommerce for the Piero Fracasso Perfumes online store. It introduces custom order statuses, corresponding email notifications, and overrides default WooCommerce email templates with branded versions. The plugin also disables unnecessary default WooCommerce emails to streamline notifications.
 
 ## Features
 - **Custom Order Statuses**:
