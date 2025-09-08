@@ -2,6 +2,13 @@
 
 All notable changes to the Piero Fracasso Perfumes WooCommerce Emails plugin will be documented in this file.
 
+## [1.1.1] - 2025-09-08
+### Fixed
+- Added guard checks to prevent fatal errors when WooCommerce or dependencies are missing.
+- Plugin initialization now waits until `plugins_loaded` priority 11 and verifies WooCommerce availability.
+- Avoids duplicate QR invoice functionality by detecting active JimSoft plugins and showing an admin warning.
+- Composer autoloader is loaded only when present, otherwise an admin notice is displayed.
+
 ## [1.1.0] - 2025-09-08
 ### Added
   - Introduced custom `invoice` order status with bulk action support and automatic assignment for configured payment methods.

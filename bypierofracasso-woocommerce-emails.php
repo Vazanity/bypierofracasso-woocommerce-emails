@@ -3,7 +3,7 @@
 Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
-Version: 1.1.0
+Version: 1.1.1
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
 License: GPLv2 or later
@@ -15,17 +15,75 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.1.0');
+define('BYPF_EMAILS_VERSION', '1.1.1');
+
+function bypf_emails_load_autoloader()
+{
+    $autoload = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+    if (file_exists($autoload)) {
+        require_once $autoload;
+        return true;
+    }
+
+    error_log('Piero Fracasso Emails: Missing vendor/autoload.php. Run composer install.');
+
+    add_action('admin_notices', function () {
+        echo '<div class="notice notice-error"><p>' . esc_html__(
+            'Missing dependencies for Piero Fracasso Perfumes WooCommerce Emails plugin. Please run composer install.',
+            'piero-fracasso-emails'
+        ) . '</p></div>';
+    });
+
+    return false;
+}
+
+bypf_emails_load_autoloader();
 
 require_once plugin_dir_path(__FILE__) . 'includes/class-email-manager.php';
 require_once plugin_dir_path(__FILE__) . 'templates/emails/setting-wc-email.php';
 
-function bypierofracasso_woocommerce_emails_init()
+function bypf_is_jimsoft_active()
 {
-    new PFP_Email_Manager();
+    include_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+    $active_plugins = array_merge(
+        (array) get_option('active_plugins', array()),
+        array_keys((array) get_site_option('active_sitewide_plugins', array()))
+    );
+
+    foreach ($active_plugins as $plugin) {
+        if (strpos($plugin, 'jimsoft') !== false) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
-add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_init');
+function bypierofracasso_woocommerce_emails_init()
+{
+    if (!class_exists('WooCommerce')) {
+        error_log('Piero Fracasso Emails: WooCommerce not active.');
+        return;
+    }
+
+    if (bypf_is_jimsoft_active()) {
+        error_log('Piero Fracasso Emails: JimSoft extension detected; plugin initialization skipped.');
+        add_action('admin_notices', function () {
+            echo '<div class="notice notice-warning"><p>' . esc_html__(
+                'JimSoft QR invoice plugin is active. Please deactivate it; functionality is now provided by Piero Fracasso Perfumes WooCommerce Emails.',
+                'piero-fracasso-emails'
+            ) . '</p></div>';
+        });
+        return;
+    }
+
+    if (class_exists('PFP_Email_Manager')) {
+        new PFP_Email_Manager();
+    }
+}
+
+add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_init', 11);
 
 // Debug: Confirm plugin is active on admin page loads
 add_action('admin_init', 'bypierofracasso_debug_plugin_active');
@@ -38,15 +96,17 @@ function bypierofracasso_debug_plugin_active()
 add_action('save_post_shop_order', 'bypierofracasso_debug_save_post', 10, 3);
 function bypierofracasso_debug_save_post($post_id, $post, $update)
 {
-    if ($update) {
-        error_log("Order $post_id updated via save_post_shop_order hook");
-        $order = wc_get_order($post_id);
-        if ($order) {
-            $old_status = get_post_meta($post_id, '_status_before_update', true) ?: $order->get_status();
-            $new_status = $order->get_status();
-            error_log("Order $post_id - Old status (meta): $old_status, New status: $new_status");
-            update_post_meta($post_id, '_status_before_update', $new_status);
-        }
+    if (!$update || !function_exists('wc_get_order')) {
+        return;
+    }
+
+    error_log("Order $post_id updated via save_post_shop_order hook");
+    $order = wc_get_order($post_id);
+    if ($order) {
+        $old_status = get_post_meta($post_id, '_status_before_update', true) ?: $order->get_status();
+        $new_status = $order->get_status();
+        error_log("Order $post_id - Old status (meta): $old_status, New status: $new_status");
+        update_post_meta($post_id, '_status_before_update', $new_status);
     }
 }
 
@@ -54,6 +114,10 @@ function bypierofracasso_debug_save_post($post_id, $post, $update)
 add_action('woocommerce_order_status_changed', 'bypierofracasso_handle_custom_email_trigger', 9999, 4);
 function bypierofracasso_handle_custom_email_trigger($order_id, $old_status, $new_status, $order)
 {
+    if (!function_exists('WC')) {
+        return;
+    }
+
     error_log("Order $order_id status changed from $old_status to $new_status (via woocommerce_order_status_changed hook)");
     $mailer = WC()->mailer()->get_emails();
 
