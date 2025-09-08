@@ -9,8 +9,8 @@ class WC_Email_Ready_For_Pickup extends WC_Email
     public function __construct()
     {
         $this->id = 'wc_email_ready_for_pickup';
-        $this->title = __('Ready for Pickup', 'woocommerce');
-        $this->description = __('Sent when an order is marked as Ready for Pickup.', 'woocommerce');
+        $this->title = __('Ready for Pickup', 'piero-fracasso-emails');
+        $this->description = __('Sent when an order is marked as Ready for Pickup.', 'piero-fracasso-emails');
         $this->template_html = 'customer-order-ready-for-pickup.php';
         $this->template_plain = 'plain/ready-for-pickup.php';
         $this->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
@@ -52,10 +52,10 @@ class WC_Email_Ready_For_Pickup extends WC_Email
             $this->placeholders['{order_number}'] = $this->object->get_order_number();
 
             if ($this->is_enabled() && $this->get_recipient()) {
-                error_log("Triggering email for order $order_id with status {$this->object->get_status()} to {$this->recipient}");
+                bypf_log("Triggering email for order $order_id with status {$this->object->get_status()} to {$this->recipient}");
                 $this->send($this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments());
             } else {
-                error_log("Email not sent for order $order_id: Either disabled or no recipient");
+                bypf_log("Email not sent for order $order_id: Either disabled or no recipient", 'warning');
             }
         }
     }
@@ -86,36 +86,36 @@ class WC_Email_Ready_For_Pickup extends WC_Email
     {
         $this->form_fields = array(
             'enabled' => array(
-                'title' => __('Enable/Disable', 'woocommerce'),
+                'title' => __('Enable/Disable', 'piero-fracasso-emails'),
                 'type' => 'checkbox',
-                'label' => __('Enable this email notification', 'woocommerce'),
+                'label' => __('Enable this email notification', 'piero-fracasso-emails'),
                 'default' => 'yes',
             ),
             'recipient' => array(
-                'title' => __('Recipient(s)', 'woocommerce'),
+                'title' => __('Recipient(s)', 'piero-fracasso-emails'),
                 'type' => 'text',
-                'description' => sprintf(__('Enter recipients (comma separated) for this email. Defaults to %s.', 'woocommerce'), '<code>' . esc_attr(get_option('admin_email')) . '</code>'),
+                'description' => sprintf(__('Enter recipients (comma separated) for this email. Defaults to %s.', 'piero-fracasso-emails'), '<code>' . esc_attr(get_option('admin_email')) . '</code>'),
                 'placeholder' => '',
                 'default' => '',
             ),
             'subject' => array(
-                'title' => __('Subject', 'woocommerce'),
+                'title' => __('Subject', 'piero-fracasso-emails'),
                 'type' => 'text',
-                'description' => sprintf(__('Defaults to %s', 'woocommerce'), '<code>' . $this->get_default_subject() . '</code>'),
+                'description' => sprintf(__('Defaults to %s', 'piero-fracasso-emails'), '<code>' . $this->get_default_subject() . '</code>'),
                 'placeholder' => $this->get_default_subject(),
                 'default' => '',
             ),
             'heading' => array(
-                'title' => __('Email Heading', 'woocommerce'),
+                'title' => __('Email Heading', 'piero-fracasso-emails'),
                 'type' => 'text',
-                'description' => sprintf(__('Defaults to %s', 'woocommerce'), '<code>' . $this->get_default_heading() . '</code>'),
+                'description' => sprintf(__('Defaults to %s', 'piero-fracasso-emails'), '<code>' . $this->get_default_heading() . '</code>'),
                 'placeholder' => $this->get_default_heading(),
                 'default' => '',
             ),
             'email_type' => array(
-                'title' => __('Email Type', 'woocommerce'),
+                'title' => __('Email Type', 'piero-fracasso-emails'),
                 'type' => 'select',
-                'description' => __('Choose which format of email to send.', 'woocommerce'),
+                'description' => __('Choose which format of email to send.', 'piero-fracasso-emails'),
                 'default' => 'html',
                 'class' => 'email_type',
                 'options' => $this->get_email_type_options(),
@@ -126,11 +126,11 @@ class WC_Email_Ready_For_Pickup extends WC_Email
 
     public function get_default_subject()
     {
-        return __('Your order is ready for pickup #{order_number}', 'woocommerce');
+        return __('Your order is ready for pickup #{order_number}', 'piero-fracasso-emails');
     }
 
     public function get_default_heading()
     {
-        return __('Order Ready for Pickup', 'woocommerce');
+        return __('Order Ready for Pickup', 'piero-fracasso-emails');
     }
 }

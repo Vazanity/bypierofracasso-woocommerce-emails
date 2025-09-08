@@ -63,7 +63,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-FFFFFF block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($pending_order_btn, 'woocommerce'); ?>
+                                                                <?php echo __($pending_order_btn, 'piero-fracasso-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -156,12 +156,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                 }
                                                 if ($order instanceof WC_Order) {
                                                     echo '<br><br>';
-                                                    echo '<strong>' . __('Order Number:', 'woocommerce') . '</strong> ' . esc_html($order->get_order_number()) . '<br>';
-                                                    echo '<strong>' . __('Order Date:', 'woocommerce') . '</strong> ' . esc_html(wc_format_datetime($order->get_date_created())) . '<br>';
-                                                    echo '<strong>' . __('Billing Address:', 'woocommerce') . '</strong><br>' . wp_kses_post($order->get_formatted_billing_address());
+                                                    echo '<strong>' . __('Order Number:', 'piero-fracasso-emails') . '</strong> ' . esc_html($order->get_order_number()) . '<br>';
+                                                    echo '<strong>' . __('Order Date:', 'piero-fracasso-emails') . '</strong> ' . esc_html(wc_format_datetime($order->get_date_created())) . '<br>';
+                                                    echo '<strong>' . __('Billing Address:', 'piero-fracasso-emails') . '</strong><br>' . wp_kses_post($order->get_formatted_billing_address());
                                                 }
                                                 if ($order instanceof WC_Order && $order->get_customer_note() != "") {
-                                                    echo __('<br><br> <strong>Note</strong>: ', 'woocommerce');
+                                                    echo __('<br><br> <strong>Note</strong>: ', 'piero-fracasso-emails');
                                                     echo wp_kses_post($order->get_customer_note());
                                                 }
                                                 ?>
@@ -267,7 +267,7 @@ do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($pending_order_btn, 'woocommerce'); ?>
+                                                                <?php echo __($pending_order_btn, 'piero-fracasso-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>

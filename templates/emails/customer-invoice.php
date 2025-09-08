@@ -65,15 +65,15 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                             <?php if ($order instanceof WC_Order): ?>
                                                                 <?php if ($order->needs_payment()): ?>
                                                                     <a href="<?php echo esc_url($order->get_checkout_payment_url()); ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                        <?php echo __($invoice_pending_btn, 'woocommerce'); ?>
+                                                                        <?php echo __($invoice_pending_btn, 'piero-fracasso-emails'); ?>
                                                                     </a>
                                                                 <?php else: ?>
                                                                     <a href="<?php echo esc_url($order->get_view_order_url()); ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                        <?php echo __($invoice_complete_btn, 'woocommerce'); ?>
+                                                                        <?php echo __($invoice_complete_btn, 'piero-fracasso-emails'); ?>
                                                                     </a>
                                                                 <?php endif; ?>
                                                             <?php else: ?>
-                                                                <span class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space"><?php echo __($invoice_complete_btn, 'woocommerce'); ?> (Preview)</span>
+                                                                <span class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space"><?php echo __($invoice_complete_btn, 'piero-fracasso-emails'); ?> (Preview)</span>
                                                             <?php endif; ?>
                                                         </td>
                                                     </tr>
@@ -165,22 +165,22 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     if ($additional_content) {
                                                         echo __(wp_kses_post(wptexturize($additional_content)));
                                                     } else {
-                                                        echo __('Please pay for your order using the button below.', 'woocommerce');
+                                                        echo __('Please pay for your order using the button below.', 'piero-fracasso-emails');
                                                     }
                                                     ?>
-                                                    <br><a href="<?php echo esc_url($order->get_checkout_payment_url()); ?>" class="font-4B7BEC"><?php echo __('Pay for this order', 'woocommerce'); ?></a>
+                                                    <br><a href="<?php echo esc_url($order->get_checkout_payment_url()); ?>" class="font-4B7BEC"><?php echo __('Pay for this order', 'piero-fracasso-emails'); ?></a>
                                                 </td>
                                             </tr>
                                         <?php elseif ($order instanceof WC_Order): ?>
                                             <tr>
                                                 <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20">
-                                                    <?php printf(esc_html__('Here are the details of your order placed on %s:', 'woocommerce'), esc_html(wc_format_datetime($order->get_date_created()))); ?>
+                                                    <?php printf(esc_html__('Here are the details of your order placed on %s:', 'piero-fracasso-emails'), esc_html(wc_format_datetime($order->get_date_created()))); ?>
                                                 </td>
                                             </tr>
                                         <?php else: ?>
                                             <tr>
                                                 <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20">
-                                                    <?php echo __('Invoice preview - no order details available.', 'woocommerce'); ?>
+                                                    <?php echo __('Invoice preview - no order details available.', 'piero-fracasso-emails'); ?>
                                                 </td>
                                             </tr>
                                         <?php endif; ?>
@@ -188,7 +188,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0" style="padding:0px;">
                                                 <?php
                                                 if ($order instanceof WC_Order && $order->get_customer_note() != "") {
-                                                    echo __('<strong>Note</strong>: ', 'woocommerce');
+                                                    echo __('<strong>Note</strong>: ', 'piero-fracasso-emails');
                                                     echo wp_kses_post($order->get_customer_note());
                                                 }
                                                 ?>
@@ -294,15 +294,15 @@ do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $
                                                             <?php if ($order instanceof WC_Order): ?>
                                                                 <?php if ($order->needs_payment()): ?>
                                                                     <a href="<?php echo esc_url($order->get_checkout_payment_url()); ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                        <?php echo __($invoice_pending_btn, 'woocommerce'); ?>
+                                                                        <?php echo __($invoice_pending_btn, 'piero-fracasso-emails'); ?>
                                                                     </a>
                                                                 <?php else: ?>
                                                                     <a href="<?php echo esc_url($order->get_view_order_url()); ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                        <?php echo __($invoice_complete_btn, 'woocommerce'); ?>
+                                                                        <?php echo __($invoice_complete_btn, 'piero-fracasso-emails'); ?>
                                                                     </a>
                                                                 <?php endif; ?>
                                                             <?php else: ?>
-                                                                <span class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space"><?php echo __($invoice_complete_btn, 'woocommerce'); ?> (Preview)</span>
+                                                                <span class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space"><?php echo __($invoice_complete_btn, 'piero-fracasso-emails'); ?> (Preview)</span>
                                                             <?php endif; ?>
                                                         </td>
                                                     </tr>

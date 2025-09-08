@@ -2,6 +2,10 @@
 
 All notable changes to the Piero Fracasso Perfumes WooCommerce Emails plugin will be documented in this file.
 
+## [1.1.2] - 2025-09-09
+### Fixed
+- Fix: Plugin-Checker Compliance (escaping/i18n/nonce/logging).
+
 ## [1.1.1] - 2025-09-08
 ### Fixed
 - Added guard checks to prevent fatal errors when WooCommerce or dependencies are missing.

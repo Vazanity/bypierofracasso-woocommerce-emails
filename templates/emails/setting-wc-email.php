@@ -29,7 +29,7 @@ $completed_order_message       = __('Your order at Piero Fracasso Perfumes is no
 $order_received_subtitle       = __('We have received your order!', 'piero-fracasso-emails'); // Header SubTitle
 $order_received_hero_bg_img    = 'email-header-cust-order-received.png'; // Header Image File Name
 $order_received_greeting       = __('Hello', 'piero-fracasso-emails'); // Greeting Before User First Name
-$order_received_message        = __('Thank you for your order! We’ve received it successfully and will review it shortly. You’ll receive an update once your order is being processed.', 'woocommerce');
+$order_received_message        = __('Thank you for your order! We’ve received it successfully and will review it shortly. You’ll receive an update once your order is being processed.', 'piero-fracasso-emails');
 $order_received_btn            = __('VIEW ORDER', 'piero-fracasso-emails'); // Button
 
 // ***************************************************//

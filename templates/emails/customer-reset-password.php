@@ -140,14 +140,14 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                 if ($additional_content) {
                                                     echo __(wp_kses_post(wptexturize($additional_content . '<br><br>')));
                                                 }
-                                                echo __($reset_password_link_text . '<br>', 'woocommerce');
+                                                echo __($reset_password_link_text . '<br>', 'piero-fracasso-emails');
                                                 if (isset($reset_key) && isset($user_login)):
                                                 ?>
                                                     <a href="<?php echo esc_url(add_query_arg(array('key' => $reset_key, 'login' => rawurlencode($user_login)), wc_get_endpoint_url('lost-password', '', wc_get_page_permalink('myaccount')))); ?>" class="font-4B7BEC">
-                                                        <?php echo __($reset_password_link, 'woocommerce'); ?>
+                                                        <?php echo __($reset_password_link, 'piero-fracasso-emails'); ?>
                                                     </a>
                                                 <?php else: ?>
-                                                    <?php echo __('[Reset link unavailable in preview]', 'woocommerce'); ?>
+                                                    <?php echo __('[Reset link unavailable in preview]', 'piero-fracasso-emails'); ?>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -157,7 +157,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
                                                             <a href="<?php echo (isset($reset_key) && isset($user_login)) ? esc_url(add_query_arg(array('key' => $reset_key, 'login' => rawurlencode($user_login)), wc_get_endpoint_url('lost-password', '', wc_get_page_permalink('myaccount')))) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($reset_password_btn, 'woocommerce'); ?>
+                                                                <?php echo __($reset_password_btn, 'piero-fracasso-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>

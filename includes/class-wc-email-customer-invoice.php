@@ -7,8 +7,8 @@ class WC_Email_Customer_Invoice extends WC_Email {
     public function __construct() {
         $this->id = 'customer_invoice';
         $this->customer_email = true;
-        $this->title = __('Customer Invoice', 'woocommerce');
-        $this->description = __('Sent to customers with invoice details.', 'woocommerce');
+        $this->title = __('Customer Invoice', 'piero-fracasso-emails');
+        $this->description = __('Sent to customers with invoice details.', 'piero-fracasso-emails');
         $this->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
         $this->template_html = 'customer-invoice.php';
         $this->template_plain = 'plain/customer-invoice.php'; // Added
@@ -39,11 +39,11 @@ class WC_Email_Customer_Invoice extends WC_Email {
     }
 
     public function get_default_subject() {
-        return __('Your Invoice from Piero Fracasso Perfumes #{order_number}', 'woocommerce');
+        return __('Your Invoice from Piero Fracasso Perfumes #{order_number}', 'piero-fracasso-emails');
     }
 
     public function get_default_heading() {
-        return __('Invoice for Order #{order_number}', 'woocommerce');
+        return __('Invoice for Order #{order_number}', 'piero-fracasso-emails');
     }
 
     public function get_content_html() {

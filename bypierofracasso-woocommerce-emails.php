@@ -3,7 +3,7 @@
 Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
-Version: 1.1.1
+Version: 1.1.2
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
 License: GPLv2 or later
@@ -15,7 +15,15 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.1.1');
+define('BYPF_EMAILS_VERSION', '1.1.2');
+
+function bypf_log($message, $level = 'debug')
+{
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        $logger = wc_get_logger();
+        $logger->log($level, $message, array('source' => 'bypf-emails'));
+    }
+}
 
 function bypf_emails_load_autoloader()
 {
@@ -25,7 +33,7 @@ function bypf_emails_load_autoloader()
         return true;
     }
 
-    error_log('Piero Fracasso Emails: Missing vendor/autoload.php. Run composer install.');
+    bypf_log('Piero Fracasso Emails: Missing vendor/autoload.php. Run composer install.', 'error');
 
     add_action('admin_notices', function () {
         echo '<div class="notice notice-error"><p>' . esc_html__(
@@ -63,12 +71,12 @@ function bypf_is_jimsoft_active()
 function bypierofracasso_woocommerce_emails_init()
 {
     if (!class_exists('WooCommerce')) {
-        error_log('Piero Fracasso Emails: WooCommerce not active.');
+        bypf_log('Piero Fracasso Emails: WooCommerce not active.', 'error');
         return;
     }
 
     if (bypf_is_jimsoft_active()) {
-        error_log('Piero Fracasso Emails: JimSoft extension detected; plugin initialization skipped.');
+        bypf_log('Piero Fracasso Emails: JimSoft extension detected; plugin initialization skipped.', 'warning');
         add_action('admin_notices', function () {
             echo '<div class="notice notice-warning"><p>' . esc_html__(
                 'JimSoft QR invoice plugin is active. Please deactivate it; functionality is now provided by Piero Fracasso Perfumes WooCommerce Emails.',
@@ -89,7 +97,7 @@ add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_init', 11);
 add_action('admin_init', 'bypierofracasso_debug_plugin_active');
 function bypierofracasso_debug_plugin_active()
 {
-    error_log("Piero Fracasso Perfumes WooCommerce Emails plugin (v" . BYPF_EMAILS_VERSION . ") is active on admin page load.");
+    bypf_log('Piero Fracasso Perfumes WooCommerce Emails plugin (v' . BYPF_EMAILS_VERSION . ') is active on admin page load.');
 }
 
 // Debug: Log order save at the WordPress level
@@ -100,12 +108,12 @@ function bypierofracasso_debug_save_post($post_id, $post, $update)
         return;
     }
 
-    error_log("Order $post_id updated via save_post_shop_order hook");
+    bypf_log("Order $post_id updated via save_post_shop_order hook");
     $order = wc_get_order($post_id);
     if ($order) {
         $old_status = get_post_meta($post_id, '_status_before_update', true) ?: $order->get_status();
         $new_status = $order->get_status();
-        error_log("Order $post_id - Old status (meta): $old_status, New status: $new_status");
+        bypf_log("Order $post_id - Old status (meta): $old_status, New status: $new_status");
         update_post_meta($post_id, '_status_before_update', $new_status);
     }
 }
@@ -118,28 +126,28 @@ function bypierofracasso_handle_custom_email_trigger($order_id, $old_status, $ne
         return;
     }
 
-    error_log("Order $order_id status changed from $old_status to $new_status (via woocommerce_order_status_changed hook)");
+    bypf_log("Order $order_id status changed from $old_status to $new_status (via woocommerce_order_status_changed hook)");
     $mailer = WC()->mailer()->get_emails();
 
     // Remove 'wc-' prefix for comparison
     $new_status = str_replace('wc-', '', $new_status);
 
     if ($new_status === 'shipped' && !empty($mailer['WC_Email_Shipped_Order'])) {
-        error_log("Triggering WC_Email_Shipped_Order for order $order_id");
+        bypf_log("Triggering WC_Email_Shipped_Order for order $order_id");
         $mailer['WC_Email_Shipped_Order']->trigger($order_id);
-        error_log("Send result for WC_Email_Shipped_Order for order $order_id: Attempted");
+        bypf_log("Send result for WC_Email_Shipped_Order for order $order_id: Attempted");
     } elseif ($new_status === 'ready-for-pickup' && !empty($mailer['WC_Email_Ready_For_Pickup'])) {
-        error_log("Triggering WC_Email_Ready_For_Pickup for order $order_id");
+        bypf_log("Triggering WC_Email_Ready_For_Pickup for order $order_id");
         $mailer['WC_Email_Ready_For_Pickup']->trigger($order_id);
-        error_log("Send result for WC_Email_Ready_For_Pickup for order $order_id: Attempted");
+        bypf_log("Send result for WC_Email_Ready_For_Pickup for order $order_id: Attempted");
     } elseif ($new_status === 'pending-payment' && !empty($mailer['WC_Email_Pending_Order'])) {
-        error_log("Triggering WC_Email_Pending_Order for order $order_id");
+        bypf_log("Triggering WC_Email_Pending_Order for order $order_id");
         $mailer['WC_Email_Pending_Order']->trigger($order_id);
-        error_log("Send result for WC_Email_Pending_Order for order $order_id: Attempted");
+        bypf_log("Send result for WC_Email_Pending_Order for order $order_id: Attempted");
     } elseif ($new_status === 'received' && !empty($mailer['WC_Email_Order_Received'])) {
-        error_log("Triggering WC_Email_Order_Received for order $order_id");
+        bypf_log("Triggering WC_Email_Order_Received for order $order_id");
         $mailer['WC_Email_Order_Received']->trigger($order_id);
-        error_log("Send result for WC_Email_Order_Received for order $order_id: Attempted");
+        bypf_log("Send result for WC_Email_Order_Received for order $order_id: Attempted");
     }
 }
 
@@ -147,18 +155,18 @@ function bypierofracasso_handle_custom_email_trigger($order_id, $old_status, $ne
 add_action('woocommerce_before_order_object_save', 'bypierofracasso_debug_before_save', 999, 2);
 function bypierofracasso_debug_before_save($order, $data_store)
 {
-    error_log("woocommerce_before_order_object_save hook fired for order {$order->get_id()}");
+    bypf_log("woocommerce_before_order_object_save hook fired for order {$order->get_id()}");
     if ($order->get_id()) {
         $old_status = $order->get_status('edit');
         $new_status = isset($order->data['status']) ? $order->data['status'] : $old_status;
-        error_log("Order {$order->get_id()} - Old status: $old_status, New status: $new_status");
+        bypf_log("Order {$order->get_id()} - Old status: $old_status, New status: $new_status");
         if ($old_status !== $new_status) {
-            error_log("Order {$order->get_id()} status changing from $old_status to $new_status (before save)");
+            bypf_log("Order {$order->get_id()} status changing from $old_status to $new_status (before save)");
         } else {
-            error_log("Order {$order->get_id()} - No status change detected (old: $old_status, new: $new_status)");
+            bypf_log("Order {$order->get_id()} - No status change detected (old: $old_status, new: $new_status)");
         }
     } else {
-        error_log("Order object has no ID in woocommerce_before_order_object_save");
+        bypf_log("Order object has no ID in woocommerce_before_order_object_save", 'warning');
     }
 }
 
@@ -166,9 +174,9 @@ function bypierofracasso_debug_before_save($order, $data_store)
 add_action('woocommerce_after_order_object_save', 'bypierofracasso_debug_after_save', 999, 2);
 function bypierofracasso_debug_after_save($order, $data_store)
 {
-    error_log("woocommerce_after_order_object_save hook fired for order {$order->get_id()}");
+    bypf_log("woocommerce_after_order_object_save hook fired for order {$order->get_id()}");
     $status = $order->get_status();
-    error_log("Order {$order->get_id()} - Status after save: $status");
+    bypf_log("Order {$order->get_id()} - Status after save: $status");
 }
 
 add_filter('woocommerce_locate_template', 'bypierofracasso_override_woocommerce_emails', 10, 3);
@@ -287,7 +295,7 @@ function bypierofracasso_maybe_set_invoice_status($order_id){
 //{
 //    $order = wc_get_order($order_id);
 //    if ($order && !$order->has_status('received')) { // Remove 'wc-' prefix
-//        error_log("Setting order $order_id to received after payment");
+//        bypf_log("Setting order $order_id to received after payment");
 //        $order->update_status('wc-received', __('Order set to Received after payment.', 'piero-fracasso-emails')); // Keep 'wc-' for update_status
 //        $email = WC()->mailer()->get_emails()['WC_Email_Order_Received'];
 //        if ($email && $email->is_enabled()) {
@@ -361,56 +369,60 @@ add_action('admin_init', 'bypierofracasso_manual_email_trigger');
 function bypierofracasso_manual_email_trigger()
 {
     if (isset($_GET['bypf_trigger_email']) && current_user_can('manage_woocommerce')) {
+        $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
+        if (!wp_verify_nonce($nonce, 'bypf_trigger_email')) {
+            return;
+        }
         $order_id = intval($_GET['bypf_trigger_email']);
         $order = wc_get_order($order_id);
         if ($order) {
             $status = $order->get_status();
             // Remove 'wc-' prefix for comparison
             $status = str_replace('wc-', '', $status);
-            error_log("Manual trigger attempt for order $order_id with status $status");
+            bypf_log("Manual trigger attempt for order $order_id with status $status");
             $mailer = WC()->mailer()->get_emails();
 
             if ($status === 'shipped' && !empty($mailer['WC_Email_Shipped_Order'])) {
-                error_log("Checking WC_Email_Shipped_Order: " . ($mailer['WC_Email_Shipped_Order'] ? 'Found' : 'Not found') . ", Enabled: " . ($mailer['WC_Email_Shipped_Order'] && $mailer['WC_Email_Shipped_Order']->is_enabled() ? 'Yes' : 'No'));
+                bypf_log("Checking WC_Email_Shipped_Order: " . ($mailer['WC_Email_Shipped_Order'] ? 'Found' : 'Not found') . ", Enabled: " . ($mailer['WC_Email_Shipped_Order'] && $mailer['WC_Email_Shipped_Order']->is_enabled() ? 'Yes' : 'No'));
                 if ($mailer['WC_Email_Shipped_Order'] && $mailer['WC_Email_Shipped_Order']->is_enabled()) {
-                    error_log("Triggering WC_Email_Shipped_Order for order $order_id");
+                    bypf_log("Triggering WC_Email_Shipped_Order for order $order_id");
                     $mailer['WC_Email_Shipped_Order']->trigger($order_id);
-                    error_log("Send result for WC_Email_Shipped_Order for order $order_id: Attempted");
+                    bypf_log("Send result for WC_Email_Shipped_Order for order $order_id: Attempted");
                 } else {
-                    error_log("WC_Email_Shipped_Order not found or not enabled for manual trigger of order $order_id");
+                    bypf_log("WC_Email_Shipped_Order not found or not enabled for manual trigger of order $order_id", 'warning');
                 }
             } elseif ($status === 'ready-for-pickup' && !empty($mailer['WC_Email_Ready_For_Pickup'])) {
-                error_log("Checking WC_Email_Ready_For_Pickup: " . ($mailer['WC_Email_Ready_For_Pickup'] ? 'Found' : 'Not found') . ", Enabled: " . ($mailer['WC_Email_Ready_For_Pickup'] && $mailer['WC_Email_Ready_For_Pickup']->is_enabled() ? 'Yes' : 'No'));
+                bypf_log("Checking WC_Email_Ready_For_Pickup: " . ($mailer['WC_Email_Ready_For_Pickup'] ? 'Found' : 'Not found') . ", Enabled: " . ($mailer['WC_Email_Ready_For_Pickup'] && $mailer['WC_Email_Ready_For_Pickup']->is_enabled() ? 'Yes' : 'No'));
                 if ($mailer['WC_Email_Ready_For_Pickup'] && $mailer['WC_Email_Ready_For_Pickup']->is_enabled()) {
-                    error_log("Triggering WC_Email_Ready_For_Pickup for order $order_id");
+                    bypf_log("Triggering WC_Email_Ready_For_Pickup for order $order_id");
                     $mailer['WC_Email_Ready_For_Pickup']->trigger($order_id);
-                    error_log("Send result for WC_Email_Ready_For_Pickup for order $order_id: Attempted");
+                    bypf_log("Send result for WC_Email_Ready_For_Pickup for order $order_id: Attempted");
                 } else {
-                    error_log("WC_Email_Ready_For_Pickup not found or not enabled for manual trigger of order $order_id");
+                    bypf_log("WC_Email_Ready_For_Pickup not found or not enabled for manual trigger of order $order_id", 'warning');
                 }
             } elseif ($status === 'pending-payment' && !empty($mailer['WC_Email_Pending_Order'])) {
-                error_log("Checking WC_Email_Pending_Order: " . ($mailer['WC_Email_Pending_Order'] ? 'Found' : 'Not found') . ", Enabled: " . ($mailer['WC_Email_Pending_Order'] && $mailer['WC_Email_Pending_Order']->is_enabled() ? 'Yes' : 'No'));
+                bypf_log("Checking WC_Email_Pending_Order: " . ($mailer['WC_Email_Pending_Order'] ? 'Found' : 'Not found') . ", Enabled: " . ($mailer['WC_Email_Pending_Order'] && $mailer['WC_Email_Pending_Order']->is_enabled() ? 'Yes' : 'No'));
                 if ($mailer['WC_Email_Pending_Order'] && $mailer['WC_Email_Pending_Order']->is_enabled()) {
-                    error_log("Triggering WC_Email_Pending_Order for order $order_id");
+                    bypf_log("Triggering WC_Email_Pending_Order for order $order_id");
                     $mailer['WC_Email_Pending_Order']->trigger($order_id);
-                    error_log("Send result for WC_Email_Pending_Order for order $order_id: Attempted");
+                    bypf_log("Send result for WC_Email_Pending_Order for order $order_id: Attempted");
                 } else {
-                    error_log("WC_Email_Pending_Order not found or not enabled for manual trigger of order $order_id");
+                    bypf_log("WC_Email_Pending_Order not found or not enabled for manual trigger of order $order_id", 'warning');
                 }
             } elseif ($status === 'received' && !empty($mailer['WC_Email_Order_Received'])) {
-                error_log("Checking WC_Email_Order_Received: " . ($mailer['WC_Email_Order_Received'] ? 'Found' : 'Not found') . ", Enabled: " . ($mailer['WC_Email_Order_Received'] && $mailer['WC_Email_Order_Received']->is_enabled() ? 'Yes' : 'No'));
+                bypf_log("Checking WC_Email_Order_Received: " . ($mailer['WC_Email_Order_Received'] ? 'Found' : 'Not found') . ", Enabled: " . ($mailer['WC_Email_Order_Received'] && $mailer['WC_Email_Order_Received']->is_enabled() ? 'Yes' : 'No'));
                 if ($mailer['WC_Email_Order_Received'] && $mailer['WC_Email_Order_Received']->is_enabled()) {
-                    error_log("Triggering WC_Email_Order_Received for order $order_id");
+                    bypf_log("Triggering WC_Email_Order_Received for order $order_id");
                     $mailer['WC_Email_Order_Received']->trigger($order_id);
-                    error_log("Send result for WC_Email_Order_Received for order $order_id: Attempted");
+                    bypf_log("Send result for WC_Email_Order_Received for order $order_id: Attempted");
                 } else {
-                    error_log("WC_Email_Order_Received not found or not enabled for manual trigger of order $order_id");
+                    bypf_log("WC_Email_Order_Received not found or not enabled for manual trigger of order $order_id", 'warning');
                 }
             } else {
-                error_log("Order $order_id has unsupported status $status for manual trigger");
+                bypf_log("Order $order_id has unsupported status $status for manual trigger", 'warning');
             }
         } else {
-            error_log("Manual trigger failed: Order $order_id not found");
+            bypf_log("Manual trigger failed: Order $order_id not found", 'error');
         }
     }
 }
