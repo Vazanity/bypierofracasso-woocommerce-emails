@@ -1,0 +1,8 @@
+{
+    "name": "bypierofracasso/woocommerce-emails",
+    "description": "Piero Fracasso Perfumes WooCommerce Emails plugin",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {},
+    "autoload": {}
+}
