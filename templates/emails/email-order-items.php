@@ -106,7 +106,7 @@ foreach ($items as $item_id => $item) :
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 small capitalize">
                                                             <?php
-                                                                echo apply_filters('woocommerce_email_order_item_quantity', ' Qty: ' . $item->get_quantity(), $item) . ' , Price: ';
+                                                                echo apply_filters('woocommerce_email_order_item_quantity', 'Qty: ' . $item->get_quantity(), $item) . ', Price: ';
                                                                 if (is_a($product, 'WC_Product') && $product->exists()) {
                                                                     if ($product->get_sale_price() != '') {
                                                                         echo wc_price($product->get_sale_price());
@@ -139,7 +139,7 @@ foreach ($items as $item_id => $item) :
                                                     </tr>
 
                                                     <tr>
-                                                        <td align="right" valign="middle" class="center-text font-primary font-191919 font-20 font-weight-600 font-space-0 small">
+                                                        <td align="right" valign="middle" class="center-text font-primary font-191919 font-20 font-weight-600 font-space-0 small white-space">
                                                             <?php echo $order->get_formatted_line_subtotal($item); ?>
                                                         </td>
                                                     </tr>

@@ -39,7 +39,7 @@ class WC_Email_Customer_Invoice extends WC_Email {
     }
 
     public function get_default_subject() {
-        return __('Your Invoice from byPieroFracasso #{order_number}', 'woocommerce');
+        return __('Your Invoice from Piero Fracasso Perfumes #{order_number}', 'woocommerce');
     }
 
     public function get_default_heading() {

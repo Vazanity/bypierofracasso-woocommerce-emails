@@ -1,6 +1,14 @@
 # Changelog
 
-All notable changes to the byPieroFracasso WooCommerce Emails plugin will be documented in this file.
+All notable changes to the Piero Fracasso Perfumes WooCommerce Emails plugin will be documented in this file.
+
+## [1.1.0] - 2025-09-08
+### Added
+  - Introduced custom `invoice` order status with bulk action support and automatic assignment for configured payment methods.
+### Changed
+  - Rebranded plugin strings to "Piero Fracasso Perfumes" and switched text domain to `piero-fracasso-emails`.
+  - Kept email item prices on one line and cleaned up label colons.
+  - Bumped plugin version to 1.1.0.
 
 ## [1.0.23] - 2025-04-11
 ### Fixed
@@ -33,9 +41,9 @@ All notable changes to the byPieroFracasso WooCommerce Emails plugin will be doc
   - Corrected template file paths in email classes (e.g., `customer-order-shipped.php`, `customer-order-ready-for-pickup.php`).
 - Fixed a fatal error in `email-order-items.php` by adding validation for invalid products (prevented `Call to a member function get_image_id() on bool`).
 ### Added
-- Added debug logging to track email triggers and status changes in `byPieroFracasso_WooCommerce_Emails.php` and `class-email-manager.php`.
+- Added debug logging to track email triggers and status changes in `Piero Fracasso Perfumes_WooCommerce_Emails.php` and `class-email-manager.php`.
 - Added `BPF_WC_Email_Customer_Processing_Order` class to prevent the "Customer Processing Order" email from sending unless the status is explicitly `processing`.
-- Added status protection in `byPieroFracasso_WooCommerce_Emails.php` to block automatic transitions to `processing` after `wc-received`.
+- Added status protection in `Piero Fracasso Perfumes_WooCommerce_Emails.php` to block automatic transitions to `processing` after `wc-received`.
 
 ## [1.0.19] - 2025-03-01 (Assumed)
 ### Added

@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class byPieroFracasso_Email_Manager {
+class PFP_Email_Manager {
     public function __construct() {
         add_filter('woocommerce_email_classes', array($this, 'add_custom_emails'), 999);
         add_filter('woocommerce_email_enabled_customer_payment_retry', '__return_false');
