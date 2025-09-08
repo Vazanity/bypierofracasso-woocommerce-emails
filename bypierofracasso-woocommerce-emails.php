@@ -3,7 +3,7 @@
 Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
-Version: 1.1.3
+Version: 1.1.4
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
 License: GPLv2 or later
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.1.3');
+define('BYPF_EMAILS_VERSION', '1.1.4');
 
 function bypf_log($message, $level = 'debug')
 {
@@ -43,6 +43,9 @@ function bypf_emails_load_autoloader()
     bypf_log('Piero Fracasso Emails: Missing vendor/autoload.php. Run composer install.', 'error');
 
     add_action('admin_notices', function () {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
         echo '<div class="notice notice-error"><p>' . esc_html__(
             'Missing dependencies for Piero Fracasso Perfumes WooCommerce Emails plugin. Please run composer install.',
             'piero-fracasso-emails'
