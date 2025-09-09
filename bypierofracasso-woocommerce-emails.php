@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.0
+Version: 1.2.2
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.0');
+define('BYPF_EMAILS_VERSION', '1.2.2');
 
 function bypf_log($message, $level = 'debug')
 {
@@ -441,14 +441,13 @@ function bypierofracasso_woocommerce_emails_bootstrap()
     require_once plugin_dir_path(__FILE__) . 'templates/emails/setting-wc-email.php';
 
     if (bypf_is_jimsoft_active()) {
-        bypf_log('Piero Fracasso Emails: JimSoft extension detected; plugin initialization skipped.', 'warning');
+        bypf_log('Piero Fracasso Emails: JimSoft extension detected; please deactivate it.', 'warning');
         add_action('admin_notices', function () {
             echo '<div class="notice notice-warning"><p>' . esc_html__(
                 'JimSoft QR invoice plugin is active. Please deactivate it; functionality is now provided by Piero Fracasso Perfumes WooCommerce Emails.',
                 'piero-fracasso-emails'
             ) . '</p></div>';
         });
-        return;
     }
 
     require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-gateway-invoice.php';

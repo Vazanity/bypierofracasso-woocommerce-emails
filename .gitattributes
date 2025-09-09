@@ -9,4 +9,14 @@
 /docker export-ignore
 /.idea export-ignore
 /.vscode export-ignore
+*.md export-ignore
+README.md !export-ignore
+CHANGELOG.md !export-ignore
+*.psd export-ignore
+*.zip export-ignore
+*.map export-ignore
+Thumbs.db export-ignore
+*.lock export-ignore
+*.dist export-ignore
 *.DS_Store export-ignore
+*.gitkeep export-ignore
