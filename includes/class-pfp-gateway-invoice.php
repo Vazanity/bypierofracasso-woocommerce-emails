@@ -22,7 +22,7 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     {
         $this->id                 = 'pfp_invoice';
         $this->method_title       = __('Rechnung (Swiss QR)', 'piero-fracasso-emails');
-        $this->method_description = __('Allows paying by Swiss QR invoice.', 'piero-fracasso-emails');
+        $this->method_description = __('Diese Zahlungsmethode erscheint nur bei Währung CHF und (optional) für Adressen in CH oder LI.', 'piero-fracasso-emails');
         $this->title              = __('Rechnung (Swiss QR)', 'piero-fracasso-emails');
         $this->has_fields = false;
         $this->supports   = array('products', 'refunds');
@@ -65,7 +65,7 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
             'icon_info' => array(
                 'title'       => __('Icon', 'piero-fracasso-emails'),
                 'type'        => 'title',
-                'description' => __('Standard-Icon wird als Inline-SVG angezeigt. Für ein eigenes Icon legen Sie bitte eine Datei unter assets/img/qr-gateway-icon.png ab. (PNG, transparente Kanten, ~32 px Höhe empfohlen.)', 'piero-fracasso-emails'),
+                'description' => $this->get_admin_icon_html() . ' ' . __('Standard-Icon wird als Inline-SVG angezeigt. Für ein eigenes Icon legen Sie bitte eine Datei unter assets/img/qr-gateway-icon.png ab. (PNG, transparente Kanten, ~32 px Höhe empfohlen.)', 'piero-fracasso-emails'),
             ),
             'only_ch_li' => array(
                 'title'   => __('Restrict to CH/LI', 'piero-fracasso-emails'),
@@ -165,6 +165,46 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     }
 
     /**
+     * Icon HTML for admin screens.
+     *
+     * @return string
+     */
+    public function get_admin_icon_html()
+    {
+        $relative    = 'assets/img/qr-gateway-icon.png';
+        $path        = plugin_dir_path(PFP_MAIN_FILE) . $relative;
+        if (file_exists($path)) {
+            $url = plugins_url($relative, PFP_MAIN_FILE);
+            return sprintf(
+                '<img src="%s" alt="" loading="lazy" style="height:24px;width:auto;vertical-align:middle;margin-right:8px;" />',
+                esc_url($url)
+            );
+        }
+
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect fill="#777" width="24" height="24"/><path fill="#fff" d="M4 5h16v2H4zm0 4h16v2H4zm0 4h10v2H4zm0 4h10v2H4z"/></svg>';
+        $allowed = array(
+            'svg'  => array(
+                'xmlns'       => true,
+                'viewBox'     => true,
+                'width'       => true,
+                'height'      => true,
+                'aria-hidden' => true,
+            ),
+            'rect' => array(
+                'fill'  => true,
+                'width' => true,
+                'height'=> true,
+            ),
+            'path' => array(
+                'fill' => true,
+                'd'    => true,
+            ),
+        );
+
+        return wp_kses($svg, $allowed);
+    }
+
+    /**
      * Retrieve the gateway icon markup.
      *
      * @return string
@@ -172,10 +212,9 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     public function get_icon()
     {
         $relative    = 'assets/img/qr-gateway-icon.png';
-        $plugin_file = dirname(__DIR__) . '/bypierofracasso-woocommerce-emails.php';
-        $path        = plugin_dir_path($plugin_file) . $relative;
+        $path        = plugin_dir_path(PFP_MAIN_FILE) . $relative;
         if (file_exists($path)) {
-            $url  = plugin_dir_url($plugin_file) . $relative;
+            $url  = plugins_url($relative, PFP_MAIN_FILE);
             $html = sprintf(
                 '<img src="%s" alt="" aria-hidden="true" width="32" height="32" style="height:1em;width:auto;vertical-align:middle;" />',
                 esc_url($url)
@@ -208,6 +247,28 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     }
 
     /**
+     * Method title with icon on admin payment screen.
+     *
+     * @return string
+     */
+    public function get_method_title()
+    {
+        $title = parent::get_method_title();
+
+        if (is_admin() && function_exists('get_current_screen')) {
+            $screen = get_current_screen();
+            if ($screen && 'woocommerce_page_wc-settings' === $screen->id) {
+                $tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : '';
+                if (in_array($tab, array('checkout', 'payments'), true)) {
+                    return $this->get_admin_icon_html() . esc_html($title);
+                }
+            }
+        }
+
+        return esc_html($title);
+    }
+
+    /**
      * Check gateway availability.
      *
      * @return bool
@@ -236,14 +297,17 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
 
         if ('yes' === $this->get_option('only_ch_li') && WC()->customer) {
             $country = WC()->customer->get_billing_country();
-            if (!in_array($country, array('CH', 'LI'), true)) {
+            if (empty($country)) {
+                $country = WC()->customer->get_shipping_country();
+            }
+            if ($country && !in_array($country, array('CH', 'LI'), true)) {
                 return $this->unavailable('country');
             }
         }
 
         $iban = $this->get_option('qr_iban');
         if (empty($iban)) {
-            return $this->unavailable('iban');
+            $this->unavailability_reasons[] = 'iban';
         }
 
         return apply_filters('pfp_invoice_is_available', true, $this);
@@ -277,6 +341,11 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     {
         $order = wc_get_order($order_id);
 
+        if (empty($this->get_option('qr_iban'))) {
+            wc_add_notice(__('Swiss QR invoice configuration is incomplete.', 'piero-fracasso-emails'), 'error');
+            return array('result' => 'failure');
+        }
+
         if (!$this->validate_order($order)) {
             wc_add_notice(__('Swiss QR invoice payment is not available for this order.', 'piero-fracasso-emails'), 'error');
             return array('result' => 'failure');
@@ -309,18 +378,16 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
 
         if ('yes' === $this->get_option('only_ch_li')) {
             $country = $order->get_billing_country();
-            if (!in_array($country, array('CH', 'LI'), true)) {
+            if (empty($country)) {
+                $country = $order->get_shipping_country();
+            }
+            if ($country && !in_array($country, array('CH', 'LI'), true)) {
                 return false;
             }
         }
 
         $min = (float) $this->get_option('min_amount', 0.05);
         if ($order->get_total() < $min) {
-            return false;
-        }
-
-        $iban = $this->get_option('qr_iban');
-        if (empty($iban)) {
             return false;
         }
 
