@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.2] - 2025-09-13
+### Added
+- Binärfreie Icon-Integration (Inline-SVG + Icon-URL Setting).
+### Chore
+- Packaging-Regeln für Releases.
+
+## [1.2.1] - 2025-09-13
+### Fixed
+- Gateway sichtbar im Checkout – korrigierte `is_available()`-Logik, Admin-Diagnose, Test-Force-Visible.
+### Added
+- Gateway-Icon (`assets/img/qr-gateway-icon.png`).
+### Chore
+- Keine JimSoft-Assets (`swiss-qr-bill`/`tcpdf_min`); Composer-Vendor bleibt Quelle der Wahrheit.
+
 ## [1.2.0] - 2025-09-13
 ### Added
 - Feature: New payment gateway 'Rechnung (Swiss QR)', sets order status invoice, auto-attaches QR invoice PDF; WPML-ready; JimSoft replacement.
