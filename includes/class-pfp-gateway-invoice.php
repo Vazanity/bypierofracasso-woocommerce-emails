@@ -59,15 +59,13 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
             'description' => array(
                 'title'       => __('Description', 'piero-fracasso-emails'),
                 'type'        => 'textarea',
-                'description' => __('Checkout description shown to the customer.', 'piero-fracasso-emails'),
-                'default'     => __('Sie erhalten eine Rechnung mit Swiss-QR-Code im Anhang der Bestellbestätigung.', 'piero-fracasso-emails'),
-            ),
-            'icon_url' => array(
-                'title'       => __('Icon-URL (optional)', 'piero-fracasso-emails'),
-                'type'        => 'url',
-                'description' => __('Sie können ein Icon aus der Medienbibliothek verwenden (URL einfügen). Wenn leer, wird ein neutrales Inline-SVG angezeigt.', 'piero-fracasso-emails'),
-                'default'     => '',
-                'desc_tip'    => true,
+            'description' => __('Checkout description shown to the customer.', 'piero-fracasso-emails'),
+            'default'     => __('Sie erhalten eine Rechnung mit Swiss-QR-Code im Anhang der Bestellbestätigung.', 'piero-fracasso-emails'),
+        ),
+            'icon_info' => array(
+                'title'       => __('Icon', 'piero-fracasso-emails'),
+                'type'        => 'title',
+                'description' => __('Standard-Icon wird als Inline-SVG angezeigt. Für ein eigenes Icon legen Sie bitte eine Datei unter assets/img/qr-gateway-icon.png ab. (PNG, transparente Kanten, ~32 px Höhe empfohlen.)', 'piero-fracasso-emails'),
             ),
             'only_ch_li' => array(
                 'title'   => __('Restrict to CH/LI', 'piero-fracasso-emails'),
@@ -173,23 +171,15 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
      */
     public function get_icon()
     {
-        $icon_url = trim($this->get_option('icon_url'));
-        if (!empty($icon_url)) {
-            $response = wp_remote_head($icon_url, array('timeout' => 2));
-            if (!is_wp_error($response)) {
-                $code = wp_remote_retrieve_response_code($response);
-                if ($code >= 200 && $code < 400) {
-                    $html = '<img src="' . esc_url($icon_url) . '" alt="" style="max-height:1em;width:auto;" />';
-                    return apply_filters('woocommerce_gateway_icon', $html, $this->id);
-                }
-            }
-        }
-
-        $relative = '../assets/img/qr-gateway-icon.png';
-        $path     = plugin_dir_path(__FILE__) . $relative;
+        $relative    = 'assets/img/qr-gateway-icon.png';
+        $plugin_file = dirname(__DIR__) . '/bypierofracasso-woocommerce-emails.php';
+        $path        = plugin_dir_path($plugin_file) . $relative;
         if (file_exists($path)) {
-            $url  = plugins_url($relative, __FILE__);
-            $html = '<img src="' . esc_url($url) . '" alt="" style="max-height:1em;width:auto;" />';
+            $url  = plugin_dir_url($plugin_file) . $relative;
+            $html = sprintf(
+                '<img src="%s" alt="" aria-hidden="true" width="32" height="32" style="height:1em;width:auto;vertical-align:middle;" />',
+                esc_url($url)
+            );
             return apply_filters('woocommerce_gateway_icon', $html, $this->id);
         }
 
