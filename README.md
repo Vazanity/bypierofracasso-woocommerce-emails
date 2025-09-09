@@ -1,6 +1,6 @@
 # Piero Fracasso Perfumes WooCommerce Emails
 
-**Stable tag:** 1.2.3
+**Stable tag:** 1.2.4
 
 ## Overview
 The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress plugin designed to enhance the email functionality of WooCommerce for the Piero Fracasso Perfumes online store. It introduces custom order statuses, corresponding email notifications, and overrides default WooCommerce email templates with branded versions. The plugin also disables unnecessary default WooCommerce emails to streamline notifications.
@@ -22,8 +22,9 @@ The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress 
   - Includes plain text versions in `templates/emails/plain/`.
 - **Disable Default Emails**:
 - **Payment Gateway:** Provides a 'Rechnung (Swiss QR)' option that sets the order status to invoice and attaches a QR invoice PDF.
-  - Displays a neutral inline SVG icon by default; you may set a custom icon URL or upload `assets/img/qr-gateway-icon.png` via SFTP (setting takes priority).
+  - Displays a neutral inline SVG icon by default; you may upload `assets/img/qr-gateway-icon.png` (PNG ~32 px) via SFTP.
   - Admins can enable checkout diagnostics and force visibility for testing via filter `pfp_invoice_force_visible`.
+  - WooCommerce Blocks checkout wird unterstützt.
   - Disables unnecessary WooCommerce emails like payment retry, renewal invoices, and certain failed order emails to reduce notification clutter.
 - **Debugging Support**:
   - Extensive debug logging to track email triggers, status changes, and plugin activity.
@@ -52,7 +53,7 @@ The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress 
 The plugin replaces the legacy *JimSoft QR-Invoice* extension. If that plugin is active, a warning is shown; please deactivate JimSoft to avoid conflicts.
 
 ### Deployment
-WordPress 5.5+ supports replacing the plugin by uploading a ZIP with the same folder name. Increase the version (currently `1.2.3`) so WordPress detects the update. JimSoft can remain installed but must stay deactivated.
+WordPress 5.5+ supports replacing the plugin by uploading a ZIP with the same folder name. Increase the version (currently `1.2.4`) so WordPress detects the update. JimSoft can remain installed but must stay deactivated.
 
 The released ZIP now includes the `vendor/` directory, so no Composer installation is required on production systems.
 

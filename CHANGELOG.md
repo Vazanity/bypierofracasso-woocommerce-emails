@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.4] - 2025-09-13
+### Added
+- Admin icon in payment list (like JimSoft)
+- Classic + Blocks checkout support finalized for pfp_invoice
+- Icon fallback to inline SVG; PNG at assets/img/qr-gateway-icon.png if present
+
 ## [1.2.3] - 2025-09-13
 ### Added
 - Feature: Gateway-Icon vorbereitet (PNG im Plugin unter assets/img/qr-gateway-icon.png), Fallback auf Inline-SVG, keine Binärdateien im PR.
