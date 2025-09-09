@@ -1,6 +1,18 @@
 # Changelog
 
+## [1.2.0] - 2025-09-13
+### Added
+- Feature: New payment gateway 'Rechnung (Swiss QR)', sets order status invoice, auto-attaches QR invoice PDF; WPML-ready; JimSoft replacement.
+
+
 All notable changes to the Piero Fracasso Perfumes WooCommerce Emails plugin will be documented in this file.
+## [1.1.5] - 2025-09-12
+### Fixed
+- Fix packaging (bundled vendor and autoloader)
+- Remove hidden files from release
+- Full Plugin Checker compliance (escaping/i18n/nonce/logging)
+- Hardened bootstrap and logger fallback
+
 ## [1.1.4] - 2025-09-11
 ### Fixed
 - Fix: Packaged vendor/ to eliminate 'Missing dependencies'.

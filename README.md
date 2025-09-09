@@ -1,6 +1,6 @@
 # Piero Fracasso Perfumes WooCommerce Emails
 
-**Stable tag:** 1.1.4
+**Stable tag:** 1.2.0
 
 ## Overview
 The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress plugin designed to enhance the email functionality of WooCommerce for the Piero Fracasso Perfumes online store. It introduces custom order statuses, corresponding email notifications, and overrides default WooCommerce email templates with branded versions. The plugin also disables unnecessary default WooCommerce emails to streamline notifications.
@@ -21,6 +21,7 @@ The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress 
   - Overrides default WooCommerce email templates with branded versions located in `templates/emails/`.
   - Includes plain text versions in `templates/emails/plain/`.
 - **Disable Default Emails**:
+- **Payment Gateway:** Provides a 'Rechnung (Swiss QR)' option that sets the order status to invoice and attaches a QR invoice PDF.
   - Disables unnecessary WooCommerce emails like payment retry, renewal invoices, and certain failed order emails to reduce notification clutter.
 - **Debugging Support**:
   - Extensive debug logging to track email triggers, status changes, and plugin activity.
@@ -34,6 +35,7 @@ The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress 
 
 ## Usage
 - **Custom Statuses**: The plugin automatically adds custom order statuses to WooCommerce. You can set an order to these statuses via the admin panel or programmatically.
+- **Swiss QR Invoice Payment:** Enable the 'Rechnung (Swiss QR)' gateway under WooCommerce > Payments and configure QR-IBAN and creditor data.
 - **Email Notifications**: Emails are triggered when an order status changes to one of the custom statuses. Ensure the emails are enabled in WooCommerce settings.
 - **Debugging**:
   - Enable WordPress debugging in `wp-config.php`:
@@ -48,7 +50,7 @@ The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress 
 The plugin replaces the legacy *JimSoft QR-Invoice* extension. If that plugin is active, a warning is shown and QR features are disabled to avoid conflicts. Please deactivate JimSoft before using this plugin.
 
 ### Deployment
-WordPress 5.5+ supports replacing the plugin by uploading a ZIP with the same folder name. Increase the version (currently `1.1.4`) so WordPress detects the update. JimSoft can remain installed but must stay deactivated.
+WordPress 5.5+ supports replacing the plugin by uploading a ZIP with the same folder name. Increase the version (currently `1.2.0`) so WordPress detects the update. JimSoft can remain installed but must stay deactivated.
 
 The released ZIP now includes the `vendor/` directory, so no Composer installation is required on production systems.
 

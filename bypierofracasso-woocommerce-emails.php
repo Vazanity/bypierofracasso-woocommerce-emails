@@ -3,7 +3,7 @@
 Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
-Version: 1.1.4
+Version: 1.2.0
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
 License: GPLv2 or later
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.1.4');
+define('BYPF_EMAILS_VERSION', '1.2.0');
 
 function bypf_log($message, $level = 'debug')
 {
@@ -278,7 +278,7 @@ function bypierofracasso_maybe_set_invoice_status($order_id){
     if(!$order){
         return;
     }
-    $invoice_methods = apply_filters('pfp_invoice_payment_methods', array('invoice','bacs'));
+    $invoice_methods = apply_filters('pfp_invoice_payment_methods', array('pfp_invoice','bacs'));
     if(in_array($order->get_payment_method(), $invoice_methods, true)){
         if($order->has_status('on-hold') || $order->has_status('pending')){
             $order->update_status('invoice');
@@ -449,6 +449,9 @@ function bypierofracasso_woocommerce_emails_bootstrap()
         return;
     }
 
+    require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-gateway-invoice.php';
+    add_filter('woocommerce_payment_gateways', 'bypierofracasso_register_invoice_gateway');
+
     if (class_exists('PFP_Email_Manager')) {
         new PFP_Email_Manager();
     }
@@ -472,6 +475,11 @@ function bypierofracasso_woocommerce_emails_bootstrap()
         add_action('woocommerce_after_order_object_save', 'bypierofracasso_debug_after_save', 999, 2);
         add_action('admin_init', 'bypierofracasso_manual_email_trigger');
     }
+}
+
+function bypierofracasso_register_invoice_gateway($gateways) {
+    $gateways[] = 'PFP_Gateway_Invoice';
+    return $gateways;
 }
 
 add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_bootstrap', 20);
