@@ -3,7 +3,9 @@
 Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
+
 Version: 1.2.0
+
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
 License: GPLv2 or later
