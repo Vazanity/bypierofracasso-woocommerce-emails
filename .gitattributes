@@ -20,3 +20,4 @@ Thumbs.db export-ignore
 *.dist export-ignore
 *.DS_Store export-ignore
 *.gitkeep export-ignore
+assets/img/.gitkeep !export-ignore

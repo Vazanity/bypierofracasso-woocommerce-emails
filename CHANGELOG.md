@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.3] - 2025-09-13
+### Added
+- Feature: Gateway-Icon vorbereitet (PNG im Plugin unter assets/img/qr-gateway-icon.png), Fallback auf Inline-SVG, keine Binärdateien im PR.
+
 ## [1.2.2] - 2025-09-13
 ### Added
 - Binärfreie Icon-Integration (Inline-SVG + Icon-URL Setting).
