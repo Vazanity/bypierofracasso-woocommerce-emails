@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.6-hotfix] - 2025-09-14
+### Changed
+- Hardened Classic/Blocks registration using official WooCommerce hooks; added admin-only instrumentation; kept IBAN rules.
+
 ## [1.2.6] - 2025-09-14
 ### Added
 - Added WooCommerce Blocks checkout support for the Invoice gateway.
