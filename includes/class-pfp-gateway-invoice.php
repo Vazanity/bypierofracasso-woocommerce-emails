@@ -20,7 +20,7 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
      */
     public function __construct()
     {
-        $this->id                 = 'pfp_invoice';
+        $this->id                 = defined('PFP_GATEWAY_ID') ? PFP_GATEWAY_ID : 'pfp_invoice';
         $this->method_title       = __('Rechnung (Swiss QR)', 'piero-fracasso-emails');
         $this->method_description = __('Diese Zahlungsmethode erscheint nur bei Währung CHF und (optional) für Adressen in CH oder LI.', 'piero-fracasso-emails');
         $this->title              = __('Rechnung (Swiss QR)', 'piero-fracasso-emails');
@@ -271,15 +271,37 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     {
         $this->unavailability_reasons = array();
 
-        if ('yes' !== $this->get_option('enabled')) {
+        $log_enabled = function_exists('bypf_invoice_logging_enabled') && bypf_invoice_logging_enabled();
+
+        $enabled = ('yes' === $this->get_option('enabled'));
+        if ($log_enabled) {
+            bypf_invoice_log_admin('is_available(): enabled = ' . ($enabled ? 'yes' : 'no'));
+        }
+        if (!$enabled) {
+            $this->unavailability_reasons[] = 'disabled';
+            if ($log_enabled) {
+                bypf_invoice_log_admin('is_available(): returning false because gateway is disabled.');
+            }
             return false;
         }
 
-        if ('CHF' !== get_woocommerce_currency()) {
-            return $this->unavailable('currency');
+        $currency = get_woocommerce_currency();
+        if ($log_enabled) {
+            bypf_invoice_log_admin('is_available(): store currency = ' . $currency);
+        }
+        if ('CHF' !== $currency) {
+            $this->unavailability_reasons[] = 'currency';
+            if ($log_enabled) {
+                bypf_invoice_log_admin('is_available(): returning false due to non-CHF currency.');
+            }
+            return false;
         }
 
-        if ('yes' === $this->get_option('only_ch_li')) {
+        $restrict_to_ch_li = ('yes' === $this->get_option('only_ch_li'));
+        if ($log_enabled) {
+            bypf_invoice_log_admin('is_available(): CH/LI restriction = ' . ($restrict_to_ch_li ? 'enabled' : 'disabled'));
+        }
+        if ($restrict_to_ch_li) {
             $country = '';
             if (function_exists('WC') && WC()->customer) {
                 $country = WC()->customer->get_billing_country();
@@ -288,39 +310,88 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
                 }
             }
 
+            if ($log_enabled) {
+                bypf_invoice_log_admin('is_available(): matched customer country = ' . ($country ?: '(empty)'));
+            }
+
             if (!empty($country) && !in_array($country, array('CH', 'LI'), true)) {
-                return $this->unavailable('country');
+                $this->unavailability_reasons[] = 'country';
+                if ($log_enabled) {
+                    bypf_invoice_log_admin('is_available(): returning false due to country restriction.');
+                }
+                return false;
             }
         }
 
         $min_setting = $this->get_option('min_amount', '');
-        $min_amount  = (float) apply_filters('pfp_invoice_min_amount', $min_setting);
-        if ($min_amount > 0 && function_exists('WC') && WC()->cart) {
-            $total = (float) WC()->cart->total;
-            if ($total < $min_amount) {
-                return $this->unavailable('min_amount');
+        $min_amount  = is_numeric($min_setting) ? (float) $min_setting : (float) 0;
+        if ($log_enabled) {
+            bypf_invoice_log_admin('is_available(): minimum amount setting = ' . $min_amount);
+        }
+
+        if ($min_amount > 0) {
+            $cart_total = null;
+            if (function_exists('WC') && WC()->cart) {
+                $cart_total_raw = null;
+                if (is_callable(array(WC()->cart, 'get_total'))) {
+                    $cart_total_raw = WC()->cart->get_total('edit');
+                } else {
+                    $cart_total_raw = WC()->cart->total;
+                }
+
+                if (is_string($cart_total_raw)) {
+                    if (function_exists('wc_format_decimal')) {
+                        $cart_total_raw = wc_format_decimal(
+                            $cart_total_raw,
+                            function_exists('wc_get_price_decimals') ? wc_get_price_decimals() : 2,
+                            false
+                        );
+                    } else {
+                        $cart_total_raw = str_replace(',', '.', preg_replace('/[^0-9\\.,-]/', '', $cart_total_raw));
+                    }
+                }
+
+                if (is_numeric($cart_total_raw)) {
+                    $cart_total = (float) $cart_total_raw;
+                }
+            }
+
+            if (null === $cart_total) {
+                if ($log_enabled) {
+                    bypf_invoice_log_admin('is_available(): cart total unavailable while evaluating minimum amount.');
+                }
+            } elseif ($cart_total < $min_amount) {
+                $this->unavailability_reasons[] = 'min_amount';
+                if ($log_enabled) {
+                    bypf_invoice_log_admin(sprintf('is_available(): cart total %.2f below minimum %.2f.', $cart_total, $min_amount));
+                }
+                return false;
+            } elseif ($log_enabled) {
+                bypf_invoice_log_admin(sprintf('is_available(): cart total %.2f meets minimum %.2f.', $cart_total, $min_amount));
             }
         }
 
-        return apply_filters('pfp_invoice_is_available', true, $this);
+        $available = apply_filters('pfp_invoice_is_available', true, $this);
+
+        if (!$available && empty($this->unavailability_reasons)) {
+            $this->unavailability_reasons[] = 'filtered';
+        }
+
+        if ($log_enabled) {
+            bypf_invoice_log_admin('is_available(): final result = ' . ($available ? 'true' : 'false') . '.');
+        }
+
+        return $available;
     }
 
     /**
-     * Mark the gateway as unavailable for a reason.
+     * Retrieve the last recorded unavailability reasons.
      *
-     * @param string $code Reason code.
-     * @return bool
+     * @return array
      */
-    protected function unavailable($code)
+    public function get_last_unavailability_reasons()
     {
-        $this->unavailability_reasons[] = $code;
-
-        $force = apply_filters('pfp_invoice_force_visible', false, $this);
-        if ($force && current_user_can('manage_woocommerce')) {
-            return true;
-        }
-
-        return false;
+        return $this->unavailability_reasons;
     }
 
     /**
@@ -471,9 +542,11 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
         }
 
         $messages = array(
+            'disabled'   => __('Gateway disabled in settings', 'piero-fracasso-emails'),
             'currency'   => __('Shop currency ≠ CHF', 'piero-fracasso-emails'),
             'country'    => __('Billing Country not CH/LI', 'piero-fracasso-emails'),
             'min_amount' => __('Minimum amount not reached', 'piero-fracasso-emails'),
+            'filtered'   => __('Hidden by customization filter', 'piero-fracasso-emails'),
         );
 
         $reasons = array();
@@ -503,14 +576,16 @@ function bypf_invoice_email_attachments($attachments, $email_id, $order)
         return $attachments;
     }
 
-    if ($order->get_payment_method() !== 'pfp_invoice') {
+    $gateway_id = defined('PFP_GATEWAY_ID') ? PFP_GATEWAY_ID : 'pfp_invoice';
+
+    if ($order->get_payment_method() !== $gateway_id) {
         return $attachments;
     }
 
     $gateway = null;
     if (function_exists('WC')) {
         $gateways = WC()->payment_gateways()->payment_gateways();
-        $gateway  = isset($gateways['pfp_invoice']) ? $gateways['pfp_invoice'] : null;
+        $gateway  = isset($gateways[$gateway_id]) ? $gateways[$gateway_id] : null;
     }
     if (!$gateway instanceof PFP_Gateway_Invoice) {
         return $attachments;

@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.6
+Version: 1.2.6-hotfix
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,9 +17,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.6');
+define('BYPF_EMAILS_VERSION', '1.2.6-hotfix');
 define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
+define('PFP_GATEWAY_ID', 'pfp_invoice');
 
 function bypf_log($message, $level = 'debug')
 {
@@ -34,6 +35,28 @@ function bypf_log($message, $level = 'debug')
     } else {
         trigger_error('bypf-emails [' . $level . ']: ' . $message, E_USER_NOTICE);
     }
+}
+
+function bypf_invoice_logging_enabled()
+{
+    if (!defined('WP_DEBUG') || !WP_DEBUG) {
+        return false;
+    }
+
+    if (!function_exists('current_user_can')) {
+        return false;
+    }
+
+    return current_user_can('manage_woocommerce');
+}
+
+function bypf_invoice_log_admin($message, $level = 'debug')
+{
+    if (!bypf_invoice_logging_enabled()) {
+        return;
+    }
+
+    bypf_log('[invoice] ' . $message, $level);
 }
 
 function bypf_emails_load_autoloader()
@@ -282,7 +305,7 @@ function bypierofracasso_maybe_set_invoice_status($order_id){
     if(!$order){
         return;
     }
-    $invoice_methods = apply_filters('pfp_invoice_payment_methods', array('pfp_invoice','bacs'));
+    $invoice_methods = apply_filters('pfp_invoice_payment_methods', array(PFP_GATEWAY_ID, 'bacs'));
     if(in_array($order->get_payment_method(), $invoice_methods, true)){
         if($order->has_status('on-hold') || $order->has_status('pending')){
             $order->update_status('invoice');
@@ -454,13 +477,11 @@ function bypierofracasso_woocommerce_emails_bootstrap()
 
     require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-gateway-invoice.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-invoice-blocks.php';
-    add_filter('woocommerce_payment_gateways', function ($gateways) {
-        $gateways[] = 'PFP_Gateway_Invoice';
-        return $gateways;
-    });
-    add_filter('woocommerce_available_payment_gateways', 'bypf_invoice_ensure_gateway', 20);
+    add_filter('woocommerce_payment_gateways', 'bypf_register_invoice_gateway');
+    add_filter('woocommerce_available_payment_gateways', 'bypf_invoice_inspect_available_gateways', 20);
     bypf_register_invoice_blocks_script();
     add_action('woocommerce_blocks_loaded', 'bypf_register_invoice_blocks_integration');
+    add_filter('woocommerce_blocks_payment_method_type_registration', 'bypf_register_invoice_blocks_compat');
 
     if (class_exists('PFP_Email_Manager')) {
         new PFP_Email_Manager();
@@ -489,21 +510,66 @@ function bypierofracasso_woocommerce_emails_bootstrap()
 
 add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_bootstrap', 20);
 
-function bypf_invoice_ensure_gateway($gateways) {
-    if (isset($gateways['pfp_invoice'])) {
+function bypf_register_invoice_gateway($gateways)
+{
+    if (!in_array('PFP_Gateway_Invoice', $gateways, true)) {
+        $gateways[] = 'PFP_Gateway_Invoice';
+    }
+
+    bypf_invoice_log_admin('Registered gateway via woocommerce_payment_gateways.');
+
+    return $gateways;
+}
+
+function bypf_invoice_inspect_available_gateways($gateways)
+{
+    if (!class_exists('PFP_Gateway_Invoice')) {
+        return $gateways;
+    }
+
+    if (isset($gateways[PFP_GATEWAY_ID]) && $gateways[PFP_GATEWAY_ID] instanceof PFP_Gateway_Invoice) {
+        bypf_invoice_log_admin('Gateway present in available payment gateways.');
+        return $gateways;
+    }
+
+    if (!bypf_invoice_logging_enabled()) {
         return $gateways;
     }
 
     if (!function_exists('WC')) {
+        bypf_invoice_log_admin('WooCommerce function WC() unavailable while inspecting payment gateways.', 'warning');
         return $gateways;
     }
 
-    $all = WC()->payment_gateways()->payment_gateways();
-    if (isset($all['pfp_invoice']) && $all['pfp_invoice'] instanceof PFP_Gateway_Invoice) {
-        $gateway = $all['pfp_invoice'];
-        if ($gateway->is_available()) {
-            $gateways['pfp_invoice'] = $gateway;
+    $instance = null;
+    $payment_gateways = WC()->payment_gateways();
+    if ($payment_gateways && method_exists($payment_gateways, 'payment_gateways')) {
+        $all = $payment_gateways->payment_gateways();
+        if (isset($all[PFP_GATEWAY_ID]) && $all[PFP_GATEWAY_ID] instanceof PFP_Gateway_Invoice) {
+            $instance = $all[PFP_GATEWAY_ID];
         }
+    }
+
+    if (!$instance instanceof PFP_Gateway_Invoice) {
+        bypf_invoice_log_admin('Invoice gateway instance not found during available gateway inspection.', 'warning');
+        return $gateways;
+    }
+
+    $available = $instance->is_available();
+    $reasons   = array();
+    if (method_exists($instance, 'get_last_unavailability_reasons')) {
+        $reasons = $instance->get_last_unavailability_reasons();
+    }
+
+    if ($available) {
+        bypf_invoice_log_admin('Invoice gateway reports available but is missing from woocommerce_available_payment_gateways.', 'warning');
+        return $gateways;
+    }
+
+    if (empty($reasons)) {
+        bypf_invoice_log_admin('Invoice gateway unavailable without recorded reasons.', 'warning');
+    } else {
+        bypf_invoice_log_admin('Invoice gateway unavailable: ' . implode(', ', $reasons));
     }
 
     return $gateways;
@@ -526,9 +592,33 @@ function bypf_register_invoice_blocks_script() {
 
 function bypf_register_invoice_blocks_integration() {
     if (!class_exists('\Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry')) {
+        bypf_invoice_log_admin('Blocks IntegrationRegistry class missing; skipping registration.');
         return;
     }
+
+    $integration = new \PFP\Blocks\PFP_Invoice_Blocks();
+
     \Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry::get_instance()->register(
-        new \PFP\Blocks\PFP_Invoice_Blocks()
+        $integration
     );
+
+    bypf_invoice_log_admin('Registered Blocks integration for invoice gateway.');
+}
+
+function bypf_register_invoice_blocks_compat($integrations)
+{
+    if (!is_array($integrations)) {
+        return $integrations;
+    }
+
+    if (!class_exists('\PFP\Blocks\PFP_Invoice_Blocks')) {
+        return $integrations;
+    }
+
+    if (!isset($integrations[PFP_GATEWAY_ID])) {
+        $integrations[PFP_GATEWAY_ID] = '\PFP\Blocks\PFP_Invoice_Blocks';
+        bypf_invoice_log_admin('Registered Blocks integration class via compatibility filter.');
+    }
+
+    return $integrations;
 }
