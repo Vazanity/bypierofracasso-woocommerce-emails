@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.6] - 2025-09-14
+### Added
+- Added WooCommerce Blocks checkout support for the Invoice gateway.
+
 ## [1.2.5] - 2025-09-13
 ### Changed
 - Classic checkout visibility fixed; enforce QR-IBAN OR IBAN (one required); removed all icon code.

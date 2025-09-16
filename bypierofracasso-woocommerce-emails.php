@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.5
+Version: 1.2.6
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,7 +17,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.5');
+define('BYPF_EMAILS_VERSION', '1.2.6');
+define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
 
 function bypf_log($message, $level = 'debug')
@@ -512,17 +513,11 @@ function bypf_register_invoice_blocks_script() {
     $handle = 'pfp-invoice-blocks';
     wp_register_script(
         $handle,
-        plugins_url('assets/blocks/build/index.js', PFP_MAIN_FILE),
+        plugins_url('assets/blocks/index.js', PFP_MAIN_FILE),
         array('wc-blocks-registry', 'wp-element', 'wp-i18n'),
-        BYPF_EMAILS_VERSION,
+        PFP_VERSION,
         true
     );
-
-    $settings = get_option('woocommerce_pfp_invoice_settings', array());
-    $only_ch_li = isset($settings['only_ch_li']) && 'yes' === $settings['only_ch_li'];
-    wp_localize_script($handle, 'pfpInvoiceData', array(
-        'onlyChLi' => $only_ch_li,
-    ));
 
     if (function_exists('wp_set_script_translations')) {
         wp_set_script_translations($handle, 'piero-fracasso-emails', plugin_dir_path(PFP_MAIN_FILE) . 'languages');
