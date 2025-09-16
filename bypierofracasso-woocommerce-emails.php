@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.4
+Version: 1.2.5
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.4');
+define('BYPF_EMAILS_VERSION', '1.2.5');
 define('PFP_MAIN_FILE', __FILE__);
 
 function bypf_log($message, $level = 'debug')
@@ -453,7 +453,10 @@ function bypierofracasso_woocommerce_emails_bootstrap()
 
     require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-gateway-invoice.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-invoice-blocks.php';
-    add_filter('woocommerce_payment_gateways', 'bypierofracasso_register_invoice_gateway');
+    add_filter('woocommerce_payment_gateways', function ($gateways) {
+        $gateways[] = 'PFP_Gateway_Invoice';
+        return $gateways;
+    });
     add_filter('woocommerce_available_payment_gateways', 'bypf_invoice_ensure_gateway', 20);
     bypf_register_invoice_blocks_script();
     add_action('woocommerce_blocks_loaded', 'bypf_register_invoice_blocks_integration');
@@ -481,11 +484,6 @@ function bypierofracasso_woocommerce_emails_bootstrap()
         add_action('woocommerce_after_order_object_save', 'bypierofracasso_debug_after_save', 999, 2);
         add_action('admin_init', 'bypierofracasso_manual_email_trigger');
     }
-}
-
-function bypierofracasso_register_invoice_gateway($gateways) {
-    $gateways[] = 'PFP_Gateway_Invoice';
-    return $gateways;
 }
 
 add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_bootstrap', 20);
@@ -522,14 +520,7 @@ function bypf_register_invoice_blocks_script() {
 
     $settings = get_option('woocommerce_pfp_invoice_settings', array());
     $only_ch_li = isset($settings['only_ch_li']) && 'yes' === $settings['only_ch_li'];
-    $icon = '';
-    $png = plugin_dir_path(PFP_MAIN_FILE) . 'assets/img/qr-gateway-icon.png';
-    if (file_exists($png)) {
-        $icon = plugins_url('assets/img/qr-gateway-icon.png', PFP_MAIN_FILE);
-    }
-
     wp_localize_script($handle, 'pfpInvoiceData', array(
-        'icon'     => $icon,
         'onlyChLi' => $only_ch_li,
     ));
 

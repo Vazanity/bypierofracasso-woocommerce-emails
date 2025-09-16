@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.5] - 2025-09-13
+### Changed
+- Classic checkout visibility fixed; enforce QR-IBAN OR IBAN (one required); removed all icon code.
+
 ## [1.2.4] - 2025-09-13
 ### Added
 - Admin icon in payment list
