@@ -35,6 +35,7 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
 
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_review_order_after_payment', array($this, 'maybe_render_checkout_diagnostics'));
+        add_filter('woocommerce_settings_api_sanitized_fields_' . $this->id, array($this, 'sanitize_admin_settings'));
     }
 
     /**
@@ -62,11 +63,6 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
             'description' => __('Checkout description shown to the customer.', 'piero-fracasso-emails'),
             'default'     => __('Sie erhalten eine Rechnung mit Swiss-QR-Code im Anhang der Bestellbestätigung.', 'piero-fracasso-emails'),
         ),
-            'icon_info' => array(
-                'title'       => __('Icon', 'piero-fracasso-emails'),
-                'type'        => 'title',
-                'description' => $this->get_admin_icon_html() . ' ' . __('Standard-Icon wird als Inline-SVG angezeigt. Für ein eigenes Icon legen Sie bitte eine Datei unter assets/img/qr-gateway-icon.png ab. (PNG, transparente Kanten, ~32 px Höhe empfohlen.)', 'piero-fracasso-emails'),
-            ),
             'only_ch_li' => array(
                 'title'   => __('Restrict to CH/LI', 'piero-fracasso-emails'),
                 'type'    => 'checkbox',
@@ -89,7 +85,21 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
             'qr_iban' => array(
                 'title'       => __('QR-IBAN', 'piero-fracasso-emails'),
                 'type'        => 'text',
-                'description' => __('Required to generate Swiss QR invoices.', 'piero-fracasso-emails'),
+                'description' => __('Optional when an IBAN is configured; required for QR references.', 'piero-fracasso-emails'),
+                'default'     => '',
+                'desc_tip'    => true,
+            ),
+            'iban' => array(
+                'title'       => __('IBAN', 'piero-fracasso-emails'),
+                'type'        => 'text',
+                'description' => __('Used when no QR-IBAN is provided.', 'piero-fracasso-emails'),
+                'default'     => '',
+                'desc_tip'    => true,
+            ),
+            'creditor_reference' => array(
+                'title'       => __('Creditor Reference', 'piero-fracasso-emails'),
+                'type'        => 'text',
+                'description' => __('Optional; start with RF for SCOR references.', 'piero-fracasso-emails'),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
@@ -165,43 +175,81 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     }
 
     /**
-     * Icon HTML for admin screens.
+     * Sanitize gateway settings before saving.
      *
-     * @return string
+     * @param array $fields Raw settings fields.
+     * @return array
      */
-    public function get_admin_icon_html()
+    public function sanitize_admin_settings($fields)
     {
-        $relative    = 'assets/img/qr-gateway-icon.png';
-        $path        = plugin_dir_path(PFP_MAIN_FILE) . $relative;
-        if (file_exists($path)) {
-            $url = plugins_url($relative, PFP_MAIN_FILE);
-            return sprintf(
-                '<img src="%s" alt="" loading="lazy" style="height:24px;width:auto;vertical-align:middle;margin-right:8px;" />',
-                esc_url($url)
-            );
+        if (!is_array($fields)) {
+            return $fields;
         }
 
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect fill="#777" width="24" height="24"/><path fill="#fff" d="M4 5h16v2H4zm0 4h16v2H4zm0 4h10v2H4zm0 4h10v2H4z"/></svg>';
-        $allowed = array(
-            'svg'  => array(
-                'xmlns'       => true,
-                'viewBox'     => true,
-                'width'       => true,
-                'height'      => true,
-                'aria-hidden' => true,
-            ),
-            'rect' => array(
-                'fill'  => true,
-                'width' => true,
-                'height'=> true,
-            ),
-            'path' => array(
-                'fill' => true,
-                'd'    => true,
-            ),
+        $text_fields = array(
+            'title',
+            'qr_iban',
+            'iban',
+            'creditor_reference',
+            'creditor_name',
+            'creditor_street',
+            'creditor_postcode',
+            'creditor_city',
+            'creditor_country',
+            'reference_schema'
         );
 
-        return wp_kses($svg, $allowed);
+        foreach ($text_fields as $key) {
+            if (isset($fields[$key]) && is_string($fields[$key])) {
+                $fields[$key] = sanitize_text_field(wp_unslash($fields[$key]));
+            }
+        }
+
+        if (isset($fields['description']) && is_string($fields['description'])) {
+            $fields['description'] = wp_kses_post(wp_unslash($fields['description']));
+        }
+
+        if (isset($fields['payment_notice']) && is_string($fields['payment_notice'])) {
+            $fields['payment_notice'] = wp_kses_post(wp_unslash($fields['payment_notice']));
+        }
+
+        if (isset($fields['min_amount'])) {
+            $fields['min_amount'] = wc_format_decimal(wp_unslash($fields['min_amount']));
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Validate and persist admin settings.
+     *
+     * @return bool
+     */
+    public function process_admin_options()
+    {
+        if (!current_user_can('manage_woocommerce')) {
+            return false;
+        }
+
+        $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
+        if (empty($nonce) || !wp_verify_nonce($nonce, 'woocommerce-settings')) {
+            return false;
+        }
+
+        $post_data = $this->get_post_data();
+        $qr_key   = $this->get_field_key('qr_iban');
+        $iban_key = $this->get_field_key('iban');
+        $qr_iban  = isset($post_data[$qr_key]) ? sanitize_text_field(wp_unslash($post_data[$qr_key])) : '';
+        $iban     = isset($post_data[$iban_key]) ? sanitize_text_field(wp_unslash($post_data[$iban_key])) : '';
+
+        if ('' === $qr_iban && '' === $iban) {
+            if (class_exists('WC_Admin_Settings')) {
+                WC_Admin_Settings::add_error(__('Please enter at least a QR-IBAN or an IBAN for the invoice gateway.', 'piero-fracasso-emails'));
+            }
+            return false;
+        }
+
+        return parent::process_admin_options();
     }
 
     /**
@@ -211,61 +259,7 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
      */
     public function get_icon()
     {
-        $relative    = 'assets/img/qr-gateway-icon.png';
-        $path        = plugin_dir_path(PFP_MAIN_FILE) . $relative;
-        if (file_exists($path)) {
-            $url  = plugins_url($relative, PFP_MAIN_FILE);
-            $html = sprintf(
-                '<img src="%s" alt="" aria-hidden="true" width="32" height="32" style="height:1em;width:auto;vertical-align:middle;" />',
-                esc_url($url)
-            );
-            return apply_filters('woocommerce_gateway_icon', $html, $this->id);
-        }
-
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect fill="#777" width="24" height="24"/><path fill="#fff" d="M4 5h16v2H4zm0 4h16v2H4zm0 4h10v2H4zm0 4h10v2H4z"/></svg>';
-        $allowed = array(
-            'svg'  => array(
-                'xmlns'       => true,
-                'viewBox'     => true,
-                'width'       => true,
-                'height'      => true,
-                'aria-hidden' => true,
-            ),
-            'rect' => array(
-                'fill'  => true,
-                'width' => true,
-                'height'=> true,
-            ),
-            'path' => array(
-                'fill' => true,
-                'd'    => true,
-            ),
-        );
-        $svg = wp_kses($svg, $allowed);
-
-        return apply_filters('woocommerce_gateway_icon', $svg, $this->id);
-    }
-
-    /**
-     * Method title with icon on admin payment screen.
-     *
-     * @return string
-     */
-    public function get_method_title()
-    {
-        $title = parent::get_method_title();
-
-        if (is_admin() && function_exists('get_current_screen')) {
-            $screen = get_current_screen();
-            if ($screen && 'woocommerce_page_wc-settings' === $screen->id) {
-                $tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : '';
-                if (in_array($tab, array('checkout', 'payments'), true)) {
-                    return $this->get_admin_icon_html() . esc_html($title);
-                }
-            }
-        }
-
-        return esc_html($title);
+        return '';
     }
 
     /**
@@ -281,33 +275,31 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
             return false;
         }
 
-        if (!function_exists('WC')) {
-            $this->unavailability_reasons[] = 'no_wc';
-            return false;
-        }
-
         if ('CHF' !== get_woocommerce_currency()) {
             return $this->unavailable('currency');
         }
 
-        $min = (float) apply_filters('pfp_invoice_min_amount', $this->get_option('min_amount', 0.05));
-        if (WC()->cart && WC()->cart->total < $min) {
-            return $this->unavailable('min_amount');
-        }
-
-        if ('yes' === $this->get_option('only_ch_li') && WC()->customer) {
-            $country = WC()->customer->get_billing_country();
-            if (empty($country)) {
-                $country = WC()->customer->get_shipping_country();
+        if ('yes' === $this->get_option('only_ch_li')) {
+            $country = '';
+            if (function_exists('WC') && WC()->customer) {
+                $country = WC()->customer->get_billing_country();
+                if (empty($country)) {
+                    $country = WC()->customer->get_shipping_country();
+                }
             }
-            if ($country && !in_array($country, array('CH', 'LI'), true)) {
+
+            if (!empty($country) && !in_array($country, array('CH', 'LI'), true)) {
                 return $this->unavailable('country');
             }
         }
 
-        $iban = $this->get_option('qr_iban');
-        if (empty($iban)) {
-            $this->unavailability_reasons[] = 'iban';
+        $min_setting = $this->get_option('min_amount', '');
+        $min_amount  = (float) apply_filters('pfp_invoice_min_amount', $min_setting);
+        if ($min_amount > 0 && function_exists('WC') && WC()->cart) {
+            $total = (float) WC()->cart->total;
+            if ($total < $min_amount) {
+                return $this->unavailable('min_amount');
+            }
         }
 
         return apply_filters('pfp_invoice_is_available', true, $this);
@@ -341,13 +333,17 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     {
         $order = wc_get_order($order_id);
 
-        if (empty($this->get_option('qr_iban'))) {
-            wc_add_notice(__('Swiss QR invoice configuration is incomplete.', 'piero-fracasso-emails'), 'error');
+        if (!$order instanceof WC_Order || !$this->validate_order($order)) {
+            wc_add_notice(__('Swiss QR invoice payment is not available for this order.', 'piero-fracasso-emails'), 'error');
             return array('result' => 'failure');
         }
 
-        if (!$this->validate_order($order)) {
-            wc_add_notice(__('Swiss QR invoice payment is not available for this order.', 'piero-fracasso-emails'), 'error');
+        $payment_parameters = $this->get_payment_parameters($order);
+        if (empty($payment_parameters['account'])) {
+            wc_add_notice(__('Swiss QR invoice configuration is incomplete.', 'piero-fracasso-emails'), 'error');
+            if (function_exists('wc_get_logger')) {
+                wc_get_logger()->error('Invoice gateway missing QR-IBAN or IBAN during checkout.', array('source' => 'pfp-invoice'));
+            }
             return array('result' => 'failure');
         }
 
@@ -386,12 +382,75 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
             }
         }
 
-        $min = (float) $this->get_option('min_amount', 0.05);
-        if ($order->get_total() < $min) {
+        $min_setting = $this->get_option('min_amount', '');
+        $min = (float) apply_filters('pfp_invoice_min_amount', $min_setting);
+        if ($min > 0 && $order->get_total() < $min) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Determine account and reference details for the payment.
+     *
+     * @param WC_Order|null $order Order context.
+     * @return array
+     */
+    public function get_payment_parameters($order = null)
+    {
+        $qr_iban            = trim((string) $this->get_option('qr_iban'));
+        $iban               = trim((string) $this->get_option('iban'));
+        $creditor_reference = trim((string) $this->get_option('creditor_reference'));
+        $reference_template = (string) $this->get_option('reference_schema', 'PFP-{order_id}');
+
+        $reference = $reference_template;
+        if ($order instanceof WC_Order) {
+            $reference = str_replace('{order_id}', $order->get_id(), $reference_template);
+        }
+
+        $reference = apply_filters('pfp_invoice_reference_schema', $reference, $order);
+
+        if ($qr_iban !== '') {
+            $parameters = array(
+                'account'        => $qr_iban,
+                'reference_type' => 'QRR',
+                'reference'      => $reference,
+            );
+
+            return apply_filters('pfp_invoice_payment_parameters', $parameters, $order, $this);
+        }
+
+        if ($iban !== '') {
+            $type            = 'NON';
+            $final_reference = $reference;
+
+            if ($creditor_reference !== '') {
+                $final_reference = $creditor_reference;
+                if (0 === strpos(strtoupper($creditor_reference), 'RF')) {
+                    $type = 'SCOR';
+                }
+            }
+
+            $parameters = array(
+                'account'        => $iban,
+                'reference_type' => $type,
+                'reference'      => $final_reference,
+            );
+
+            return apply_filters('pfp_invoice_payment_parameters', $parameters, $order, $this);
+        }
+
+        return apply_filters(
+            'pfp_invoice_payment_parameters',
+            array(
+                'account'        => '',
+                'reference_type' => '',
+                'reference'      => '',
+            ),
+            $order,
+            $this
+        );
     }
 
     /**
@@ -415,7 +474,6 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
             'currency'   => __('Shop currency ≠ CHF', 'piero-fracasso-emails'),
             'country'    => __('Billing Country not CH/LI', 'piero-fracasso-emails'),
             'min_amount' => __('Minimum amount not reached', 'piero-fracasso-emails'),
-            'iban'       => __('QR-IBAN missing', 'piero-fracasso-emails'),
         );
 
         $reasons = array();
@@ -499,9 +557,11 @@ function bypf_invoice_generate_pdf($order, $gateway)
         return false;
     }
 
-    $iban = $gateway->get_option('qr_iban');
-    if (empty($iban)) {
-        bypf_log('Missing QR-IBAN for invoice gateway', 'warning');
+    $parameters = $gateway->get_payment_parameters($order);
+    if (empty($parameters['account'])) {
+        if (function_exists('wc_get_logger')) {
+            wc_get_logger()->warning('Skipped invoice PDF: no QR-IBAN or IBAN configured.', array('source' => 'pfp-invoice'));
+        }
         return false;
     }
 
@@ -520,11 +580,12 @@ function bypf_invoice_generate_pdf($order, $gateway)
 
     $service = new QR_Invoice_Service();
     if (method_exists($service, 'generate')) {
-        $reference = apply_filters('pfp_invoice_reference_schema', str_replace('{order_id}', $order->get_id(), $gateway->get_option('reference_schema', 'PFP-{order_id}')), $order);
+        $reference = $parameters['reference'];
+        $reference_type = isset($parameters['reference_type']) ? $parameters['reference_type'] : '';
         $service->generate(
             $order,
             array(
-                'iban'     => $iban,
+                'iban'     => $parameters['account'],
                 'creditor' => array(
                     'name'    => $gateway->get_option('creditor_name'),
                     'street'  => $gateway->get_option('creditor_street'),
@@ -536,6 +597,7 @@ function bypf_invoice_generate_pdf($order, $gateway)
                 'amount'   => $order->get_total(),
                 'currency' => $order->get_currency(),
                 'reference' => $reference,
+                'reference_type' => $reference_type,
                 'filename' => $filepath,
             )
         );
