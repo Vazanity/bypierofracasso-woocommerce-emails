@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.6.6
+- Fix: Blocks checkout now enqueues the gateway script reliably; aligned PHP get_name() and JS registration name; added robust dependencies and fallback enqueue on `woocommerce_blocks_enqueue_payment_method_type_scripts`.
+- Tweak: JS `canMakePayment()` simplified to true (server-side availability already enforced).
+
 ## 1.2.6.5
 - Fix: Woo Blocks legacy registration now supports the modern action signature (PaymentMethodRegistry).
 - Fix: Deferred all translations to post-init usage to satisfy WP 6.7+ i18n timing.
