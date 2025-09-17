@@ -1,4 +1,5 @@
 .DS_Store
-.DS_Store
 **/.DS_Store
 node_modules/
+!assets/blocks/build/index.js
+!assets/blocks/build/index.asset.php

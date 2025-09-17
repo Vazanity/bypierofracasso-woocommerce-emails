@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.6.8
+- Fix: Adopted Woo Blocks dummy pattern — bundled Blocks JS (no ESM at runtime), registered via index.asset.php.
+- Fix: Proper Blocks payment method registration (AbstractPaymentMethodType, legacy registry action guarded).
+- Fix: Label now plain string to satisfy current Blocks API; payment method visible in Checkout (Blocks).
+- Tweak: Fallback enqueue for the built handle when not auto-enqueued by Blocks.
+
 ## 1.2.6.7
 - Fix: Blocks checkout label now uses a plain string to satisfy current WC Blocks API; payment method appears correctly.
 - Improvement: Added fallback enqueue of the blocks script and one-time log line for diagnostics.

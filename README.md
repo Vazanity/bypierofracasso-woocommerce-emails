@@ -1,6 +1,6 @@
 # Piero Fracasso Perfumes WooCommerce Emails
 
-**Stable tag:** 1.2.6.7
+**Stable tag:** 1.2.6.8
 
 ## Overview
 The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress plugin designed to enhance the email functionality of WooCommerce for the Piero Fracasso Perfumes online store. It introduces custom order statuses, corresponding email notifications, and overrides default WooCommerce email templates with branded versions. The plugin also disables unnecessary default WooCommerce emails to streamline notifications.
@@ -57,7 +57,7 @@ The **Piero Fracasso Perfumes WooCommerce Emails** plugin is a custom WordPress 
 The plugin replaces the legacy *JimSoft QR-Invoice* extension. If that plugin is active, a warning is shown; please deactivate JimSoft to avoid conflicts.
 
 ### Deployment
-WordPress 5.5+ supports replacing the plugin by uploading a ZIP with the same folder name. Increase the version (currently `1.2.6.7`) so WordPress detects the update. JimSoft can remain installed but must stay deactivated.
+WordPress 5.5+ supports replacing the plugin by uploading a ZIP with the same folder name. Increase the version (currently `1.2.6.8`) so WordPress detects the update. JimSoft can remain installed but must stay deactivated.
 
 The released ZIP now includes the `vendor/` directory, so no Composer installation is required on production systems.
 
