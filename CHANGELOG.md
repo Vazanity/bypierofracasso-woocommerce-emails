@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.6.10
+- Change: Use the existing "customer-order-received" email for invoice orders and attach the Swiss QR PDF automatically.
+- Add: Styled, translatable notice in the order-received template (only for invoice gateway).
+- Dev: Safe email trigger after checkout for pfp_invoice with fallback to Woo "customer_on_hold_order".
+- Dev: Conditional attachment via woocommerce_email_attachments; robust logging.
+
 ## 1.2.6.9
 - Fix: Ensure wc-blocks-registry is a hard dependency of the frontend bundle.
 - Fix: Properly typed payment method label (string/React element).

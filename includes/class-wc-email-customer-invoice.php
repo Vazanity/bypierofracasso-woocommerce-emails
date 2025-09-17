@@ -86,4 +86,8 @@ class WC_Email_Customer_Invoice extends WC_Email {
             $this->template_base
         );
     }
+
+    public function is_enabled() {
+        return false;
+    }
 }
