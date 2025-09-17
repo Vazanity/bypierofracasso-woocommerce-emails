@@ -7,44 +7,45 @@ class PFP_Email_Customer_Payment_Reminder extends WC_Email
 {
     public function __construct()
     {
-        $this->id             = 'customer_payment_reminder';
+        $this->id             = 'pfp_email_customer_payment_reminder';
         $this->title          = __('Zahlungserinnerung', 'bypierofracasso-woocommerce-emails');
-        $this->description    = __('Manuell ausgelöste Zahlungserinnerung für Rechnungsbestellungen.', 'bypierofracasso-woocommerce-emails');
+        $this->description    = __('Wird manuell aus einer Bestellung gesendet, wenn die Rechnung überfällig ist. Fügt Rechnung als PDF bei.', 'bypierofracasso-woocommerce-emails');
         $this->customer_email = true;
         $this->heading        = __('Zahlungserinnerung', 'bypierofracasso-woocommerce-emails');
         $this->subject        = __('Zahlungserinnerung zu Ihrer Bestellung {order_number}', 'bypierofracasso-woocommerce-emails');
         $this->template_html  = 'emails/customer-payment-reminder.php';
         $this->template_base  = plugin_dir_path(__FILE__) . '../templates/';
 
-        add_action('pfp_send_payment_reminder_notification', array($this, 'trigger'), 10, 1);
         parent::__construct();
     }
 
-    public function trigger($order_id)
+    public function trigger($order_id, $order = false)
     {
-        if ($order_id) {
-            $this->object    = wc_get_order($order_id);
-            $this->recipient = $this->object ? $this->object->get_billing_email() : '';
+        if (!$order instanceof WC_Order && $order_id) {
+            $order = wc_get_order($order_id);
         }
 
-        if (!$this->is_enabled() || !$this->get_recipient() || !$this->object) {
-            if (function_exists('pfp_log')) {
-                pfp_log('[PFP] Skipped payment reminder send for order #' . absint($order_id) . ' (missing recipient or disabled)', 'notice');
-            } else {
-                bypf_log('[PFP] Skipped payment reminder send for order #' . absint($order_id) . ' (missing recipient or disabled)', 'notice');
-            }
+        if (!$order instanceof WC_Order) {
+            error_log('[PFP] Payment Reminder: missing order context for trigger ' . absint($order_id));
+            return;
+        }
+
+        if ('pfp_invoice' !== $order->get_payment_method()) {
+            error_log('[PFP] Payment Reminder: skipped for non-invoice order ' . $order->get_id());
+            return;
+        }
+
+        $this->object    = $order;
+        $this->recipient = $order->get_billing_email();
+
+        if (!$this->is_enabled() || !$this->get_recipient()) {
+            error_log('[PFP] Payment Reminder: not sent – disabled or missing recipient for order ' . $order->get_id());
             return;
         }
 
         $this->setup_locale();
 
-        $log_message = '[PFP] Sending payment reminder for order #' . $this->object->get_id() . ' to ' . $this->get_recipient();
-
-        if (function_exists('pfp_log')) {
-            pfp_log($log_message);
-        } else {
-            bypf_log($log_message);
-        }
+        error_log('[PFP] Payment Reminder: sending email for order ' . $order->get_id() . ' to ' . $this->get_recipient());
 
         $this->send($this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments());
         $this->restore_locale();

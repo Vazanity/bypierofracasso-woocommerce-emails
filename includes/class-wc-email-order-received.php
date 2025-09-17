@@ -3,22 +3,28 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class WC_Email_Order_Received extends WC_Email
+class PFP_Email_Order_Received extends WC_Email
 {
+    public $heading_default = '';
+
     public function __construct()
     {
-        $this->id             = 'customer_order_received';
-        $this->title          = __('Bestellung erhalten', 'bypierofracasso-woocommerce-emails');
-        $this->description    = __('Diese E-Mail wird gesendet, wenn eine Bestellung aufgegeben wurde.', 'bypierofracasso-woocommerce-emails');
-        $this->heading        = __('Vielen Dank für deine Bestellung!', 'bypierofracasso-woocommerce-emails');
-        $this->subject        = __('Deine Bestellung bei Piero Fracasso Perfumes wurde erhalten', 'bypierofracasso-woocommerce-emails');
-        $this->customer_email = true;
-        $this->enabled        = 'yes';
-        $this->template_html  = 'emails/customer-order-received.php';
-        $this->template_plain = 'emails/customer-order-received.php';
-        $this->template_base  = plugin_dir_path(__FILE__) . '../templates/';
+        $this->id              = 'pfp_email_order_received';
+        $this->title           = __('Bestellung erhalten', 'bypierofracasso-woocommerce-emails');
+        $this->description     = __('Bestellbestätigung für Kunden, inklusive Rechnungshinweisen bei Rechnungskauf.', 'bypierofracasso-woocommerce-emails');
+        $this->heading_default = __('Bestellung erhalten', 'bypierofracasso-woocommerce-emails');
+        $this->heading         = $this->heading_default;
+        $this->subject         = __('Deine Bestellung bei Piero Fracasso Perfumes wurde erhalten', 'bypierofracasso-woocommerce-emails');
+        $this->customer_email  = true;
+        $this->template_html   = 'emails/customer-order-received.php';
+        $this->template_plain  = 'emails/customer-order-received.php';
+        $this->template_base   = plugin_dir_path(__FILE__) . '../templates/';
 
         parent::__construct();
+
+        add_action('woocommerce_checkout_order_processed', array($this, 'trigger_from_checkout'), 20, 1);
+        add_action('woocommerce_order_status_pending_to_invoice', array($this, 'trigger_from_status'), 10, 2);
+        add_action('woocommerce_order_status_on-hold_to_invoice', array($this, 'trigger_from_status'), 10, 2);
     }
 
     public function get_title()
@@ -52,13 +58,54 @@ class WC_Email_Order_Received extends WC_Email
 
     public function get_default_heading()
     {
-        return __('Vielen Dank für deine Bestellung!', 'bypierofracasso-woocommerce-emails');
+        return $this->heading_default;
     }
 
-    public function trigger($order_id, $order = null)
+    public function trigger_from_checkout($order_id)
+    {
+        error_log('[PFP] Order_Received: checkout trigger hit for order ' . absint($order_id));
+
+        $order = wc_get_order($order_id);
+
+        if (!$order instanceof WC_Order) {
+            error_log('[PFP] Order_Received: checkout trigger skipped – order missing for ID ' . absint($order_id));
+            return;
+        }
+
+        if ('pfp_invoice' !== $order->get_payment_method()) {
+            error_log('[PFP] Order_Received: checkout trigger skipped – payment method ' . $order->get_payment_method());
+            return;
+        }
+
+        $this->trigger($order_id, $order);
+    }
+
+    public function trigger_from_status($order_id, $order)
+    {
+        $status = ($order instanceof WC_Order) ? $order->get_status() : 'unknown';
+        error_log('[PFP] Order_Received: status trigger hit ' . $status . ' for order ' . absint($order_id));
+
+        if (!$order instanceof WC_Order) {
+            $order = wc_get_order($order_id);
+        }
+
+        if (!$order instanceof WC_Order) {
+            error_log('[PFP] Order_Received: status trigger skipped – order missing for ID ' . absint($order_id));
+            return;
+        }
+
+        if ('pfp_invoice' !== $order->get_payment_method()) {
+            error_log('[PFP] Order_Received: status trigger skipped – payment method ' . $order->get_payment_method());
+            return;
+        }
+
+        $this->trigger($order_id, $order);
+    }
+
+    public function trigger($order_id, $order = false)
     {
         if (!$order_id) {
-            $this->log('[PFP] Missing order id for customer_order_received trigger', 'warning');
+            $this->log('[PFP] Missing order id for pfp_email_order_received trigger', 'warning');
             return;
         }
 
@@ -67,26 +114,33 @@ class WC_Email_Order_Received extends WC_Email
         }
 
         if (!$order instanceof WC_Order) {
-            $this->log('[PFP] Unable to locate order for customer_order_received trigger (order #' . absint($order_id) . ')', 'error');
+            $this->log('[PFP] Unable to locate order for pfp_email_order_received trigger (order #' . absint($order_id) . ')', 'error');
             return;
         }
 
-        $this->object    = $order;
+        $this->object = $order;
+
+        if ('pfp_invoice' === $order->get_payment_method()) {
+            $this->heading = __('Bestellung erhalten – Zahlung per Rechnung', 'bypierofracasso-woocommerce-emails');
+        } else {
+            $this->heading = $this->heading_default;
+        }
+
         $this->recipient = $order->get_billing_email();
 
         if (!$this->is_enabled()) {
-            $this->log('[PFP] customer_order_received email disabled – skipping order #' . $order->get_id(), 'notice');
+            $this->log('[PFP] pfp_email_order_received disabled – skipping order #' . $order->get_id(), 'notice');
             return;
         }
 
         if (!$this->get_recipient()) {
-            $this->log('[PFP] No recipient for customer_order_received on order #' . $order->get_id(), 'warning');
+            $this->log('[PFP] No recipient for pfp_email_order_received on order #' . $order->get_id(), 'warning');
             return;
         }
 
         $this->setup_locale();
 
-        $this->log('[PFP] Sending customer_order_received to ' . $this->get_recipient() . ' for order #' . $order->get_id());
+        $this->log('[PFP] Sending pfp_email_order_received to ' . $this->get_recipient() . ' for order #' . $order->get_id());
 
         $sent = $this->send(
             $this->get_recipient(),
@@ -99,9 +153,9 @@ class WC_Email_Order_Received extends WC_Email
         $this->restore_locale();
 
         if ($sent) {
-            $this->log('[PFP] customer_order_received dispatched successfully for order #' . $order->get_id());
+            $this->log('[PFP] pfp_email_order_received dispatched successfully for order #' . $order->get_id());
         } else {
-            $this->log('[PFP] Failed sending customer_order_received for order #' . $order->get_id(), 'error');
+            $this->log('[PFP] Failed sending pfp_email_order_received for order #' . $order->get_id(), 'error');
         }
     }
 
