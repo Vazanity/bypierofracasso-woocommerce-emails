@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.6.9
+- Fix: Ensure wc-blocks-registry is a hard dependency of the frontend bundle.
+- Fix: Properly typed payment method label (string/React element).
+- Dev: JS now imports from @woocommerce/blocks-registry & @woocommerce/settings; asset deps auto-generated.
+- Dev: Safe fallback deps if index.asset.php is missing in prod.
+
 ## 1.2.6.8
 - Fix: Adopted Woo Blocks dummy pattern — bundled Blocks JS (no ESM at runtime), registered via index.asset.php.
 - Fix: Proper Blocks payment method registration (AbstractPaymentMethodType, legacy registry action guarded).
