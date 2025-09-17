@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.6.6
+Version: 1.2.6.7
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.6.6');
+define('BYPF_EMAILS_VERSION', '1.2.6.7');
 define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
 define('PFP_GATEWAY_ID', 'pfp_invoice');
@@ -612,17 +612,11 @@ add_action('init', function () {
 });
 
 add_action('woocommerce_blocks_enqueue_payment_method_type_scripts', function () {
-    if (function_exists('wp_script_is') && wp_script_is('pfp-invoice-blocks', 'enqueued')) {
-        return;
-    }
-
-    if (function_exists('wp_enqueue_script')) {
+    if (function_exists('wp_script_is') && !wp_script_is('pfp-invoice-blocks', 'enqueued')) {
         wp_enqueue_script('pfp-invoice-blocks');
 
         if (function_exists('pfp_log')) {
             pfp_log('[PFP] enqueued pfp-invoice-blocks');
-        } elseif (function_exists('bypf_invoice_log_admin')) {
-            bypf_invoice_log_admin('enqueued pfp-invoice-blocks');
         }
     }
 }, 10);
