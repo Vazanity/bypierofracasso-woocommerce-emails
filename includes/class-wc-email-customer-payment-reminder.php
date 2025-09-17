@@ -38,10 +38,12 @@ class PFP_Email_Customer_Payment_Reminder extends WC_Email
 
         $this->setup_locale();
 
+        $log_message = '[PFP] Sending payment reminder for order #' . $this->object->get_id() . ' to ' . $this->get_recipient();
+
         if (function_exists('pfp_log')) {
-            pfp_log('[PFP] Sending payment reminder for order #' . $this->object->get_id());
+            pfp_log($log_message);
         } else {
-            bypf_log('[PFP] Sending payment reminder for order #' . $this->object->get_id());
+            bypf_log($log_message);
         }
 
         $this->send($this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments());

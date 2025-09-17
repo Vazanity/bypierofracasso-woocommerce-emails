@@ -37,22 +37,22 @@ foreach ($items as $item_id => $item) :
 ?>
 
 <!-- Contents : Product Info -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
 
             <!-- 600 -->
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
+            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:600px; width:100%;">
                 <tr>
                     <td align="center" bgcolor="#FFFFFF" class="bg-FFFFFF">
 
                         <!-- 520 -->
-                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:520px; width:100%;">
                             <tr>
                                 <td align="center" class="container-padding">
 
                                     <!-- Content -->
-                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                         <tr>
                                             <td class="spacer-15"> </td>
                                         </tr>
@@ -67,9 +67,10 @@ foreach ($items as $item_id => $item) :
                                                     <tr>
                                                         <td align="center" valign="middle">
 
-                                                            <a href="<?php echo $url = get_permalink($item['product_id']); ?>">
+                                                            <a href="<?php echo $url = get_permalink($item['product_id']); ?>" style="text-decoration:none;" rel="noopener">
                                                                 <?php
-                                                                    echo apply_filters('woocommerce_order_item_thumbnail', '<img src="' . esc_url($image_url) . '" alt="' . esc_attr__('Product image', 'bypierofracasso-woocommerce-emails') . '" class="border-radius-8" width="100" style="max-width:100px"', $item);
+                                                                    $item_alt = wp_strip_all_tags($item->get_name());
+                                                                    echo apply_filters('woocommerce_order_item_thumbnail', '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($item_alt) . '" class="border-radius-8" width="100" style="display:block; max-width:100px; height:auto; border:0;" />', $item);
                                                                 ?>
                                                             </a>
 
@@ -96,7 +97,7 @@ foreach ($items as $item_id => $item) :
 
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-5 small">
-                                                            <a href="<?php echo $url = get_permalink($item['product_id']); ?>" class="font-191919 capitalize">
+                                                            <a href="<?php echo $url = get_permalink($item['product_id']); ?>" class="font-191919 capitalize" style="color:#191919; text-decoration:none;" rel="noopener">
                                                                 <?php echo wp_kses_post(apply_filters('woocommerce_order_item_name', $item->get_name(), $item, false));
                                                                 ?>
                                                             </a>
@@ -171,22 +172,22 @@ foreach ($items as $item_id => $item) :
 <!-- Contents : Product Info -->
 
 <!-- Dividers : Divider -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
 
             <!-- 600 -->
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
+            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:600px; width:100%;">
                 <tr>
                     <td align="center" bgcolor="#FFFFFF" class="bg-FFFFFF">
 
                         <!-- 520 -->
-                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:520px; width:100%;">
                             <tr>
                                 <td align="center" class="container-padding">
 
                                     <!-- Content -->
-                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                         <tr>
                                             <td class="spacer-15"> </td>
                                         </tr>
