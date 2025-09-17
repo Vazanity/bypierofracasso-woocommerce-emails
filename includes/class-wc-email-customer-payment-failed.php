@@ -7,8 +7,8 @@ class WC_Email_Customer_Payment_Failed extends WC_Email {
     public function __construct() {
         $this->id = 'customer_payment_failed';
         $this->customer_email = true;
-        $this->title = __('Customer Payment Failed', 'piero-fracasso-emails');
-        $this->description = __('Sent to customers when payment fails for an order.', 'piero-fracasso-emails');
+        $this->title = __('Customer Payment Failed', 'bypierofracasso-woocommerce-emails');
+        $this->description = __('Sent to customers when payment fails for an order.', 'bypierofracasso-woocommerce-emails');
         $this->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
         $this->template_html = 'customer-payment-failed.php';
         $this->template_plain = 'plain/customer-payment-failed.php'; // Added
@@ -49,11 +49,11 @@ class WC_Email_Customer_Payment_Failed extends WC_Email {
     }
 
     public function get_default_subject() {
-        return __('Payment Failed for Order #{order_number}', 'piero-fracasso-emails');
+        return __('Payment Failed for Order #{order_number}', 'bypierofracasso-woocommerce-emails');
     }
 
     public function get_default_heading() {
-        return __('Payment Failed', 'piero-fracasso-emails');
+        return __('Payment Failed', 'bypierofracasso-woocommerce-emails');
     }
 
     public function get_content_html() {

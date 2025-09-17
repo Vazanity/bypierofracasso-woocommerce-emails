@@ -1,17 +1,17 @@
-(function() {
-  const registry = window.wc && window.wc.wcBlocksRegistry ? window.wc.wcBlocksRegistry : {};
-  const registerPaymentMethod = registry.registerPaymentMethod;
-  if (typeof registerPaymentMethod !== 'function') {
+( function() {
+  const { __ } = window.wp?.i18n || {};
+  const reg = window?.wc?.wcBlocksRegistry?.registerPaymentMethod
+    || ( window?.wc?.blocksCheckout && window.wc.blocksCheckout.registerPaymentMethod );
+  if ( ! reg ) {
     return;
   }
-
-  registerPaymentMethod({
+  reg( {
     name: 'pfp_invoice',
     canMakePayment: () => true,
     edit: () => null,
     content: () => null,
-    label: window.pfpInvoiceLabel || 'Invoice (Swiss QR)',
-    ariaLabel: window.pfpInvoiceLabel || 'Invoice (Swiss QR)',
+    ariaLabel: __ ? __( 'Invoice (Swiss QR)', 'bypierofracasso-woocommerce-emails' ) : 'Invoice (Swiss QR)',
+    label: __ ? __( 'Invoice (Swiss QR)', 'bypierofracasso-woocommerce-emails' ) : 'Invoice (Swiss QR)',
     supports: { features: [] }
-  });
-})();
+  } );
+} )();

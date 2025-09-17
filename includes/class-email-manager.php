@@ -74,7 +74,7 @@ class PFP_Email_Manager {
         if (isset($email_classes['WC_Email_Failed_Order'])) {
             $email_classes['WC_Email_Failed_Order']->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
             $email_classes['WC_Email_Failed_Order']->template_html = 'admin-failed-order.php';
-            $email_classes['WC_Email_Failed_Order']->title = __('Admin Failed Order', 'piero-fracasso-emails');
+            $email_classes['WC_Email_Failed_Order']->title = __('Admin Failed Order', 'bypierofracasso-woocommerce-emails');
         }
 
         return $email_classes;

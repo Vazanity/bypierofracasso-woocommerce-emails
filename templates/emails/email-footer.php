@@ -49,7 +49,7 @@ include('setting-wc-email.php'); // All Customization in This File
                                         </tr>
                                         <tr>
                                             <td valign="middle" class="center-text font-primary font-191919 font-20 font-weight-600 font-space-0 pb-30">
-                                                <?php echo __($other_product_title); ?>
+                                                <?php echo __($other_product_title, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -59,17 +59,17 @@ include('setting-wc-email.php'); // All Customization in This File
                                                 <table width="250" border="0" cellpadding="0" cellspacing="0" align="left" class="row table-250 table-left">
                                                     <tr>
                                                         <td align="center" valign="middle" class="img-responsive pb-15">
-                                                            <?php echo __('<a href="' . $other_product_1_link . '"><img src="' . esc_url($plugin_path . '/' . $other_product_1_img) . '" alt="Product 1" border="0" width="250" class="table-250 border-radius-8"></a>'); ?>
+                                                            <?php echo __('<a href="' . $other_product_1_link . '"><img src="' . esc_url($plugin_path . '/' . $other_product_1_img) . '" alt="Product 1" border="0" width="250" class="table-250 border-radius-8"></a>', 'bypierofracasso-woocommerce-emails'); ?>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-400 font-space-0">
-                                                            <?php echo __($other_product_1_title); ?>
+                                                            <?php echo __($other_product_1_title, 'bypierofracasso-woocommerce-emails'); ?>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-20 font-weight-600 font-space-0">
-                                                            <?php echo __($other_product_1_price); ?>
+                                                            <?php echo __($other_product_1_price, 'bypierofracasso-woocommerce-emails'); ?>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -85,17 +85,17 @@ include('setting-wc-email.php'); // All Customization in This File
                                                 <table width="250" border="0" cellpadding="0" cellspacing="0" align="left" class="row table-250 table-left">
                                                     <tr>
                                                         <td align="center" valign="middle" class="img-responsive pb-15">
-                                                            <?php echo __('<a href="' . $other_product_2_link . '"><img src="' . esc_url($plugin_path . '/' . $other_product_2_img) . '" alt="Product 2" border="0" width="250" class="table-250 border-radius-8"></a>'); ?>
+                                                            <?php echo __('<a href="' . $other_product_2_link . '"><img src="' . esc_url($plugin_path . '/' . $other_product_2_img) . '" alt="Product 2" border="0" width="250" class="table-250 border-radius-8"></a>', 'bypierofracasso-woocommerce-emails'); ?>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-400 font-space-0">
-                                                            <?php echo __($other_product_2_title); ?>
+                                                            <?php echo __($other_product_2_title, 'bypierofracasso-woocommerce-emails'); ?>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-20 font-weight-600 font-space-0">
-                                                            <?php echo __($other_product_2_price); ?>
+                                                            <?php echo __($other_product_2_price, 'bypierofracasso-woocommerce-emails'); ?>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -143,7 +143,7 @@ include('setting-wc-email.php'); // All Customization in This File
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="img-responsive">
-                                                <?php echo __('<a href="' . $banner_link . '"><img src="' . esc_url($plugin_path . '/' . $banner_img) . '" border="0" width="570" alt="Banner" class="block border-radius-8" style="width:570px; max-width:570px;"></a>'); ?>
+                                                <?php echo __('<a href="' . $banner_link . '"><img src="' . esc_url($plugin_path . '/' . $banner_img) . '" border="0" width="570" alt="Banner" class="block border-radius-8" style="width:570px; max-width:570px;"></a>', 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -184,7 +184,7 @@ include('setting-wc-email.php'); // All Customization in This File
                                         <?php if ($download_app_show == "YES") : ?>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-191919 font-16 font-weight-600 font-space-0 pb-20">
-                                                <?php echo __($footer_app_title); ?>
+                                                <?php echo __($footer_app_title, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -193,19 +193,19 @@ include('setting-wc-email.php'); // All Customization in This File
                                                     <tr>
                                                         <?php
                                                         if ($footer_app_1_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_1_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_1_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_1_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_1_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         if ($footer_app_2_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_2_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_2_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_2_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_2_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         if ($footer_app_3_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_3_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_3_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_3_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_3_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         if ($footer_app_4_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_4_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_4_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_4_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_4_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         if ($footer_app_5_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_5_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_5_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $footer_app_5_link . '"><img src="' . esc_url($plugin_path . '/' . $footer_app_5_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         ?>
                                                     </tr>
@@ -219,14 +219,14 @@ include('setting-wc-email.php'); // All Customization in This File
                                         <?php if ($footer_info != "") : ?>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-999999 font-14 font-weight-400 font-space-0 pb-20">
-                                                <?php echo __($footer_info); ?>
+                                                <?php echo __($footer_info, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <?php endif; ?>
                                         <?php if ($footer_social_title != "") : ?>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-191919 font-16 font-weight-600 font-space-0 pb-20">
-                                                <?php echo __($footer_social_title); ?>
+                                                <?php echo __($footer_social_title, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <?php endif; ?>
@@ -236,19 +236,19 @@ include('setting-wc-email.php'); // All Customization in This File
                                                     <tr>
                                                         <?php
                                                         if ($social_1_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $social_1_link . '"><img src="' . esc_url($plugin_path . '/' . $social_1_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $social_1_link . '"><img src="' . esc_url($plugin_path . '/' . $social_1_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         if ($social_2_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $social_2_link . '"><img src="' . esc_url($plugin_path . '/' . $social_2_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $social_2_link . '"><img src="' . esc_url($plugin_path . '/' . $social_2_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         if ($social_3_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $social_3_link . '"><img src="' . esc_url($plugin_path . '/' . $social_3_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $social_3_link . '"><img src="' . esc_url($plugin_path . '/' . $social_3_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         if ($social_4_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $social_4_link . '"><img src="' . esc_url($plugin_path . '/' . $social_4_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $social_4_link . '"><img src="' . esc_url($plugin_path . '/' . $social_4_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         if ($social_5_link != "") {
-                                                            echo __('<td align="center" width="45"><a href="' . $social_5_link . '"><img src="' . esc_url($plugin_path . '/' . $social_5_img) . '" alt="Social" width="35" style="width:35px;"></a></td>');
+                                                            echo __('<td align="center" width="45"><a href="' . $social_5_link . '"><img src="' . esc_url($plugin_path . '/' . $social_5_img) . '" alt="Social" width="35" style="width:35px;"></a></td>', 'bypierofracasso-woocommerce-emails');
                                                         }
                                                         ?>
                                                     </tr>
@@ -259,16 +259,16 @@ include('setting-wc-email.php'); // All Customization in This File
                                             <td align="center" valign="middle" class="font-primary font-999999 font-14 font-weight-400 font-space-0">
                                                 <?php
                                                 if ($footer_link_1 != "") {
-                                                    echo __('<a href="' . $footer_link_1 . '" class="font-underline font-999999">' . $footer_link_name_1 . '</a>&nbsp;&nbsp;|&nbsp;&nbsp;');
+                                                    echo __('<a href="' . $footer_link_1 . '" class="font-underline font-999999">' . $footer_link_name_1 . '</a>&nbsp;&nbsp;|&nbsp;&nbsp;', 'bypierofracasso-woocommerce-emails');
                                                 }
                                                 if ($footer_link_2 != "") {
-                                                    echo __('<a href="' . $footer_link_2 . '" class="font-underline font-999999">' . $footer_link_name_2 . '</a>&nbsp;&nbsp;|&nbsp;&nbsp;');
+                                                    echo __('<a href="' . $footer_link_2 . '" class="font-underline font-999999">' . $footer_link_name_2 . '</a>&nbsp;&nbsp;|&nbsp;&nbsp;', 'bypierofracasso-woocommerce-emails');
                                                 }
                                                 if ($footer_link_3 != "") {
-                                                    echo __('<a href="' . $footer_link_3 . '" class="font-underline font-999999">' . $footer_link_name_3 . '</a>&nbsp;&nbsp;|&nbsp;&nbsp;');
+                                                    echo __('<a href="' . $footer_link_3 . '" class="font-underline font-999999">' . $footer_link_name_3 . '</a>&nbsp;&nbsp;|&nbsp;&nbsp;', 'bypierofracasso-woocommerce-emails');
                                                 }
                                                 if ($footer_link_4 != "") {
-                                                    echo __('<a href="' . $footer_link_4 . '" class="font-underline font-999999">' . $footer_link_name_4 . '</a>');
+                                                    echo __('<a href="' . $footer_link_4 . '" class="font-underline font-999999">' . $footer_link_name_4 . '</a>', 'bypierofracasso-woocommerce-emails');
                                                 }
                                                 ?>
                                             </td>

@@ -46,12 +46,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-16 font-weight-600 pb-5 font-space-0">
-                                                <?php echo __($reset_password_subtitle); ?>
+                                                <?php echo __($reset_password_subtitle, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-36 font-weight-400 font-space-0">
-                                                <?php echo __($email_heading); ?>
+                                                <?php echo __($email_heading, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -125,11 +125,11 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="font-primary font-191919 font-18 font-weight-600 font-space-0 pb-20">
                                                 <?php
                                                 if (isset($user_data->first_name) && !empty($user_data->first_name)) {
-                                                    echo __($reset_password_greeting . " " . esc_html($user_data->first_name) . ',');
+                                                    echo __($reset_password_greeting . " " . esc_html($user_data->first_name) . ',', 'bypierofracasso-woocommerce-emails');
                                                 } elseif (!empty($user_login)) {
-                                                    echo __($reset_password_greeting . " " . esc_html($user_login) . ',');
+                                                    echo __($reset_password_greeting . " " . esc_html($user_login) . ',', 'bypierofracasso-woocommerce-emails');
                                                 } else {
-                                                    echo __($reset_password_greeting . " Customer,");
+                                                    echo __($reset_password_greeting . " Customer,", 'bypierofracasso-woocommerce-emails');
                                                 }
                                                 ?>
                                             </td>
@@ -138,16 +138,16 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="font-primary font-595959 font-16 font-weight-400 font-space-0 pb-40">
                                                 <?php
                                                 if ($additional_content) {
-                                                    echo __(wp_kses_post(wptexturize($additional_content . '<br><br>')));
+                                                    echo __(wp_kses_post(wptexturize($additional_content . '<br><br>')), 'bypierofracasso-woocommerce-emails');
                                                 }
-                                                echo __($reset_password_link_text . '<br>', 'piero-fracasso-emails');
+                                                echo __($reset_password_link_text . '<br>', 'bypierofracasso-woocommerce-emails');
                                                 if (isset($reset_key) && isset($user_login)):
                                                 ?>
                                                     <a href="<?php echo esc_url(add_query_arg(array('key' => $reset_key, 'login' => rawurlencode($user_login)), wc_get_endpoint_url('lost-password', '', wc_get_page_permalink('myaccount')))); ?>" class="font-4B7BEC">
-                                                        <?php echo __($reset_password_link, 'piero-fracasso-emails'); ?>
+                                                        <?php echo __($reset_password_link, 'bypierofracasso-woocommerce-emails'); ?>
                                                     </a>
                                                 <?php else: ?>
-                                                    <?php echo __('[Reset link unavailable in preview]', 'piero-fracasso-emails'); ?>
+                                                    <?php echo __('[Reset link unavailable in preview]', 'bypierofracasso-woocommerce-emails'); ?>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -157,7 +157,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
                                                             <a href="<?php echo (isset($reset_key) && isset($user_login)) ? esc_url(add_query_arg(array('key' => $reset_key, 'login' => rawurlencode($user_login)), wc_get_endpoint_url('lost-password', '', wc_get_page_permalink('myaccount')))) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($reset_password_btn, 'piero-fracasso-emails'); ?>
+                                                                <?php echo __($reset_password_btn, 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -201,12 +201,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="left" valign="middle" class="font-primary font-191919 font-18 font-weight-600 font-space-0">
-                                                <?php echo __($reset_password_regards_1); ?>
+                                                <?php echo __($reset_password_regards_1, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="left" valign="middle" class="font-primary font-595959 font-16 font-weight-400 font-space-0">
-                                                <?php echo __($reset_password_regards_2); ?>
+                                                <?php echo __($reset_password_regards_2, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -283,7 +283,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="left" valign="middle" class="font-primary font-595959 font-16 font-weight-400 font-space-0">
-                                                <?php echo __($reset_password_description); ?>
+                                                <?php echo __($reset_password_description, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>

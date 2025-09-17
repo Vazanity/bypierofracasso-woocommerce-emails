@@ -21,9 +21,9 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     public function __construct()
     {
         $this->id                 = PFP_GATEWAY_ID;
-        $this->method_title       = __('Rechnung (Swiss QR)', 'piero-fracasso-emails');
-        $this->method_description = __('Diese Zahlungsmethode erscheint nur bei Währung CHF und (optional) für Adressen in CH oder LI.', 'piero-fracasso-emails');
-        $this->title              = __('Rechnung (Swiss QR)', 'piero-fracasso-emails');
+        $this->method_title       = __('Rechnung (Swiss QR)', 'bypierofracasso-woocommerce-emails');
+        $this->method_description = __('Diese Zahlungsmethode erscheint nur bei Währung CHF und (optional) für Adressen in CH oder LI.', 'bypierofracasso-woocommerce-emails');
+        $this->title              = __('Rechnung (Swiss QR)', 'bypierofracasso-woocommerce-emails');
         $this->has_fields = false;
         $this->supports   = array('products');
 
@@ -45,130 +45,130 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     {
         $this->form_fields = array(
             'enabled' => array(
-                'title'   => __('Enable/Disable', 'piero-fracasso-emails'),
+                'title'   => __('Enable/Disable', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'checkbox',
-                'label'   => __('Enable Swiss QR invoice payments', 'piero-fracasso-emails'),
+                'label'   => __('Enable Swiss QR invoice payments', 'bypierofracasso-woocommerce-emails'),
                 'default' => 'no',
             ),
             'title' => array(
-                'title'       => __('Title', 'piero-fracasso-emails'),
+                'title'       => __('Title', 'bypierofracasso-woocommerce-emails'),
                 'type'        => 'text',
-                'description' => __('Displayed on the checkout page.', 'piero-fracasso-emails'),
-                'default'     => __('Rechnung (Swiss QR)', 'piero-fracasso-emails'),
+                'description' => __('Displayed on the checkout page.', 'bypierofracasso-woocommerce-emails'),
+                'default'     => __('Rechnung (Swiss QR)', 'bypierofracasso-woocommerce-emails'),
                 'desc_tip'    => true,
             ),
             'description' => array(
-                'title'       => __('Description', 'piero-fracasso-emails'),
+                'title'       => __('Description', 'bypierofracasso-woocommerce-emails'),
                 'type'        => 'textarea',
-            'description' => __('Checkout description shown to the customer.', 'piero-fracasso-emails'),
-            'default'     => __('Sie erhalten eine Rechnung mit Swiss-QR-Code im Anhang der Bestellbestätigung.', 'piero-fracasso-emails'),
+            'description' => __('Checkout description shown to the customer.', 'bypierofracasso-woocommerce-emails'),
+            'default'     => __('Sie erhalten eine Rechnung mit Swiss-QR-Code im Anhang der Bestellbestätigung.', 'bypierofracasso-woocommerce-emails'),
         ),
             'only_ch_li' => array(
-                'title'   => __('Restrict to CH/LI', 'piero-fracasso-emails'),
+                'title'   => __('Restrict to CH/LI', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'checkbox',
-                'label'   => __('Only allow billing addresses in Switzerland or Liechtenstein', 'piero-fracasso-emails'),
+                'label'   => __('Only allow billing addresses in Switzerland or Liechtenstein', 'bypierofracasso-woocommerce-emails'),
                 'default' => 'yes',
             ),
             'min_amount' => array(
-                'title'       => __('Minimum Amount (CHF)', 'piero-fracasso-emails'),
+                'title'       => __('Minimum Amount (CHF)', 'bypierofracasso-woocommerce-emails'),
                 'type'        => 'number',
-                'description' => __('Minimum order total required to show this gateway.', 'piero-fracasso-emails'),
+                'description' => __('Minimum order total required to show this gateway.', 'bypierofracasso-woocommerce-emails'),
                 'default'     => '0.05',
                 'desc_tip'    => true,
             ),
             'payment_notice' => array(
-                'title'       => __('Payment Notice', 'piero-fracasso-emails'),
+                'title'       => __('Payment Notice', 'bypierofracasso-woocommerce-emails'),
                 'type'        => 'textarea',
-                'description' => __('Shown on the invoice and emails.', 'piero-fracasso-emails'),
-                'default'     => __('Der Rechnungsbetrag ist sofort nach Erhalt zahlbar.', 'piero-fracasso-emails'),
+                'description' => __('Shown on the invoice and emails.', 'bypierofracasso-woocommerce-emails'),
+                'default'     => __('Der Rechnungsbetrag ist sofort nach Erhalt zahlbar.', 'bypierofracasso-woocommerce-emails'),
             ),
             'qr_iban' => array(
-                'title'       => __('QR-IBAN', 'piero-fracasso-emails'),
+                'title'       => __('QR-IBAN', 'bypierofracasso-woocommerce-emails'),
                 'type'        => 'text',
-                'description' => __('Optional when an IBAN is configured; required for QR references.', 'piero-fracasso-emails'),
+                'description' => __('Optional when an IBAN is configured; required for QR references.', 'bypierofracasso-woocommerce-emails'),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'iban' => array(
-                'title'       => __('IBAN', 'piero-fracasso-emails'),
+                'title'       => __('IBAN', 'bypierofracasso-woocommerce-emails'),
                 'type'        => 'text',
-                'description' => __('Used when no QR-IBAN is provided.', 'piero-fracasso-emails'),
+                'description' => __('Used when no QR-IBAN is provided.', 'bypierofracasso-woocommerce-emails'),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'creditor_reference' => array(
-                'title'       => __('Creditor Reference', 'piero-fracasso-emails'),
+                'title'       => __('Creditor Reference', 'bypierofracasso-woocommerce-emails'),
                 'type'        => 'text',
-                'description' => __('Optional; start with RF for SCOR references.', 'piero-fracasso-emails'),
+                'description' => __('Optional; start with RF for SCOR references.', 'bypierofracasso-woocommerce-emails'),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
             'creditor_name' => array(
-                'title'       => __('Creditor Name', 'piero-fracasso-emails'),
+                'title'       => __('Creditor Name', 'bypierofracasso-woocommerce-emails'),
                 'type'        => 'text',
                 'default'     => '',
             ),
             'creditor_street' => array(
-                'title'   => __('Creditor Street and No.', 'piero-fracasso-emails'),
+                'title'   => __('Creditor Street and No.', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'text',
                 'default' => '',
             ),
             'creditor_postcode' => array(
-                'title'   => __('Creditor ZIP', 'piero-fracasso-emails'),
+                'title'   => __('Creditor ZIP', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'text',
                 'default' => '',
             ),
             'creditor_city' => array(
-                'title'   => __('Creditor City', 'piero-fracasso-emails'),
+                'title'   => __('Creditor City', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'text',
                 'default' => '',
             ),
             'creditor_country' => array(
-                'title'   => __('Creditor Country (ISO-2)', 'piero-fracasso-emails'),
+                'title'   => __('Creditor Country (ISO-2)', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'text',
                 'default' => 'CH',
             ),
             'reference_schema' => array(
-                'title'       => __('Reference Schema', 'piero-fracasso-emails'),
+                'title'       => __('Reference Schema', 'bypierofracasso-woocommerce-emails'),
                 'type'        => 'text',
-                'description' => __('Used to build the payment reference.', 'piero-fracasso-emails'),
+                'description' => __('Used to build the payment reference.', 'bypierofracasso-woocommerce-emails'),
                 'default'     => 'PFP-{order_id}',
                 'desc_tip'    => true,
             ),
             'attach_customer_invoice' => array(
-                'title'   => __('Attach to customer invoice email', 'piero-fracasso-emails'),
+                'title'   => __('Attach to customer invoice email', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'checkbox',
-                'label'   => __('Attach PDF to customer invoice email', 'piero-fracasso-emails'),
+                'label'   => __('Attach PDF to customer invoice email', 'bypierofracasso-woocommerce-emails'),
                 'default' => 'yes',
             ),
             'attach_customer_order_received' => array(
-                'title'   => __('Attach to order confirmation email', 'piero-fracasso-emails'),
+                'title'   => __('Attach to order confirmation email', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'checkbox',
-                'label'   => __('Attach PDF to order confirmation email', 'piero-fracasso-emails'),
+                'label'   => __('Attach PDF to order confirmation email', 'bypierofracasso-woocommerce-emails'),
                 'default' => 'yes',
             ),
             'attach_customer_processing_order' => array(
-                'title'   => __('Attach to processing order email', 'piero-fracasso-emails'),
+                'title'   => __('Attach to processing order email', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'checkbox',
-                'label'   => __('Attach PDF to processing order email', 'piero-fracasso-emails'),
+                'label'   => __('Attach PDF to processing order email', 'bypierofracasso-woocommerce-emails'),
                 'default' => 'yes',
             ),
             'attach_customer_order_shipped' => array(
-                'title'   => __('Attach to shipped order email', 'piero-fracasso-emails'),
+                'title'   => __('Attach to shipped order email', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'checkbox',
-                'label'   => __('Attach PDF to shipped order email', 'piero-fracasso-emails'),
+                'label'   => __('Attach PDF to shipped order email', 'bypierofracasso-woocommerce-emails'),
                 'default' => 'yes',
             ),
             'cache_pdf' => array(
-                'title'   => __('Cache PDF per order', 'piero-fracasso-emails'),
+                'title'   => __('Cache PDF per order', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'checkbox',
-                'label'   => __('Only generate the PDF once per order', 'piero-fracasso-emails'),
+                'label'   => __('Only generate the PDF once per order', 'bypierofracasso-woocommerce-emails'),
                 'default' => 'yes',
             ),
             'checkout_diagnostics' => array(
-                'title'   => __('Diagnose im Checkout für Admins', 'piero-fracasso-emails'),
+                'title'   => __('Diagnose im Checkout für Admins', 'bypierofracasso-woocommerce-emails'),
                 'type'    => 'checkbox',
-                'label'   => __('Show diagnostic info in checkout for administrators', 'piero-fracasso-emails'),
+                'label'   => __('Show diagnostic info in checkout for administrators', 'bypierofracasso-woocommerce-emails'),
                 'default' => 'no',
             ),
         );
@@ -244,7 +244,7 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
 
         if ('' === $qr_iban && '' === $iban) {
             if (class_exists('WC_Admin_Settings')) {
-                WC_Admin_Settings::add_error(__('Please enter at least a QR-IBAN or an IBAN for the invoice gateway.', 'piero-fracasso-emails'));
+                WC_Admin_Settings::add_error(__('Please enter at least a QR-IBAN or an IBAN for the invoice gateway.', 'bypierofracasso-woocommerce-emails'));
             }
             return false;
         }
@@ -275,58 +275,63 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
 
         $enabled = ('yes' === $this->get_option('enabled', 'no'));
         if ($log_enabled) {
-            bypf_invoice_log_admin('is_available(): enabled = ' . ($enabled ? 'yes' : 'no'));
+            bypf_invoice_log_admin('Classic is_available(): enabled setting = ' . ($enabled ? 'yes' : 'no'));
         }
         if (!$enabled) {
             $this->unavailability_reasons[] = 'disabled';
             if ($log_enabled) {
-                bypf_invoice_log_admin('is_available(): returning false because gateway is disabled.');
+                bypf_invoice_log_admin('Classic is_available(): failing because gateway is disabled.');
             }
             return false;
         }
 
         $currency = function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : '';
+        $currency_pass = ('CHF' === $currency);
         if ($log_enabled) {
-            bypf_invoice_log_admin('is_available(): store currency = ' . ($currency ?: '(empty)'));
+            bypf_invoice_log_admin(
+                'Classic is_available(): currency check = ' . ($currency_pass ? 'pass' : 'fail') . ' (' . ($currency ?: 'n/a') . ')'
+            );
         }
-        if ('CHF' !== $currency) {
+        if (!$currency_pass) {
             $this->unavailability_reasons[] = 'currency';
-            if ($log_enabled) {
-                bypf_invoice_log_admin('is_available(): returning false due to non-CHF currency.');
-            }
             return false;
         }
 
         $restrict_to_ch_li = ('yes' === $this->get_option('only_ch_li', 'no'));
-        if ($log_enabled) {
-            bypf_invoice_log_admin('is_available(): CH/LI restriction = ' . ($restrict_to_ch_li ? 'enabled' : 'disabled'));
-        }
+        $country_value      = '';
+        $country_pass       = true;
+
         if ($restrict_to_ch_li) {
-            $country = '';
             if (function_exists('WC') && WC()->customer) {
-                $country = WC()->customer->get_billing_country();
-                if (empty($country)) {
-                    $country = WC()->customer->get_shipping_country();
+                $country_value = WC()->customer->get_billing_country();
+                if ('' === $country_value) {
+                    $country_value = WC()->customer->get_shipping_country();
                 }
             }
 
-            if ($log_enabled) {
-                bypf_invoice_log_admin('is_available(): matched customer country = ' . ($country ?: '(empty)'));
-            }
-
-            if (!empty($country) && !in_array($country, array('CH', 'LI'), true)) {
+            $country_pass = ('' === $country_value || in_array($country_value, array('CH', 'LI'), true));
+            if (!$country_pass) {
                 $this->unavailability_reasons[] = 'country';
-                if ($log_enabled) {
-                    bypf_invoice_log_admin('is_available(): returning false due to country restriction.');
-                }
-                return false;
             }
+        }
+
+        if ($log_enabled) {
+            $message = 'Classic is_available(): country check = ' . ($country_pass ? 'pass' : 'fail');
+            if (!$restrict_to_ch_li) {
+                $message .= ' (restriction disabled)';
+            }
+            $message .= ' (' . ($country_value ?: 'empty') . ')';
+            bypf_invoice_log_admin($message);
+        }
+
+        if (!$country_pass) {
+            return false;
         }
 
         $min_setting = $this->get_option('min_amount', '');
         $min_amount  = is_numeric($min_setting) ? (float) $min_setting : 0.0;
         if ($log_enabled) {
-            bypf_invoice_log_admin('is_available(): minimum amount setting = ' . $min_amount);
+            bypf_invoice_log_admin('Classic is_available(): minimum amount setting = ' . $min_amount);
         }
 
         if ($min_amount > 0) {
@@ -381,18 +386,16 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
 
             if ($log_enabled) {
                 bypf_invoice_log_admin(
-                    'is_available(): evaluated cart total = ' . (null === $cart_total ? '(unavailable)' : sprintf('%.2f', $cart_total))
+                    'Classic is_available(): min total evaluation = ' . (null === $cart_total ? 'unavailable' : sprintf('%.2f', $cart_total))
                 );
             }
 
             if (null !== $cart_total && $cart_total < $min_amount) {
                 $this->unavailability_reasons[] = 'min_amount';
                 if ($log_enabled) {
-                    bypf_invoice_log_admin(sprintf('is_available(): cart total %.2f below minimum %.2f.', $cart_total, $min_amount));
+                    bypf_invoice_log_admin(sprintf('Classic is_available(): failing min check %.2f < %.2f', $cart_total, $min_amount));
                 }
                 return false;
-            } elseif (null !== $cart_total && $log_enabled) {
-                bypf_invoice_log_admin(sprintf('is_available(): cart total %.2f meets minimum %.2f.', $cart_total, $min_amount));
             }
         }
 
@@ -400,10 +403,13 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
 
         if (!$available && empty($this->unavailability_reasons)) {
             $this->unavailability_reasons[] = 'filtered';
+            if ($log_enabled) {
+                bypf_invoice_log_admin('Classic is_available(): filtered result forced to false.');
+            }
         }
 
         if ($log_enabled) {
-            bypf_invoice_log_admin('is_available(): final result = ' . ($available ? 'true' : 'false') . '.');
+            bypf_invoice_log_admin('Classic is_available(): final result = ' . ($available ? 'true' : 'false'));
         }
 
         return $available;
@@ -430,13 +436,13 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
         $order = wc_get_order($order_id);
 
         if (!$order instanceof WC_Order || !$this->validate_order($order)) {
-            wc_add_notice(__('Swiss QR invoice payment is not available for this order.', 'piero-fracasso-emails'), 'error');
+            wc_add_notice(__('Swiss QR invoice payment is not available for this order.', 'bypierofracasso-woocommerce-emails'), 'error');
             return array('result' => 'failure');
         }
 
         $payment_parameters = $this->get_payment_parameters($order);
         if (empty($payment_parameters['account'])) {
-            wc_add_notice(__('Swiss QR invoice configuration is incomplete.', 'piero-fracasso-emails'), 'error');
+            wc_add_notice(__('Swiss QR invoice configuration is incomplete.', 'bypierofracasso-woocommerce-emails'), 'error');
             if (function_exists('wc_get_logger')) {
                 wc_get_logger()->error('Invoice gateway missing QR-IBAN or IBAN during checkout.', array('source' => 'pfp-invoice'));
             }
@@ -567,11 +573,11 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
         }
 
         $messages = array(
-            'disabled'   => __('Gateway disabled in settings', 'piero-fracasso-emails'),
-            'currency'   => __('Shop currency ≠ CHF', 'piero-fracasso-emails'),
-            'country'    => __('Billing Country not CH/LI', 'piero-fracasso-emails'),
-            'min_amount' => __('Minimum amount not reached', 'piero-fracasso-emails'),
-            'filtered'   => __('Hidden by customization filter', 'piero-fracasso-emails'),
+            'disabled'   => __('Gateway disabled in settings', 'bypierofracasso-woocommerce-emails'),
+            'currency'   => __('Shop currency ≠ CHF', 'bypierofracasso-woocommerce-emails'),
+            'country'    => __('Billing Country not CH/LI', 'bypierofracasso-woocommerce-emails'),
+            'min_amount' => __('Minimum amount not reached', 'bypierofracasso-woocommerce-emails'),
+            'filtered'   => __('Hidden by customization filter', 'bypierofracasso-woocommerce-emails'),
         );
 
         $reasons = array();
@@ -582,7 +588,7 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
         }
 
         if (!empty($reasons)) {
-            echo '<div class="notice notice-info"><p>' . esc_html__('Swiss QR invoice hidden:', 'piero-fracasso-emails') . ' ' . esc_html(implode(', ', $reasons)) . '</p></div>';
+            echo '<div class="notice notice-info"><p>' . esc_html__('Swiss QR invoice hidden:', 'bypierofracasso-woocommerce-emails') . ' ' . esc_html(implode(', ', $reasons)) . '</p></div>';
         }
     }
 }
