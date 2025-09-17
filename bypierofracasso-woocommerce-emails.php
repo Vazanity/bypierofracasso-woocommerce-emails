@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.6.4
+Version: 1.2.6.5
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,13 +17,31 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.6.4');
+define('BYPF_EMAILS_VERSION', '1.2.6.5');
 define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
 define('PFP_GATEWAY_ID', 'pfp_invoice');
 
 function bypf_log($message, $level = 'debug')
 {
+    static $once_per_request = array();
+
+    $limited_messages = array(
+        'perfume_sampler' => "Added \"Perfume Sampler\" to product type selector.",
+        'email_classes'   => 'Registered email classes'
+    );
+
+    foreach ($limited_messages as $key => $needle) {
+        if (strpos($message, $needle) !== false) {
+            if (isset($once_per_request[$key])) {
+                return;
+            }
+
+            $once_per_request[$key] = true;
+            break;
+        }
+    }
+
     if (!defined('WP_DEBUG') || !WP_DEBUG) {
         return;
     }
@@ -134,6 +152,12 @@ function bypf_emails_activation_notice()
 
 register_activation_hook(__FILE__, 'bypf_emails_activation');
 add_action('admin_notices', 'bypf_emails_activation_notice');
+
+require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-legacy-detector.php';
+
+if (class_exists('PFP_Legacy_Detector')) {
+    PFP_Legacy_Detector::register();
+}
 
 // Debug: Confirm plugin is active on admin page loads
 function bypierofracasso_debug_plugin_active()

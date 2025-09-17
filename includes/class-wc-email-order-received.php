@@ -8,10 +8,10 @@ class WC_Email_Order_Received extends WC_Email
     public function __construct()
     {
         $this->id = 'order_received';
-        $this->title = __('Bestellung erhalten', 'bypierofracasso-woocommerce-emails');
-        $this->description = __('Diese E-Mail wird gesendet, wenn eine Bestellung aufgegeben wurde.', 'bypierofracasso-woocommerce-emails');
-        $this->heading = __('Vielen Dank für deine Bestellung!', 'bypierofracasso-woocommerce-emails');
-        $this->subject = __('Deine Bestellung bei Piero Fracasso Perfumes wurde erhalten', 'bypierofracasso-woocommerce-emails');
+        $this->title = 'Bestellung erhalten';
+        $this->description = 'Diese E-Mail wird gesendet, wenn eine Bestellung aufgegeben wurde.';
+        $this->heading = 'Vielen Dank für deine Bestellung!';
+        $this->subject = 'Deine Bestellung bei Piero Fracasso Perfumes wurde erhalten';
 
         $this->template_html = 'customer-order-received.php'; // Fixed path
         $this->template_plain = 'plain/customer-order-received.php'; // Fixed path
@@ -21,6 +21,40 @@ class WC_Email_Order_Received extends WC_Email
         add_action('woocommerce_order_status_changed', array($this, 'bpf_handle_custom_email_trigger'), 9999, 4);
 
         parent::__construct();
+    }
+
+    public function get_title()
+    {
+        return apply_filters('woocommerce_email_title_' . $this->id, __($this->title, 'bypierofracasso-woocommerce-emails'), $this);
+    }
+
+    public function get_description()
+    {
+        return __($this->description, 'bypierofracasso-woocommerce-emails');
+    }
+
+    public function get_heading()
+    {
+        $heading = $this->format_string(__($this->heading, 'bypierofracasso-woocommerce-emails'));
+
+        return apply_filters('woocommerce_email_heading_' . $this->id, $heading, $this->object, $this);
+    }
+
+    public function get_subject()
+    {
+        $subject = $this->format_string(__($this->subject, 'bypierofracasso-woocommerce-emails'));
+
+        return apply_filters('woocommerce_email_subject_' . $this->id, $subject, $this->object, $this);
+    }
+
+    public function get_default_subject()
+    {
+        return __('Deine Bestellung bei Piero Fracasso Perfumes wurde erhalten', 'bypierofracasso-woocommerce-emails');
+    }
+
+    public function get_default_heading()
+    {
+        return __('Vielen Dank für deine Bestellung!', 'bypierofracasso-woocommerce-emails');
     }
 
     // When order status changed

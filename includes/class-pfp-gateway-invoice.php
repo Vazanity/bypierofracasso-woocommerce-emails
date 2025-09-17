@@ -8,6 +8,10 @@ if (!defined('ABSPATH')) {
  */
 class PFP_Gateway_Invoice extends WC_Payment_Gateway
 {
+    private const DEFAULT_TITLE = 'Invoice (Swiss QR)';
+
+    private const DEFAULT_METHOD_DESCRIPTION = 'This payment method appears only when the store currency is CHF and can optionally be limited to billing addresses in Switzerland or Liechtenstein.';
+
     /**
      * Reasons why the gateway is unavailable.
      *
@@ -21,11 +25,11 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
     public function __construct()
     {
         $this->id                 = PFP_GATEWAY_ID;
-        $this->method_title       = __('Rechnung (Swiss QR)', 'bypierofracasso-woocommerce-emails');
-        $this->method_description = __('Diese Zahlungsmethode erscheint nur bei Währung CHF und (optional) für Adressen in CH oder LI.', 'bypierofracasso-woocommerce-emails');
-        $this->title              = __('Rechnung (Swiss QR)', 'bypierofracasso-woocommerce-emails');
-        $this->has_fields = false;
-        $this->supports   = array('products');
+        $this->method_title       = self::DEFAULT_TITLE;
+        $this->method_description = self::DEFAULT_METHOD_DESCRIPTION;
+        $this->title              = self::DEFAULT_TITLE;
+        $this->has_fields         = false;
+        $this->supports           = array('products');
 
         $this->init_form_fields();
         $this->init_settings();
@@ -36,6 +40,66 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         add_action('woocommerce_review_order_after_payment', array($this, 'maybe_render_checkout_diagnostics'));
         add_filter('woocommerce_settings_api_sanitized_fields_' . $this->id, array($this, 'sanitize_admin_settings'));
+    }
+
+    /**
+     * Get the translated gateway title used in settings screens.
+     */
+    public function get_method_title()
+    {
+        $title = $this->method_title;
+
+        if ($title === self::DEFAULT_TITLE) {
+            $title = __('Invoice (Swiss QR)', 'bypierofracasso-woocommerce-emails');
+        }
+
+        return apply_filters('woocommerce_gateway_title', $title, $this->id);
+    }
+
+    /**
+     * Get the translated gateway title shown at checkout.
+     */
+    public function get_title()
+    {
+        $title = $this->title;
+
+        if ($title === self::DEFAULT_TITLE) {
+            $title = __('Invoice (Swiss QR)', 'bypierofracasso-woocommerce-emails');
+        }
+
+        return apply_filters('woocommerce_gateway_title', $title, $this->id);
+    }
+
+    /**
+     * Get the translated description used in admin screens.
+     */
+    public function get_method_description()
+    {
+        $description = $this->method_description;
+
+        if ($description === self::DEFAULT_METHOD_DESCRIPTION) {
+            $description = __('This payment method appears only when the store currency is CHF and can optionally be limited to billing addresses in Switzerland or Liechtenstein.', 'bypierofracasso-woocommerce-emails');
+        }
+
+        return $description;
+    }
+
+    /**
+     * Get the translated description shown to the customer.
+     */
+    public function get_description()
+    {
+        $description = $this->description;
+
+        if ('' === $description || null === $description) {
+            $description = $this->method_description;
+        }
+
+        if ($description === self::DEFAULT_METHOD_DESCRIPTION) {
+            $description = __('This payment method appears only when the store currency is CHF and can optionally be limited to billing addresses in Switzerland or Liechtenstein.', 'bypierofracasso-woocommerce-emails');
+        }
+
+        return apply_filters('woocommerce_gateway_description_' . $this->id, $description, $this);
     }
 
     /**
