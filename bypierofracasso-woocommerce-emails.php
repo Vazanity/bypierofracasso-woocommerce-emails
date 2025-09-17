@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.6-hotfix
+Version: 1.2.6.2
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.6-hotfix');
+define('BYPF_EMAILS_VERSION', '1.2.6.2');
 define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
 define('PFP_GATEWAY_ID', 'pfp_invoice');
@@ -475,13 +475,7 @@ function bypierofracasso_woocommerce_emails_bootstrap()
         });
     }
 
-    require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-gateway-invoice.php';
-    require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-invoice-blocks.php';
-    add_filter('woocommerce_payment_gateways', 'bypf_register_invoice_gateway');
     add_filter('woocommerce_available_payment_gateways', 'bypf_invoice_inspect_available_gateways', 20);
-    bypf_register_invoice_blocks_script();
-    add_action('woocommerce_blocks_loaded', 'bypf_register_invoice_blocks_integration');
-    add_filter('woocommerce_blocks_payment_method_type_registration', 'bypf_register_invoice_blocks_compat');
 
     if (class_exists('PFP_Email_Manager')) {
         new PFP_Email_Manager();
@@ -510,16 +504,65 @@ function bypierofracasso_woocommerce_emails_bootstrap()
 
 add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_bootstrap', 20);
 
-function bypf_register_invoice_gateway($gateways)
-{
-    if (!in_array('PFP_Gateway_Invoice', $gateways, true)) {
-        $gateways[] = 'PFP_Gateway_Invoice';
+add_action('plugins_loaded', function () {
+    if (!function_exists('WC')) {
+        return;
     }
 
-    bypf_invoice_log_admin('Registered gateway via woocommerce_payment_gateways.');
+    $gateway_file = plugin_dir_path(PFP_MAIN_FILE) . 'includes/class-pfp-gateway-invoice.php';
+    if (!class_exists('PFP_Gateway_Invoice') && file_exists($gateway_file)) {
+        require_once $gateway_file;
+    }
 
-    return $gateways;
-}
+    add_filter('woocommerce_payment_gateways', function ($methods) {
+        if (!in_array('PFP_Gateway_Invoice', $methods, true)) {
+            $methods[] = 'PFP_Gateway_Invoice';
+            bypf_invoice_log_admin('woocommerce_payment_gateways: added PFP_Gateway_Invoice.');
+        }
+
+        return $methods;
+    });
+}, 20);
+
+add_action('init', function () {
+    if (is_admin() && (!function_exists('wp_doing_ajax') || !wp_doing_ajax())) {
+        return;
+    }
+
+    wp_register_script(
+        'pfp-invoice-blocks',
+        plugins_url('assets/blocks/index.js', PFP_MAIN_FILE),
+        array('wc-blocks-registry', 'wp-element', 'wp-i18n'),
+        PFP_VERSION,
+        true
+    );
+
+    $label = __('Invoice (Swiss QR)', 'piero-fracasso-emails');
+    wp_add_inline_script('pfp-invoice-blocks', 'window.pfpInvoiceLabel = ' . wp_json_encode($label) . ';', 'before');
+});
+
+add_action('woocommerce_blocks_loaded', function () {
+    if (!class_exists('\Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry')) {
+        bypf_invoice_log_admin('Blocks IntegrationRegistry class missing; skipping registration.');
+        return;
+    }
+
+    $integration_file = plugin_dir_path(PFP_MAIN_FILE) . 'includes/class-pfp-invoice-blocks.php';
+    if (!class_exists('\PFP\Blocks\PFP_Invoice_Blocks') && file_exists($integration_file)) {
+        require_once $integration_file;
+    }
+
+    if (!class_exists('\PFP\Blocks\PFP_Invoice_Blocks')) {
+        bypf_invoice_log_admin('Blocks integration class unavailable; skipping registration.', 'warning');
+        return;
+    }
+
+    \Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry::get_instance()->register(
+        new \PFP\Blocks\PFP_Invoice_Blocks()
+    );
+
+    bypf_invoice_log_admin('Registered Blocks integration for invoice gateway.');
+});
 
 function bypf_invoice_inspect_available_gateways($gateways)
 {
@@ -575,50 +618,3 @@ function bypf_invoice_inspect_available_gateways($gateways)
     return $gateways;
 }
 
-function bypf_register_invoice_blocks_script() {
-    $handle = 'pfp-invoice-blocks';
-    wp_register_script(
-        $handle,
-        plugins_url('assets/blocks/index.js', PFP_MAIN_FILE),
-        array('wc-blocks-registry', 'wp-element', 'wp-i18n'),
-        PFP_VERSION,
-        true
-    );
-
-    if (function_exists('wp_set_script_translations')) {
-        wp_set_script_translations($handle, 'piero-fracasso-emails', plugin_dir_path(PFP_MAIN_FILE) . 'languages');
-    }
-}
-
-function bypf_register_invoice_blocks_integration() {
-    if (!class_exists('\Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry')) {
-        bypf_invoice_log_admin('Blocks IntegrationRegistry class missing; skipping registration.');
-        return;
-    }
-
-    $integration = new \PFP\Blocks\PFP_Invoice_Blocks();
-
-    \Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry::get_instance()->register(
-        $integration
-    );
-
-    bypf_invoice_log_admin('Registered Blocks integration for invoice gateway.');
-}
-
-function bypf_register_invoice_blocks_compat($integrations)
-{
-    if (!is_array($integrations)) {
-        return $integrations;
-    }
-
-    if (!class_exists('\PFP\Blocks\PFP_Invoice_Blocks')) {
-        return $integrations;
-    }
-
-    if (!isset($integrations[PFP_GATEWAY_ID])) {
-        $integrations[PFP_GATEWAY_ID] = '\PFP\Blocks\PFP_Invoice_Blocks';
-        bypf_invoice_log_admin('Registered Blocks integration class via compatibility filter.');
-    }
-
-    return $integrations;
-}

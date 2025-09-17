@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.6.2] - 2025-09-14
+### Changed
+- Hardened Classic/Blocks registration using official WooCommerce APIs.
+- Ensured supports = products and unified gateway ID.
+- Added admin-only diagnostics for availability and blocks activation.
+- No icons added.
+
 ## [1.2.6-hotfix] - 2025-09-14
 ### Changed
 - Hardened Classic/Blocks registration using official WooCommerce hooks; added admin-only instrumentation; kept IBAN rules.

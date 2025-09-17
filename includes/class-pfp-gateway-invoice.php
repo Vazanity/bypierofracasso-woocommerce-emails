@@ -20,12 +20,12 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
      */
     public function __construct()
     {
-        $this->id                 = defined('PFP_GATEWAY_ID') ? PFP_GATEWAY_ID : 'pfp_invoice';
+        $this->id                 = PFP_GATEWAY_ID;
         $this->method_title       = __('Rechnung (Swiss QR)', 'piero-fracasso-emails');
         $this->method_description = __('Diese Zahlungsmethode erscheint nur bei Währung CHF und (optional) für Adressen in CH oder LI.', 'piero-fracasso-emails');
         $this->title              = __('Rechnung (Swiss QR)', 'piero-fracasso-emails');
         $this->has_fields = false;
-        $this->supports   = array('products', 'refunds');
+        $this->supports   = array('products');
 
         $this->init_form_fields();
         $this->init_settings();
@@ -273,7 +273,7 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
 
         $log_enabled = function_exists('bypf_invoice_logging_enabled') && bypf_invoice_logging_enabled();
 
-        $enabled = ('yes' === $this->get_option('enabled'));
+        $enabled = ('yes' === $this->get_option('enabled', 'no'));
         if ($log_enabled) {
             bypf_invoice_log_admin('is_available(): enabled = ' . ($enabled ? 'yes' : 'no'));
         }
@@ -285,9 +285,9 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
             return false;
         }
 
-        $currency = get_woocommerce_currency();
+        $currency = function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : '';
         if ($log_enabled) {
-            bypf_invoice_log_admin('is_available(): store currency = ' . $currency);
+            bypf_invoice_log_admin('is_available(): store currency = ' . ($currency ?: '(empty)'));
         }
         if ('CHF' !== $currency) {
             $this->unavailability_reasons[] = 'currency';
@@ -297,7 +297,7 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
             return false;
         }
 
-        $restrict_to_ch_li = ('yes' === $this->get_option('only_ch_li'));
+        $restrict_to_ch_li = ('yes' === $this->get_option('only_ch_li', 'no'));
         if ($log_enabled) {
             bypf_invoice_log_admin('is_available(): CH/LI restriction = ' . ($restrict_to_ch_li ? 'enabled' : 'disabled'));
         }
@@ -324,49 +324,74 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
         }
 
         $min_setting = $this->get_option('min_amount', '');
-        $min_amount  = is_numeric($min_setting) ? (float) $min_setting : (float) 0;
+        $min_amount  = is_numeric($min_setting) ? (float) $min_setting : 0.0;
         if ($log_enabled) {
             bypf_invoice_log_admin('is_available(): minimum amount setting = ' . $min_amount);
         }
 
         if ($min_amount > 0) {
             $cart_total = null;
+
             if (function_exists('WC') && WC()->cart) {
-                $cart_total_raw = null;
+                $raw_total = null;
                 if (is_callable(array(WC()->cart, 'get_total'))) {
-                    $cart_total_raw = WC()->cart->get_total('edit');
-                } else {
-                    $cart_total_raw = WC()->cart->total;
+                    $raw_total = WC()->cart->get_total('edit');
+                } elseif (isset(WC()->cart->total)) {
+                    $raw_total = WC()->cart->total;
                 }
 
-                if (is_string($cart_total_raw)) {
+                if (is_string($raw_total)) {
                     if (function_exists('wc_format_decimal')) {
-                        $cart_total_raw = wc_format_decimal(
-                            $cart_total_raw,
+                        $raw_total = wc_format_decimal(
+                            $raw_total,
                             function_exists('wc_get_price_decimals') ? wc_get_price_decimals() : 2,
                             false
                         );
                     } else {
-                        $cart_total_raw = str_replace(',', '.', preg_replace('/[^0-9\\.,-]/', '', $cart_total_raw));
+                        $raw_total = str_replace(',', '.', preg_replace('/[^0-9\\.,-]/', '', $raw_total));
                     }
                 }
 
-                if (is_numeric($cart_total_raw)) {
-                    $cart_total = (float) $cart_total_raw;
+                if (is_numeric($raw_total)) {
+                    $cart_total = (float) $raw_total;
                 }
             }
 
-            if (null === $cart_total) {
-                if ($log_enabled) {
-                    bypf_invoice_log_admin('is_available(): cart total unavailable while evaluating minimum amount.');
+            if (null === $cart_total && function_exists('WC') && WC()->session) {
+                $totals = WC()->session->get('cart_totals');
+                if (is_array($totals) && isset($totals['total'])) {
+                    $session_total = $totals['total'];
+                    if (is_string($session_total)) {
+                        if (function_exists('wc_format_decimal')) {
+                            $session_total = wc_format_decimal(
+                                $session_total,
+                                function_exists('wc_get_price_decimals') ? wc_get_price_decimals() : 2,
+                                false
+                            );
+                        } else {
+                            $session_total = str_replace(',', '.', preg_replace('/[^0-9\\.,-]/', '', $session_total));
+                        }
+                    }
+
+                    if (is_numeric($session_total)) {
+                        $cart_total = (float) $session_total;
+                    }
                 }
-            } elseif ($cart_total < $min_amount) {
+            }
+
+            if ($log_enabled) {
+                bypf_invoice_log_admin(
+                    'is_available(): evaluated cart total = ' . (null === $cart_total ? '(unavailable)' : sprintf('%.2f', $cart_total))
+                );
+            }
+
+            if (null !== $cart_total && $cart_total < $min_amount) {
                 $this->unavailability_reasons[] = 'min_amount';
                 if ($log_enabled) {
                     bypf_invoice_log_admin(sprintf('is_available(): cart total %.2f below minimum %.2f.', $cart_total, $min_amount));
                 }
                 return false;
-            } elseif ($log_enabled) {
+            } elseif (null !== $cart_total && $log_enabled) {
                 bypf_invoice_log_admin(sprintf('is_available(): cart total %.2f meets minimum %.2f.', $cart_total, $min_amount));
             }
         }
@@ -576,7 +601,7 @@ function bypf_invoice_email_attachments($attachments, $email_id, $order)
         return $attachments;
     }
 
-    $gateway_id = defined('PFP_GATEWAY_ID') ? PFP_GATEWAY_ID : 'pfp_invoice';
+    $gateway_id = PFP_GATEWAY_ID;
 
     if ($order->get_payment_method() !== $gateway_id) {
         return $attachments;
