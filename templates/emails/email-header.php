@@ -44,30 +44,35 @@ include('setting-wc-email.php'); // All Customization in This File
     <meta name="format-detection" content="address=no">
     <meta name="format-detection" content="email=no">
     <title><?php echo get_bloginfo('name', 'display'); ?></title>
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
 
     <!-- Google Fonts Link -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700" rel="stylesheet">
 
 </head>
 
-<body marginwidth="0" topmargin="0" marginheight="0" offset="0">
-<center>
+<body marginwidth="0" topmargin="0" marginheight="0" offset="0" style="margin:0; padding:0; background-color:#F1F1F1; color:#191919; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+    <div class="preheader" style="display:none!important; visibility:hidden; mso-hide:all; opacity:0; color:transparent; height:0; width:0; overflow:hidden;">
+        <?php echo esc_html__('Ihre Bestellung ist bei uns eingegangen – wir kümmern uns um den Versand.', 'bypierofracasso-woocommerce-emails'); ?>
+    </div>
+<center style="width:100%;">
 
 <?php if ($top_offer_show == "YES") : ?>
 <!-- Top bars : Offer Link -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
             <!-- 600 -->
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
+            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:600px; width:100%;">
                 <tr>
                     <td align="center" bgcolor="#F1F1F1" class="bg-F1F1F1">
                         <!-- 520 -->
-                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:520px; width:100%;">
                             <tr>
                                 <td align="center" class="container-padding">
                                     <!-- Content -->
-                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                         <tr>
                                             <td class="spacer-10"> </td>
                                         </tr>
@@ -95,30 +100,36 @@ include('setting-wc-email.php'); // All Customization in This File
 <?php endif; ?>
 
 <!-- Navigation : Center Logo -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
             <!-- 600 -->
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
+            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:600px; width:100%;">
                 <tr>
                     <td align="center" bgcolor="#4B7BEC" class="bg-4B7BEC">
                         <!-- 520 -->
-                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:520px; width:100%;">
                             <tr>
                                 <td align="center" class="container-padding">
                                     <!-- Content -->
-                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                        <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                         <tr>
                                             <td class="spacer-60"> </td>
                                         </tr>
                                         <tr>
-                                            <?php
-                                            if ($img = get_option('woocommerce_email_header_image')) {
-                                                echo __('<td align="center"><a href="' . get_home_url() . '"><img src="' . esc_url($img) . '" alt="' . get_bloginfo('name', 'display') . '" width="300px" style="width:' . $logoWidth . ';" class="block" /></a></td>', 'bypierofracasso-woocommerce-emails');
-                                            } else {
-                                                echo __('<td align="center" class="font-FFFFFF font-primary font-36 font-weight-600"><a class="font-FFFFFF" href="' . get_home_url() . '">' . get_bloginfo('name', 'display') . '</a></td>', 'bypierofracasso-woocommerce-emails');
-                                            }
-                                            ?>
+                                            <?php if ($img = get_option('woocommerce_email_header_image')) : ?>
+                                                <td align="center">
+                                                    <a href="<?php echo esc_url(get_home_url()); ?>" style="text-decoration:none;" rel="noopener">
+                                                        <img src="<?php echo esc_url($img); ?>" alt="<?php echo esc_attr(get_bloginfo('name', 'display')); ?>" width="300" style="display:block; border:0; width:<?php echo esc_attr($logoWidth); ?>; max-width:100%; height:auto;" class="block" />
+                                                    </a>
+                                                </td>
+                                            <?php else : ?>
+                                                <td align="center" class="font-FFFFFF font-primary font-36 font-weight-600">
+                                                    <a class="font-FFFFFF" href="<?php echo esc_url(get_home_url()); ?>" style="color:#FFFFFF; text-decoration:none;">
+                                                        <?php echo esc_html(get_bloginfo('name', 'display')); ?>
+                                                    </a>
+                                                </td>
+                                            <?php endif; ?>
                                         </tr>
                                         <tr>
                                             <td class="spacer-30"> </td>

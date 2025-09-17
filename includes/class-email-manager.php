@@ -5,7 +5,8 @@ if (!defined('ABSPATH')) {
 
 class PFP_Email_Manager {
     public function __construct() {
-        add_filter('woocommerce_email_classes', array($this, 'add_custom_emails'), 999);
+        add_filter('woocommerce_email_classes', array($this, 'add_custom_emails'), 5);
+        add_action('init', array($this, 'log_registered_email_states'), 20);
         add_filter('woocommerce_email_enabled_customer_payment_retry', '__return_false');
         add_filter('woocommerce_email_enabled_customer_completed_renewal_order', '__return_false');
         add_filter('woocommerce_email_enabled_customer_completed_switch_order', '__return_false');
@@ -28,7 +29,7 @@ class PFP_Email_Manager {
         require_once plugin_dir_path(__FILE__) . 'class-wc-email-customer-payment-failed.php';
         require_once plugin_dir_path(__FILE__) . 'class-wc-email-customer-payment-reminder.php';
 
-        $email_classes['order_received'] = new WC_Email_Order_Received();
+        $email_classes['PFP_Email_Order_Received'] = new WC_Email_Order_Received();
         $email_classes['pending_order'] = new WC_Email_Pending_Order();
         $email_classes['wc_email_shipped_order'] = new WC_Email_Shipped_Order();
         $email_classes['wc_email_ready_for_pickup'] = new WC_Email_Ready_For_Pickup();
@@ -36,11 +37,7 @@ class PFP_Email_Manager {
         $email_classes['PFP_Email_Customer_Payment_Reminder'] = new PFP_Email_Customer_Payment_Reminder();
 
         // Debug: Log the registered email classes
-        static $registered_logged = false;
-        if (!$registered_logged) {
-            bypf_log('Registered email classes: ' . implode(', ', array_keys($email_classes)));
-            $registered_logged = true;
-        }
+        $this->log_registration_once($email_classes);
 
         if (isset($email_classes['WC_Email_Customer_New_Account'])) {
             $email_classes['WC_Email_Customer_New_Account']->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
@@ -79,5 +76,61 @@ class PFP_Email_Manager {
         }
 
         return $email_classes;
+    }
+
+    public function log_registered_email_states()
+    {
+        static $logged = false;
+
+        if ($logged || !function_exists('WC')) {
+            return;
+        }
+
+        $mailer = WC()->mailer();
+
+        if (!$mailer || !method_exists($mailer, 'get_emails')) {
+            return;
+        }
+
+        $emails = $mailer->get_emails();
+
+        if (!is_array($emails) || empty($emails)) {
+            return;
+        }
+
+        $logged = true;
+
+        $states = array();
+
+        foreach ($emails as $email) {
+            $id       = isset($email->id) ? $email->id : get_class($email);
+            $enabled  = method_exists($email, 'is_enabled') && $email->is_enabled() ? 'enabled' : 'disabled';
+            $states[] = $id . ' (' . $enabled . ')';
+        }
+
+        $this->log('[PFP] Registered emails on init: ' . implode(', ', $states));
+    }
+
+    protected function log_registration_once($email_classes)
+    {
+        static $logged = false;
+
+        if ($logged) {
+            return;
+        }
+
+        $logged = true;
+
+        $this->log('[PFP] Email classes registered: ' . implode(', ', array_keys($email_classes)));
+    }
+
+    protected function log($message, $level = 'info')
+    {
+        if (function_exists('pfp_log')) {
+            pfp_log($message, $level);
+            return;
+        }
+
+        bypf_log($message, $level);
     }
 }

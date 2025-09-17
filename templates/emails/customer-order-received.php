@@ -19,16 +19,16 @@ do_action('woocommerce_email_header', $email_heading, $email);
 ?>
 
 <!-- Titles : Subtitle Title Button -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
+            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:600px; width:100%;">
                 <tr>
                     <td align="center" bgcolor="#4B7BEC" class="bg-4B7BEC">
-                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:520px; width:100%;">
                             <tr>
                                 <td align="center" class="container-padding">
-                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                         <tr>
                                             <td class="spacer-30"> </td>
                                         </tr>
@@ -47,7 +47,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                 <table border="0" align="center" cellpadding="0" cellspacing="0">
                                                     <tr>
                                                         <td align="center" class="bg-FFFFFF block btn border-radius-4">
-                                                            <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
+                                                            <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space" style="display:inline-block; padding:12px 28px; background-color:#FFFFFF; color:#4B7BEC; text-decoration:none; border-radius:4px; line-height:1.4; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
                                                                 <?php echo __($order_received_btn, 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
@@ -71,19 +71,19 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <!-- Titles : Subtitle Title Button -->
 
 <!-- Headers : Full Image -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
+            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:600px; width:100%;">
                 <tr>
                     <td align="center" bgcolor="#4B7BEC" class="bg-4B7BEC">
-                        <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                        <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                             <tr>
                                 <td align="center">
-                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                         <tr>
                                             <td align="center" valign="middle" class="img-responsive">
-                                                <img src="<?php echo esc_url($plugin_path . '/' . $order_received_hero_bg_img); ?>" border="0" width="600" alt="Header" class="block table-600">
+                                                <img src="<?php echo esc_url($plugin_path . '/' . $order_received_hero_bg_img); ?>" border="0" width="600" alt="" class="block table-600" style="display:block; width:100%; height:auto; border:0;">
                                             </td>
                                         </tr>
                                     </table>
@@ -99,16 +99,16 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <!-- Header : Full Image -->
 
 <!-- Contents : Title Description -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
+            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:600px; width:100%;">
                 <tr>
                     <td align="center" bgcolor="#FFFFFF" class="bg-FFFFFF">
-                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:520px; width:100%;">
                             <tr>
                                 <td align="center" class="container-padding">
-                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                         <tr>
                                             <td class="spacer-30"> </td>
                                         </tr>
@@ -140,10 +140,10 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <?php if (isset($order) && $order instanceof WC_Order && 'pfp_invoice' === $order->get_payment_method()) : ?>
                                         <tr>
                                             <td>
-                                                <table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+                                                <table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                                     <tr>
                                                         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-                                                            <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                                                            <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:520px; width:100%;">
                                                                 <tr>
                                                                     <td align="left" class="container-padding center-text font-primary font-191919 font-16 font-weight-400 font-space-0" style="background:#F7F7F7; padding:12px 16px; border-radius:4px;">
                                                                         <strong><?php echo esc_html__('Die Rechnung finden Sie im Anhang dieser Bestellbestätigung.', 'bypierofracasso-woocommerce-emails'); ?></strong>
@@ -176,16 +176,16 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <!-- Contents : Title Description -->
 
 <!-- Dividers : Divider -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
+            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:600px; width:100%;">
                 <tr>
                     <td align="center" bgcolor="#FFFFFF" class="bg-FFFFFF">
-                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:520px; width:100%;">
                             <tr>
                                 <td align="center" class="container-padding">
-                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                         <tr>
                                             <td class="spacer-15"> </td>
                                         </tr>
@@ -225,42 +225,17 @@ do_action('woocommerce_email_header', $email_heading, $email);
 </table>
 <!-- Dividers : Divider -->
 
-<?php if (isset($order) && $order instanceof WC_Order && 'pfp_invoice' === $order->get_payment_method()) : ?>
-<!-- Invoice Attachment Notice -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
-    <tr>
-        <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
-                <tr>
-                    <td align="center" bgcolor="#FFFFFF" class="bg-FFFFFF">
-                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
-                            <tr>
-                                <td align="left" class="container-padding center-text font-primary font-191919 font-16 font-weight-400 font-space-0" style="background:#F7F7F7; padding:12px 16px; border-radius:4px;">
-                                    <strong><?php echo esc_html__('Die Rechnung finden Sie im Anhang dieser Bestellbestätigung.', 'bypierofracasso-woocommerce-emails'); ?></strong>
-                                </td>
-                            </tr>
-                            <tr><td class="spacer-15">&nbsp;</td></tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-<!-- End Invoice Attachment Notice -->
-<?php endif; ?>
-
 <!-- Buttons : Button -->
-<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+<table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
     <tr>
         <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
-            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600">
+            <table border="0" width="600" align="center" cellpadding="0" cellspacing="0" class="row table-600" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:600px; width:100%;">
                 <tr>
                     <td align="center" bgcolor="#FFFFFF" class="bg-FFFFFF">
-                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                        <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0; max-width:520px; width:100%;">
                             <tr>
                                 <td align="center" class="container-padding">
-                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="table-100pc" role="presentation" style="border-collapse:collapse; mso-table-lspace:0; mso-table-rspace:0;">
                                         <tr>
                                             <td class="spacer-20"> </td>
                                         </tr>
@@ -269,7 +244,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                 <table border="0" align="center" cellpadding="0" cellspacing="0">
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
-                                                            <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
+                                                            <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space" style="display:inline-block; padding:12px 28px; background-color:#4B7BEC; color:#FFFFFF; text-decoration:none; border-radius:4px; line-height:1.4; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
                                                                 <?php echo __($order_received_btn, 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
