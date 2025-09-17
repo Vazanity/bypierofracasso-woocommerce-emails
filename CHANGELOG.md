@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.6.7
+- Fix: Blocks checkout label now uses a plain string to satisfy current WC Blocks API; payment method appears correctly.
+- Improvement: Added fallback enqueue of the blocks script and one-time log line for diagnostics.
+
 ## 1.2.6.6
 - Fix: Blocks checkout now enqueues the gateway script reliably; aligned PHP get_name() and JS registration name; added robust dependencies and fallback enqueue on `woocommerce_blocks_enqueue_payment_method_type_scripts`.
 - Tweak: JS `canMakePayment()` simplified to true (server-side availability already enforced).
