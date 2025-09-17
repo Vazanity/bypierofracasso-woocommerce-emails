@@ -12,27 +12,22 @@ class PFP_Invoice_Blocks extends AbstractPaymentMethodType
     /** @var array */
     protected $settings = array();
 
-    protected function get_gateway_id()
-    {
-        return PFP_GATEWAY_ID;
-    }
-
-    protected function is_logging_enabled()
+    protected function is_logging_enabled(): bool
     {
         return \function_exists('bypf_invoice_logging_enabled') && \bypf_invoice_logging_enabled();
     }
 
-    public function get_name()
+    public function get_name(): string
     {
-        return $this->get_gateway_id();
+        return 'pfp_invoice';
     }
 
-    public function initialize()
+    public function initialize(): void
     {
-        $this->settings = get_option('woocommerce_' . $this->get_gateway_id() . '_settings', array());
+        $this->settings = get_option('woocommerce_pfp_invoice_settings', array());
     }
 
-    public function is_active()
+    public function is_active(): bool
     {
         $log_enabled = $this->is_logging_enabled();
 
@@ -40,29 +35,29 @@ class PFP_Invoice_Blocks extends AbstractPaymentMethodType
         if ($log_enabled) {
             \bypf_invoice_log_admin('Blocks is_active(): enabled setting = ' . ($enabled ? 'yes' : 'no'));
         }
-        if (!$enabled) {
+
+        $is_active = $enabled;
+
+        if ($is_active) {
+            $currency      = \function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : '';
+            $currency_pass = ('CHF' === $currency);
+
             if ($log_enabled) {
-                \bypf_invoice_log_admin('Blocks is_active(): failing because gateway is disabled.');
+                \bypf_invoice_log_admin(
+                    'Blocks is_active(): currency check = ' . ($currency_pass ? 'pass' : 'fail') . ' (' . ($currency ?: 'n/a') . ')'
+                );
             }
-            return false;
+
+            if (!$currency_pass) {
+                $is_active = false;
+            }
         }
 
-        $currency = \function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : '';
-        $currency_pass = ('CHF' === $currency);
-        if ($log_enabled) {
-            \bypf_invoice_log_admin(
-                'Blocks is_active(): currency check = ' . ($currency_pass ? 'pass' : 'fail') . ' (' . ($currency ?: 'n/a') . ')'
-            );
-        }
-        if (!$currency_pass) {
-            return false;
-        }
-
-        $restrict = isset($this->settings['only_ch_li']) && 'yes' === $this->settings['only_ch_li'];
+        $restrict      = isset($this->settings['only_ch_li']) && 'yes' === $this->settings['only_ch_li'];
         $country_value = '';
         $country_pass  = true;
 
-        if ($restrict && \function_exists('WC')) {
+        if ($is_active && $restrict && \function_exists('WC')) {
             $customer = \WC()->customer;
             if ($customer) {
                 $country_value = $customer->get_billing_country();
@@ -82,8 +77,8 @@ class PFP_Invoice_Blocks extends AbstractPaymentMethodType
             \bypf_invoice_log_admin($message);
         }
 
-        if ($restrict && !$country_pass) {
-            return false;
+        if ($is_active && $restrict && !$country_pass) {
+            $is_active = false;
         }
 
         $min_setting = isset($this->settings['min_amount']) ? $this->settings['min_amount'] : '';
@@ -95,37 +90,24 @@ class PFP_Invoice_Blocks extends AbstractPaymentMethodType
         }
 
         if ($log_enabled) {
-            \bypf_invoice_log_admin('Blocks is_active(): final result = true.');
+            \bypf_invoice_log_admin('Blocks is_active(): final result = ' . ($is_active ? 'true' : 'false') . '.');
         }
 
-        return true;
+        return true === $is_active;
     }
 
-    public function get_payment_method_script_handles()
+    public function get_payment_method_script_handles(): array
     {
-        $registered = \wp_script_is('pfp-invoice-blocks', 'registered');
-
-        if (!$registered) {
-            if (\current_user_can('manage_woocommerce') && \function_exists('is_checkout') && \is_checkout()) {
-                if (!\has_action('admin_notices', '\bypf_invoice_blocks_missing_script_notice')) {
-                    \add_action('admin_notices', '\bypf_invoice_blocks_missing_script_notice');
-                }
-                if (!\has_action('wp_footer', '\bypf_invoice_blocks_missing_script_notice')) {
-                    \add_action('wp_footer', '\bypf_invoice_blocks_missing_script_notice');
-                }
-            }
-
-            if ($this->is_logging_enabled()) {
-                \bypf_invoice_log_admin('Blocks get_payment_method_script_handles(): script handle missing.');
-            }
-
-            return array();
-        }
-
-        if ($this->is_logging_enabled() && !\wp_script_is('pfp-invoice-blocks', 'enqueued')) {
-            \bypf_invoice_log_admin('pfp-invoice-blocks registered but not enqueued — verify Blocks integration');
-        }
-
         return array('pfp-invoice-blocks');
+    }
+
+    public function get_payment_method_data(): array
+    {
+        return array(
+            'title'       => __('Rechnung (Swiss QR)', 'bypierofracasso-woocommerce-emails'),
+            'description' => __('Bezahlen Sie per Rechnung/Swiss-QR nach Erhalt.', 'bypierofracasso-woocommerce-emails'),
+            'minAmount'   => 0.05,
+            'currency'    => \function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : '',
+        );
     }
 }
