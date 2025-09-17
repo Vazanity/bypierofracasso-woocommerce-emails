@@ -112,14 +112,17 @@ class PFP_Invoice_Blocks extends AbstractPaymentMethodType
 
     public function get_payment_method_script_handles(): array
     {
-        return array('pfp-invoice-blocks');
+        return array( 'pfp-invoice-blocks' );
     }
 
     public function get_payment_method_data(): array
     {
+        $settings = get_option('woocommerce_pfp_invoice_settings', array());
+
         return array(
-            'title'       => __('Rechnung (Swiss QR)', 'bypierofracasso-woocommerce-emails'),
-            'description' => __('Bezahlen Sie per Rechnung/Swiss-QR nach Erhalt.', 'bypierofracasso-woocommerce-emails'),
+            'title'       => isset($settings['title']) ? $settings['title'] : __('Invoice', 'bypierofracasso-woocommerce-emails'),
+            'description' => isset($settings['description']) ? $settings['description'] : '',
+            'min_total'   => isset($settings['min_amount']) ? (float) $settings['min_amount'] : 0.0,
         );
     }
 }

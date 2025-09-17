@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.6.8
+Version: 1.2.6.9
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.6.8');
+define('BYPF_EMAILS_VERSION', '1.2.6.9');
 define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
 define('PFP_GATEWAY_ID', 'pfp_invoice');
@@ -594,34 +594,34 @@ add_action('plugins_loaded', function () {
 }, 20);
 
 add_action('init', function () {
-    $asset_file = plugin_dir_path(PFP_MAIN_FILE) . 'assets/blocks/build/index.asset.php';
-    $deps       = array('wc-blocks-registry', 'wp-element', 'wp-i18n');
-    $ver        = PFP_VERSION;
+    $build      = plugin_dir_path(__FILE__) . 'assets/blocks/build/index.js';
+    $asset_file = plugin_dir_path(__FILE__) . 'assets/blocks/build/index.asset.php';
+    $asset      = file_exists($asset_file)
+        ? require $asset_file
+        : array(
+            'dependencies' => array('wc-blocks-registry', 'wc-settings', 'wp-element', 'wp-i18n'),
+            'version'      => file_exists($build) ? filemtime($build) : BYPF_EMAILS_VERSION,
+        );
 
-    if (file_exists($asset_file)) {
-        $data = include $asset_file;
-        if (is_array($data)) {
-            $deps = ! empty($data['dependencies']) ? $data['dependencies'] : $deps;
-            $ver  = ! empty($data['version']) ? $data['version'] : $ver;
-        }
-    }
+    $deps = isset($asset['dependencies']) ? (array) $asset['dependencies'] : array();
+    $deps[] = 'wc-blocks-registry';
+    $deps[] = 'wc-settings';
+    $deps   = array_values(array_unique($deps));
 
     wp_register_script(
         'pfp-invoice-blocks',
-        plugins_url('assets/blocks/build/index.js', PFP_MAIN_FILE),
+        plugins_url('assets/blocks/build/index.js', __FILE__),
         $deps,
-        $ver,
+        isset($asset['version']) ? $asset['version'] : BYPF_EMAILS_VERSION,
         true
     );
 
-    if (function_exists('wp_set_script_translations')) {
-        wp_set_script_translations(
-            'pfp-invoice-blocks',
-            'bypierofracasso-woocommerce-emails',
-            plugin_dir_path(PFP_MAIN_FILE) . 'languages'
-        );
-    }
-});
+    wp_set_script_translations(
+        'pfp-invoice-blocks',
+        'bypierofracasso-woocommerce-emails',
+        plugin_dir_path(__FILE__) . 'languages'
+    );
+}, 9);
 
 add_action('woocommerce_blocks_enqueue_payment_method_type_scripts', function () {
     if (function_exists('wp_script_is') && !wp_script_is('pfp-invoice-blocks', 'enqueued')) {
