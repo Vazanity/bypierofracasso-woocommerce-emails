@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.6.7
+Version: 1.2.6.8
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.6.7');
+define('BYPF_EMAILS_VERSION', '1.2.6.8');
 define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
 define('PFP_GATEWAY_ID', 'pfp_invoice');
@@ -565,7 +565,7 @@ function bypf_register_invoice_blocks_integration()
         new \PFP\Blocks\PFP_Invoice_Blocks()
     );
 
-    bypf_invoice_log_admin('blocks integration registered');
+    bypf_invoice_log_admin('blocks registry: registered PFP_Invoice_Blocks');
 }
 
 function bypf_invoice_blocks_missing_script_notice()
@@ -594,11 +594,23 @@ add_action('plugins_loaded', function () {
 }, 20);
 
 add_action('init', function () {
+    $asset_file = plugin_dir_path(PFP_MAIN_FILE) . 'assets/blocks/build/index.asset.php';
+    $deps       = array('wc-blocks-registry', 'wp-element', 'wp-i18n');
+    $ver        = PFP_VERSION;
+
+    if (file_exists($asset_file)) {
+        $data = include $asset_file;
+        if (is_array($data)) {
+            $deps = ! empty($data['dependencies']) ? $data['dependencies'] : $deps;
+            $ver  = ! empty($data['version']) ? $data['version'] : $ver;
+        }
+    }
+
     wp_register_script(
         'pfp-invoice-blocks',
-        plugins_url('assets/blocks/index.js', PFP_MAIN_FILE),
-        array('wc-blocks-registry', 'wp-element', 'wp-i18n', 'wp-html-entities'),
-        PFP_VERSION,
+        plugins_url('assets/blocks/build/index.js', PFP_MAIN_FILE),
+        $deps,
+        $ver,
         true
     );
 
