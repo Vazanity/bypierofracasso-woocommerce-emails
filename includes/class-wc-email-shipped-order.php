@@ -9,8 +9,8 @@ class WC_Email_Shipped_Order extends WC_Email
     public function __construct()
     {
         $this->id = 'wc_email_shipped_order';
-        $this->title = __('Shipped Order', 'bypierofracasso-woocommerce-emails');
-        $this->description = __('Sent when an order is marked as Shipped.', 'bypierofracasso-woocommerce-emails');
+        $this->title = 'Shipped Order';
+        $this->description = 'Sent when an order is marked as Shipped.';
         $this->template_html = 'customer-order-shipped.php';
         $this->template_plain = 'plain/customer-order-shipped.php';
         $this->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
@@ -24,6 +24,16 @@ class WC_Email_Shipped_Order extends WC_Email
         add_action('woocommerce_order_status_changed', array($this, 'bpf_handle_custom_email_trigger'), 9999, 4);
 
         parent::__construct();
+    }
+
+    public function get_title()
+    {
+        return apply_filters('woocommerce_email_title_' . $this->id, __($this->title, 'bypierofracasso-woocommerce-emails'), $this);
+    }
+
+    public function get_description()
+    {
+        return __($this->description, 'bypierofracasso-woocommerce-emails');
     }
 
     // When order status changed

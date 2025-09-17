@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.6.5
+- Fix: Deferred all translations to post-init usage to satisfy WP 6.7+ i18n timing.
+- Add: Admin legacy detector to warn when an old plugin version is loaded in parallel.
+- Chore: Reduced repetitive debug logs (product type selector, email registry).
+
 ## [1.2.6.4] - 2025-09-16
 ### Changed
 - Refactor: unified all PHP/JS strings to text domain `bypierofracasso-woocommerce-emails`.

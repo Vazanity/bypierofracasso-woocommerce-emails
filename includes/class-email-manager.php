@@ -34,7 +34,11 @@ class PFP_Email_Manager {
         $email_classes['customer_payment_failed'] = new WC_Email_Customer_Payment_Failed();
 
         // Debug: Log the registered email classes
-        bypf_log('Registered email classes: ' . implode(', ', array_keys($email_classes)));
+        static $registered_logged = false;
+        if (!$registered_logged) {
+            bypf_log('Registered email classes: ' . implode(', ', array_keys($email_classes)));
+            $registered_logged = true;
+        }
 
         if (isset($email_classes['WC_Email_Customer_Invoice'])) {
             $email_classes['WC_Email_Customer_Invoice']->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';

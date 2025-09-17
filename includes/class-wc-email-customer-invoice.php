@@ -7,8 +7,8 @@ class WC_Email_Customer_Invoice extends WC_Email {
     public function __construct() {
         $this->id = 'customer_invoice';
         $this->customer_email = true;
-        $this->title = __('Customer Invoice', 'bypierofracasso-woocommerce-emails');
-        $this->description = __('Sent to customers with invoice details.', 'bypierofracasso-woocommerce-emails');
+        $this->title = 'Customer Invoice';
+        $this->description = 'Sent to customers with invoice details.';
         $this->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
         $this->template_html = 'customer-invoice.php';
         $this->template_plain = 'plain/customer-invoice.php'; // Added
@@ -19,6 +19,14 @@ class WC_Email_Customer_Invoice extends WC_Email {
 
         // Call parent constructor
         parent::__construct();
+    }
+
+    public function get_title() {
+        return apply_filters('woocommerce_email_title_' . $this->id, __($this->title, 'bypierofracasso-woocommerce-emails'), $this);
+    }
+
+    public function get_description() {
+        return __($this->description, 'bypierofracasso-woocommerce-emails');
     }
 
     public function trigger($order_id, $order = false) {
