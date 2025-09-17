@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.6.10
+Version: 1.2.6.11
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.6.10');
+define('BYPF_EMAILS_VERSION', '1.2.6.11');
 define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
 define('PFP_GATEWAY_ID', 'pfp_invoice');
@@ -594,70 +594,80 @@ add_action('plugins_loaded', function () {
     add_filter('woocommerce_payment_gateways', 'bypf_register_invoice_gateway');
 }, 20);
 
-add_action('woocommerce_checkout_order_processed', function ($order_id, $posted, $order) {
+add_filter('woocommerce_email_enabled_customer_processing_order', '__return_false');
+add_filter('woocommerce_email_enabled_customer_on_hold_order', '__return_false');
+
+add_action('woocommerce_checkout_order_processed', function ($order_id) {
+    $order = wc_get_order($order_id);
     if (!$order instanceof WC_Order) {
-        $order = wc_get_order($order_id);
-    }
-    if (!$order instanceof WC_Order) {
+        if (function_exists('pfp_log')) {
+            pfp_log('[PFP] Unable to load order for customer-order-received send (ID ' . $order_id . ')', 'error');
+        } else {
+            bypf_log('[PFP] Unable to load order for customer-order-received send (ID ' . $order_id . ')', 'error');
+        }
         return;
     }
 
-    if ($order->get_payment_method() !== PFP_GATEWAY_ID) {
+    if ($order->get_meta('_pfp_customer_received_sent', true)) {
+        if (function_exists('pfp_log')) {
+            pfp_log('[PFP] customer-order-received already sent for order #' . $order_id);
+        } else {
+            bypf_log('[PFP] customer-order-received already sent for order #' . $order_id);
+        }
         return;
     }
 
-    if (!function_exists('WC')) {
-        return;
-    }
-
-    $wc = WC();
-    if (!$wc || !method_exists($wc, 'mailer')) {
-        return;
-    }
-
-    $mailer = $wc->mailer();
-    if (!$mailer || !method_exists($mailer, 'get_emails')) {
+    $mailer = WC()->mailer();
+    if (!$mailer) {
+        if (function_exists('pfp_log')) {
+            pfp_log('[PFP] WooCommerce mailer unavailable while sending customer-order-received for order #' . $order_id, 'warning');
+        } else {
+            bypf_log('[PFP] WooCommerce mailer unavailable while sending customer-order-received for order #' . $order_id, 'warning');
+        }
         return;
     }
 
     $emails = $mailer->get_emails();
-    if (!is_array($emails)) {
-        return;
-    }
+    $sent   = false;
 
-    $sent = false;
-    foreach ($emails as $email_instance) {
-        if (isset($email_instance->id) && 'customer_order_received' === $email_instance->id) {
-            $email_instance->trigger($order_id);
-            $sent = true;
-            break;
+    if (is_array($emails)) {
+        foreach ($emails as $email) {
+            if (isset($email->id) && 'customer_order_received' === $email->id && $email->is_enabled()) {
+                $email->trigger($order_id);
+                $sent = true;
+                break;
+            }
         }
     }
 
-    if (!$sent && isset($emails['WC_Email_Customer_On_Hold_Order'])) {
-        $emails['WC_Email_Customer_On_Hold_Order']->trigger($order_id);
+    if ($sent) {
+        $order->update_meta_data('_pfp_customer_received_sent', current_time('mysql'));
+        $order->save();
+        if (function_exists('pfp_log')) {
+            pfp_log('[PFP] Sent customer-order-received for order #' . $order_id);
+        } else {
+            bypf_log('[PFP] Sent customer-order-received for order #' . $order_id);
+        }
+    } else {
+        if (function_exists('pfp_log')) {
+            pfp_log('[PFP] Could not send customer-order-received (disabled/missing) for order #' . $order_id, 'warning');
+        } else {
+            bypf_log('[PFP] Could not send customer-order-received (disabled/missing) for order #' . $order_id, 'warning');
+        }
     }
-
-    if (function_exists('pfp_log')) {
-        pfp_log(sprintf('[PFP] Triggered customer mail for invoice order #%d (preferred=%s)', $order_id, $sent ? 'order_received' : 'on_hold_fallback'));
-    }
-}, 20, 3);
+}, 999);
 
 add_filter('woocommerce_email_attachments', function ($attachments, $email_id, $order, $email) {
     if (!$order instanceof WC_Order) {
         return $attachments;
     }
 
-    if ($order->get_payment_method() !== PFP_GATEWAY_ID) {
+    $attach_for = array('customer_order_received', 'customer_payment_reminder');
+    if (!in_array($email_id, $attach_for, true)) {
         return $attachments;
     }
 
-    $allow_ids = array(
-        'customer_order_received',
-        'customer_on_hold_order',
-    );
-
-    if (!in_array($email_id, $allow_ids, true)) {
+    if ('pfp_invoice' !== $order->get_payment_method()) {
         return $attachments;
     }
 
@@ -665,16 +675,47 @@ add_filter('woocommerce_email_attachments', function ($attachments, $email_id, $
     if ($path) {
         $attachments[] = $path;
         if (function_exists('pfp_log')) {
-            pfp_log('[PFP] Attached invoice PDF for email ' . $email_id . ' (order #' . $order->get_id() . ')');
+            pfp_log('[PFP] Attached invoice PDF for ' . $email_id . ' (order #' . $order->get_id() . ')');
+        } else {
+            bypf_log('[PFP] Attached invoice PDF for ' . $email_id . ' (order #' . $order->get_id() . ')');
         }
     } else {
         if (function_exists('pfp_log')) {
             pfp_log('[PFP] No invoice PDF available for ' . $email_id . ' (order #' . $order->get_id() . ')', 'warning');
+        } else {
+            bypf_log('[PFP] No invoice PDF available for ' . $email_id . ' (order #' . $order->get_id() . ')', 'warning');
         }
     }
 
     return $attachments;
 }, 10, 4);
+
+add_filter('woocommerce_order_actions', function ($actions, $order) {
+    if ($order instanceof WC_Order && 'pfp_invoice' === $order->get_payment_method()) {
+        $actions['pfp_send_payment_reminder'] = __('Zahlungserinnerung senden', 'bypierofracasso-woocommerce-emails');
+    }
+    return $actions;
+}, 10, 2);
+
+add_action('woocommerce_order_action_pfp_send_payment_reminder', function ($order) {
+    if ($order instanceof WC_Order) {
+        if ('pfp_invoice' !== $order->get_payment_method()) {
+            if (function_exists('pfp_log')) {
+                pfp_log('[PFP] Skipped payment reminder for non-invoice order #' . $order->get_id(), 'notice');
+            } else {
+                bypf_log('[PFP] Skipped payment reminder for non-invoice order #' . $order->get_id(), 'notice');
+            }
+            return;
+        }
+
+        do_action('pfp_send_payment_reminder_notification', $order->get_id());
+        if (function_exists('pfp_log')) {
+            pfp_log('[PFP] Manual payment reminder sent for order #' . $order->get_id());
+        } else {
+            bypf_log('[PFP] Manual payment reminder sent for order #' . $order->get_id());
+        }
+    }
+});
 
 add_action('init', function () {
     $build      = plugin_dir_path(__FILE__) . 'assets/blocks/build/index.js';

@@ -137,6 +137,29 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                 ?>
                                             </td>
                                         </tr>
+                                        <?php if (isset($order) && $order instanceof WC_Order && 'pfp_invoice' === $order->get_payment_method()) : ?>
+                                        <tr>
+                                            <td>
+                                                <table border="0" width="100%" align="center" cellpadding="0" cellspacing="0" class="table-100pc">
+                                                    <tr>
+                                                        <td align="center" valign="middle" bgcolor="#F1F1F1" class="bg-F1F1F1">
+                                                            <table border="0" width="520" align="center" cellpadding="0" cellspacing="0" class="row table-520">
+                                                                <tr>
+                                                                    <td align="left" class="container-padding center-text font-primary font-191919 font-16 font-weight-400 font-space-0" style="background:#F7F7F7; padding:12px 16px; border-radius:4px;">
+                                                                        <strong><?php echo esc_html__('Die Rechnung finden Sie im Anhang dieser Bestellbestätigung.', 'bypierofracasso-woocommerce-emails'); ?></strong>
+                                                                        <div style="margin-top:6px;">
+                                                                            <?php echo esc_html__('Rechnungsbetrag sofort zahlbar nach Erhalt.', 'bypierofracasso-woocommerce-emails'); ?>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr><td class="spacer-15">&nbsp;</td></tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <?php endif; ?>
                                         <tr>
                                             <td class="spacer-15"> </td>
                                         </tr>

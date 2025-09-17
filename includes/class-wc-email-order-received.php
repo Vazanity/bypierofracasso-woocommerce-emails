@@ -7,11 +7,11 @@ class WC_Email_Order_Received extends WC_Email
 {
     public function __construct()
     {
-        $this->id = 'order_received';
-        $this->title = 'Bestellung erhalten';
-        $this->description = 'Diese E-Mail wird gesendet, wenn eine Bestellung aufgegeben wurde.';
-        $this->heading = 'Vielen Dank für deine Bestellung!';
-        $this->subject = 'Deine Bestellung bei Piero Fracasso Perfumes wurde erhalten';
+        $this->id = 'customer_order_received';
+        $this->title = __('Bestellung erhalten', 'bypierofracasso-woocommerce-emails');
+        $this->description = __('Diese E-Mail wird gesendet, wenn eine Bestellung aufgegeben wurde.', 'bypierofracasso-woocommerce-emails');
+        $this->heading = __('Vielen Dank für deine Bestellung!', 'bypierofracasso-woocommerce-emails');
+        $this->subject = __('Deine Bestellung bei Piero Fracasso Perfumes wurde erhalten', 'bypierofracasso-woocommerce-emails');
 
         $this->template_html = 'customer-order-received.php'; // Fixed path
         $this->template_plain = 'plain/customer-order-received.php'; // Fixed path
@@ -25,24 +25,24 @@ class WC_Email_Order_Received extends WC_Email
 
     public function get_title()
     {
-        return apply_filters('woocommerce_email_title_' . $this->id, __($this->title, 'bypierofracasso-woocommerce-emails'), $this);
+        return apply_filters('woocommerce_email_title_' . $this->id, $this->title, $this);
     }
 
     public function get_description()
     {
-        return __($this->description, 'bypierofracasso-woocommerce-emails');
+        return $this->description;
     }
 
     public function get_heading()
     {
-        $heading = $this->format_string(__($this->heading, 'bypierofracasso-woocommerce-emails'));
+        $heading = $this->format_string($this->heading);
 
         return apply_filters('woocommerce_email_heading_' . $this->id, $heading, $this->object, $this);
     }
 
     public function get_subject()
     {
-        $subject = $this->format_string(__($this->subject, 'bypierofracasso-woocommerce-emails'));
+        $subject = $this->format_string($this->subject);
 
         return apply_filters('woocommerce_email_subject_' . $this->id, $subject, $this->object, $this);
     }
@@ -77,11 +77,28 @@ class WC_Email_Order_Received extends WC_Email
 
         if (is_a($order, 'WC_Order')) {
             $this->object = $order; // ← Important fix to correctly assign the order object
-            $this->setup_locale();
             $this->recipient = $order->get_billing_email();
 
+            if ($order->get_meta('_pfp_customer_received_sent', true)) {
+                if (function_exists('pfp_log')) {
+                    pfp_log('[PFP] Skipping customer-order-received email; already sent for order #' . $order->get_id());
+                } else {
+                    bypf_log('[PFP] Skipping customer-order-received email; already sent for order #' . $order->get_id());
+                }
+                return;
+            }
+
+            $this->setup_locale();
+
             if ($this->is_enabled() && $this->get_recipient()) {
+                if (function_exists('pfp_log')) {
+                    pfp_log('[PFP] Triggering customer-order-received email send for order #' . $order->get_id());
+                } else {
+                    bypf_log('[PFP] Triggering customer-order-received email send for order #' . $order->get_id());
+                }
                 $this->send($this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments());
+                $order->update_meta_data('_pfp_customer_received_sent', current_time('mysql'));
+                $order->save();
             }
             $this->restore_locale();
         }

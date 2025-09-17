@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.6.11
+- Change: Always send our “customer-order-received” email after checkout (all gateways) to avoid split workflows.
+- Feature: For the Invoice gateway, the same template shows an invoice-specific notice and attaches the PDF.
+- Feature: Added manual “Zahlungserinnerung” email (order action), also attaching the invoice PDF.
+- Remove: Legacy customer-invoice template and triggers.
+- Dev: Centralized PDF resolver helper; disabled Woo default customer processing/on-hold emails to prevent duplicates.
+
 ## 1.2.6.10
 - Change: Use the existing "customer-order-received" email for invoice orders and attach the Swiss QR PDF automatically.
 - Add: Styled, translatable notice in the order-received template (only for invoice gateway).
