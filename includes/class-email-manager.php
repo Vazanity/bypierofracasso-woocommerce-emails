@@ -26,23 +26,20 @@ class PFP_Email_Manager {
         require_once plugin_dir_path(__FILE__) . 'class-wc-email-shipped-order.php';
         require_once plugin_dir_path(__FILE__) . 'class-wc-email-ready-for-pickup.php';
         require_once plugin_dir_path(__FILE__) . 'class-wc-email-customer-payment-failed.php';
+        require_once plugin_dir_path(__FILE__) . 'class-wc-email-customer-payment-reminder.php';
 
         $email_classes['order_received'] = new WC_Email_Order_Received();
         $email_classes['pending_order'] = new WC_Email_Pending_Order();
         $email_classes['wc_email_shipped_order'] = new WC_Email_Shipped_Order();
         $email_classes['wc_email_ready_for_pickup'] = new WC_Email_Ready_For_Pickup();
         $email_classes['customer_payment_failed'] = new WC_Email_Customer_Payment_Failed();
+        $email_classes['PFP_Email_Customer_Payment_Reminder'] = new PFP_Email_Customer_Payment_Reminder();
 
         // Debug: Log the registered email classes
         static $registered_logged = false;
         if (!$registered_logged) {
             bypf_log('Registered email classes: ' . implode(', ', array_keys($email_classes)));
             $registered_logged = true;
-        }
-
-        if (isset($email_classes['WC_Email_Customer_Invoice'])) {
-            $email_classes['WC_Email_Customer_Invoice']->template_base = plugin_dir_path(__FILE__) . '../templates/emails/';
-            $email_classes['WC_Email_Customer_Invoice']->template_html = 'customer-invoice.php';
         }
 
         if (isset($email_classes['WC_Email_Customer_New_Account'])) {
