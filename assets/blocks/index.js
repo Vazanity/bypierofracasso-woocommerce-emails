@@ -1,20 +1,17 @@
-(function () {
-    var wc = window.wc || {};
-    var registry = wc.wcBlocksRegistry || {};
-    var registerPaymentMethod = registry.registerPaymentMethod;
-    var __ = window.wp && window.wp.i18n && typeof window.wp.i18n.__ === 'function'
-        ? window.wp.i18n.__
-        : function (text) {
-            return text;
-        };
+(function() {
+  const registry = window.wc && window.wc.wcBlocksRegistry ? window.wc.wcBlocksRegistry : {};
+  const registerPaymentMethod = registry.registerPaymentMethod;
+  if (typeof registerPaymentMethod !== 'function') {
+    return;
+  }
 
-    if (typeof registerPaymentMethod !== 'function') {
-        return;
-    }
-
-    registerPaymentMethod({
-        name: 'pfp_invoice',
-        title: __('Rechnung (Swiss QR)', 'piero-fracasso-emails'),
-        description: __('Pay via Swiss QR invoice.', 'piero-fracasso-emails'),
-    });
+  registerPaymentMethod({
+    name: 'pfp_invoice',
+    canMakePayment: () => true,
+    edit: () => null,
+    content: () => null,
+    label: window.pfpInvoiceLabel || 'Invoice (Swiss QR)',
+    ariaLabel: window.pfpInvoiceLabel || 'Invoice (Swiss QR)',
+    supports: { features: [] }
+  });
 })();
