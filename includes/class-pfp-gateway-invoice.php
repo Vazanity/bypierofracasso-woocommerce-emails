@@ -658,63 +658,6 @@ class PFP_Gateway_Invoice extends WC_Payment_Gateway
 }
 
 /**
- * Attach invoice PDF to emails.
- *
- * @param array    $attachments Existing attachments.
- * @param string   $email_id    Email ID.
- * @param WC_Order $order       Order object.
- * @return array
- */
-function bypf_invoice_email_attachments($attachments, $email_id, $order)
-{
-    if (!$order instanceof WC_Order) {
-        return $attachments;
-    }
-
-    $gateway_id = PFP_GATEWAY_ID;
-
-    if ($order->get_payment_method() !== $gateway_id) {
-        return $attachments;
-    }
-
-    $gateway = null;
-    if (function_exists('WC')) {
-        $gateways = WC()->payment_gateways()->payment_gateways();
-        $gateway  = isset($gateways[$gateway_id]) ? $gateways[$gateway_id] : null;
-    }
-    if (!$gateway instanceof PFP_Gateway_Invoice) {
-        return $attachments;
-    }
-
-    $enabled_emails = array();
-    if ('yes' === $gateway->get_option('attach_customer_invoice')) {
-        $enabled_emails[] = 'customer_invoice';
-    }
-    if ('yes' === $gateway->get_option('attach_customer_order_received')) {
-        $enabled_emails[] = 'customer_order_received';
-    }
-    if ('yes' === $gateway->get_option('attach_customer_processing_order')) {
-        $enabled_emails[] = 'customer_processing_order';
-    }
-    if ('yes' === $gateway->get_option('attach_customer_order_shipped')) {
-        $enabled_emails[] = 'customer_order_shipped';
-    }
-
-    $enabled_emails = apply_filters('pfp_invoice_attach_email_ids', $enabled_emails);
-    if (!in_array($email_id, $enabled_emails, true)) {
-        return $attachments;
-    }
-
-    $pdf = bypf_invoice_generate_pdf($order, $gateway);
-    if ($pdf) {
-        $attachments[] = $pdf;
-    }
-
-    return $attachments;
-}
-add_filter('woocommerce_email_attachments', 'bypf_invoice_email_attachments', 10, 3);
-
-/**
  * Generate invoice PDF.
  *
  * @param WC_Order            $order   Order object.

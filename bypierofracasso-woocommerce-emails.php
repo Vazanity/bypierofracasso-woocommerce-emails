@@ -4,7 +4,7 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.6.9
+Version: 1.2.6.10
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.6.9');
+define('BYPF_EMAILS_VERSION', '1.2.6.10');
 define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
 define('PFP_GATEWAY_ID', 'pfp_invoice');
@@ -154,6 +154,7 @@ register_activation_hook(__FILE__, 'bypf_emails_activation');
 add_action('admin_notices', 'bypf_emails_activation_notice');
 
 require_once plugin_dir_path(__FILE__) . 'includes/class-pfp-legacy-detector.php';
+require_once plugin_dir_path(__FILE__) . 'includes/pdf-helpers.php';
 
 if (class_exists('PFP_Legacy_Detector')) {
     PFP_Legacy_Detector::register();
@@ -592,6 +593,88 @@ add_action('plugins_loaded', function () {
     bypf_include_invoice_gateway_class();
     add_filter('woocommerce_payment_gateways', 'bypf_register_invoice_gateway');
 }, 20);
+
+add_action('woocommerce_checkout_order_processed', function ($order_id, $posted, $order) {
+    if (!$order instanceof WC_Order) {
+        $order = wc_get_order($order_id);
+    }
+    if (!$order instanceof WC_Order) {
+        return;
+    }
+
+    if ($order->get_payment_method() !== PFP_GATEWAY_ID) {
+        return;
+    }
+
+    if (!function_exists('WC')) {
+        return;
+    }
+
+    $wc = WC();
+    if (!$wc || !method_exists($wc, 'mailer')) {
+        return;
+    }
+
+    $mailer = $wc->mailer();
+    if (!$mailer || !method_exists($mailer, 'get_emails')) {
+        return;
+    }
+
+    $emails = $mailer->get_emails();
+    if (!is_array($emails)) {
+        return;
+    }
+
+    $sent = false;
+    foreach ($emails as $email_instance) {
+        if (isset($email_instance->id) && 'customer_order_received' === $email_instance->id) {
+            $email_instance->trigger($order_id);
+            $sent = true;
+            break;
+        }
+    }
+
+    if (!$sent && isset($emails['WC_Email_Customer_On_Hold_Order'])) {
+        $emails['WC_Email_Customer_On_Hold_Order']->trigger($order_id);
+    }
+
+    if (function_exists('pfp_log')) {
+        pfp_log(sprintf('[PFP] Triggered customer mail for invoice order #%d (preferred=%s)', $order_id, $sent ? 'order_received' : 'on_hold_fallback'));
+    }
+}, 20, 3);
+
+add_filter('woocommerce_email_attachments', function ($attachments, $email_id, $order, $email) {
+    if (!$order instanceof WC_Order) {
+        return $attachments;
+    }
+
+    if ($order->get_payment_method() !== PFP_GATEWAY_ID) {
+        return $attachments;
+    }
+
+    $allow_ids = array(
+        'customer_order_received',
+        'customer_on_hold_order',
+    );
+
+    if (!in_array($email_id, $allow_ids, true)) {
+        return $attachments;
+    }
+
+    $path = pfp_get_invoice_pdf_path($order);
+    if ($path) {
+        $attachments[] = $path;
+        if (function_exists('pfp_log')) {
+            pfp_log('[PFP] Attached invoice PDF for email ' . $email_id . ' (order #' . $order->get_id() . ')');
+        }
+    } else {
+        if (function_exists('pfp_log')) {
+            pfp_log('[PFP] No invoice PDF available for ' . $email_id . ' (order #' . $order->get_id() . ')', 'warning');
+        }
+    }
+
+    return $attachments;
+}, 10, 4);
 
 add_action('init', function () {
     $build      = plugin_dir_path(__FILE__) . 'assets/blocks/build/index.js';
