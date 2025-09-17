@@ -7,6 +7,7 @@ class PFP_Email_Manager {
     public function __construct() {
         add_filter('woocommerce_email_classes', array($this, 'add_custom_emails'), 5);
         add_action('init', array($this, 'log_registered_email_states'), 20);
+        add_action('init', array($this, 'configure_order_received_email'), 30);
         add_filter('woocommerce_email_enabled_customer_payment_retry', '__return_false');
         add_filter('woocommerce_email_enabled_customer_completed_renewal_order', '__return_false');
         add_filter('woocommerce_email_enabled_customer_completed_switch_order', '__return_false');
@@ -16,9 +17,17 @@ class PFP_Email_Manager {
         // Disable any stray failed order emails
         add_filter('woocommerce_email_enabled_customer_failed_order', '__return_false');
         add_filter('woocommerce_email_enabled_failed_order', function($enabled, $email) {
+            if (!$email instanceof WC_Email) {
+                return false;
+            }
+
             // Only enable if explicitly our override
             return $email->template_html === 'admin-failed-order.php' ? $enabled : false;
         }, 999, 2);
+
+        add_filter('woocommerce_email_attachments', array($this, 'maybe_attach_invoice_pdf'), 10, 4);
+        add_filter('woocommerce_order_actions', array($this, 'register_manual_order_actions'), 10, 2);
+        add_action('woocommerce_order_action_pfp_send_payment_reminder', array($this, 'handle_manual_payment_reminder'));
     }
 
     public function add_custom_emails($email_classes) {
@@ -29,7 +38,7 @@ class PFP_Email_Manager {
         require_once plugin_dir_path(__FILE__) . 'class-wc-email-customer-payment-failed.php';
         require_once plugin_dir_path(__FILE__) . 'class-wc-email-customer-payment-reminder.php';
 
-        $email_classes['PFP_Email_Order_Received'] = new WC_Email_Order_Received();
+        $email_classes['PFP_Email_Order_Received'] = new PFP_Email_Order_Received();
         $email_classes['pending_order'] = new WC_Email_Pending_Order();
         $email_classes['wc_email_shipped_order'] = new WC_Email_Shipped_Order();
         $email_classes['wc_email_ready_for_pickup'] = new WC_Email_Ready_For_Pickup();
@@ -76,6 +85,111 @@ class PFP_Email_Manager {
         }
 
         return $email_classes;
+    }
+
+    public function configure_order_received_email()
+    {
+        if (!function_exists('WC')) {
+            return;
+        }
+
+        $mailer = WC()->mailer();
+
+        if (!$mailer || !method_exists($mailer, 'get_emails')) {
+            return;
+        }
+
+        $emails = $mailer->get_emails();
+        $email  = is_array($emails) && isset($emails['PFP_Email_Order_Received']) ? $emails['PFP_Email_Order_Received'] : null;
+
+        if (!$email || !$email instanceof WC_Email) {
+            error_log('[PFP] Email Manager: Order_Received email not initialized yet; skipping.');
+            return;
+        }
+
+        if (empty($email->template_base)) {
+            $email->template_base = plugin_dir_path(__FILE__) . '../templates/';
+        }
+
+        if (empty($email->template_html)) {
+            $email->template_html = 'emails/customer-order-received.php';
+        }
+
+        if (empty($email->template_plain)) {
+            $email->template_plain = 'emails/customer-order-received.php';
+        }
+    }
+
+    public function maybe_attach_invoice_pdf($attachments, $email_id, $order, $email)
+    {
+        if (!$order instanceof WC_Order) {
+            return $attachments;
+        }
+
+        if ('pfp_invoice' !== $order->get_payment_method()) {
+            return $attachments;
+        }
+
+        $is_order_received = ('pfp_email_order_received' === $email_id) || ($email instanceof PFP_Email_Order_Received);
+        $is_reminder       = ('pfp_email_customer_payment_reminder' === $email_id) || ($email instanceof PFP_Email_Customer_Payment_Reminder);
+
+        if (!$is_order_received && !$is_reminder) {
+            return $attachments;
+        }
+
+        $pdf_path = pfp_get_invoice_pdf_path($order);
+
+        if ($pdf_path && file_exists($pdf_path)) {
+            $attachments[] = $pdf_path;
+            error_log('[PFP] Attached PDF invoice for order ' . $order->get_id());
+        } else {
+            error_log('[PFP] Skipped PDF attachment for order ' . $order->get_id() . ' – file missing.');
+        }
+
+        return $attachments;
+    }
+
+    public function register_manual_order_actions($actions, $order)
+    {
+        if ($order instanceof WC_Order && 'pfp_invoice' === $order->get_payment_method()) {
+            $actions['pfp_send_payment_reminder'] = __('Zahlungserinnerung senden', 'bypierofracasso-woocommerce-emails');
+        }
+
+        return $actions;
+    }
+
+    public function handle_manual_payment_reminder($order)
+    {
+        if (!$order instanceof WC_Order) {
+            return;
+        }
+
+        if ('pfp_invoice' !== $order->get_payment_method()) {
+            error_log('[PFP] Manual payment reminder skipped for non-invoice order ' . $order->get_id());
+            return;
+        }
+
+        if (!function_exists('WC')) {
+            error_log('[PFP] Manual payment reminder skipped – WooCommerce not loaded for order ' . $order->get_id());
+            return;
+        }
+
+        $mailer = WC()->mailer();
+
+        if (!$mailer || !isset($mailer->emails['PFP_Email_Customer_Payment_Reminder'])) {
+            error_log('[PFP] Manual payment reminder skipped – email class missing for order ' . $order->get_id());
+            return;
+        }
+
+        $reminder_email = $mailer->emails['PFP_Email_Customer_Payment_Reminder'];
+
+        if (!$reminder_email instanceof WC_Email) {
+            error_log('[PFP] Manual payment reminder skipped – email instance invalid for order ' . $order->get_id());
+            return;
+        }
+
+        $reminder_email->trigger($order->get_id(), $order);
+        error_log('[PFP] Manual payment reminder sent for order ' . $order->get_id());
     }
 
     public function log_registered_email_states()

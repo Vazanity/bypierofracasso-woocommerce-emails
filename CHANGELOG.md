@@ -1,12 +1,10 @@
 # Changelog
 
 ## 1.2.6.12
-- Fix: Ensure our “customer_order_received” email is registered, enabled, and always triggered after checkout (idempotent) for all gateways.
-- Feature: Invoice-specific notice and automatic PDF attachment inside the same customer-order-received template.
-- Feature: Manual “Zahlungserinnerung” email with order action; also attaches the invoice PDF for invoice orders.
-- Remove: Legacy customer-invoice template and any triggers.
-- Improve: Align templates with WooCommerce Email HTML Best Practices (preheader, alt text, 600px container, inline CSS, bulletproof buttons, accessibility, RTL/dark-mode resilience) while preserving existing design.
-- Dev: Extended logging for class registration, triggering, recipients and attachment resolution to simplify diagnosis.
+- Fix: Send the customer “Order received” email for invoice checkout flows and invoice status transitions.
+- Fix: Guard access to the email manager when the custom email instance is not initialized yet (prevent PHP warnings).
+- Tweak: Keep the payment reminder manual-only with an updated label and WooCommerce order action.
+- Docs: Clarified behaviour for invoice emails and reminder workflow.
 
 ## 1.2.6.11
 - Change: Always send our “customer-order-received” email after checkout (all gateways) to avoid split workflows.
