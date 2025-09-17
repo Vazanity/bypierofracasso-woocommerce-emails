@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.2.6.5
+- Fix: Woo Blocks legacy registration now supports the modern action signature (PaymentMethodRegistry).
 - Fix: Deferred all translations to post-init usage to satisfy WP 6.7+ i18n timing.
 - Add: Admin legacy detector to warn when an old plugin version is loaded in parallel.
 - Chore: Reduced repetitive debug logs (product type selector, email registry).

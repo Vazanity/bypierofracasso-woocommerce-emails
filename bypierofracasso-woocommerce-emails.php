@@ -568,17 +568,6 @@ function bypf_register_invoice_blocks_integration()
     bypf_invoice_log_admin('blocks integration registered');
 }
 
-function bypf_register_invoice_blocks_integration_legacy($class_names)
-{
-    bypf_include_invoice_blocks_class();
-
-    if (class_exists('\PFP\Blocks\PFP_Invoice_Blocks')) {
-        $class_names[] = '\PFP\Blocks\PFP_Invoice_Blocks';
-    }
-
-    return $class_names;
-}
-
 function bypf_invoice_blocks_missing_script_notice()
 {
     echo '<div class="notice notice-error"><p>' . esc_html__(
@@ -621,7 +610,44 @@ add_action('init', function () {
 });
 
 add_action('woocommerce_blocks_loaded', 'bypf_register_invoice_blocks_integration');
-add_filter('woocommerce_blocks_payment_method_type_registration', 'bypf_register_invoice_blocks_integration_legacy');
+
+// Dual-shape legacy registration for Woo Blocks payment methods.
+// Modern Woo (8.x/9.x): action passes Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry.
+// Very old Woo Blocks: filter passes an array of class names.
+add_action('woocommerce_blocks_payment_method_type_registration', function ($arg = null) {
+    bypf_include_invoice_blocks_class();
+
+    // Prefer modern object registration.
+    if (is_object($arg) && is_a($arg, 'Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry')) {
+        if (class_exists('\PFP\Blocks\PFP_Invoice_Blocks')) {
+            try {
+                $arg->register(new \PFP\Blocks\PFP_Invoice_Blocks());
+                bypf_invoice_log_admin('blocks legacy(action) registry -> registered PFP_Invoice_Blocks');
+            } catch (\Throwable $e) {
+                bypf_invoice_log_admin('blocks legacy(action) registry failed: ' . $e->getMessage(), 'error');
+            }
+        } else {
+            bypf_invoice_log_admin('blocks legacy(action): PFP_Invoice_Blocks class missing', 'error');
+        }
+
+        return;
+    }
+
+    // Fallback for very old filter shape (array of class names).
+    if (is_array($arg)) {
+        if (class_exists('\PFP\Blocks\PFP_Invoice_Blocks')) {
+            $arg[] = '\PFP\Blocks\PFP_Invoice_Blocks';
+            bypf_invoice_log_admin('blocks legacy(filter) -> appended PFP_Invoice_Blocks class');
+        }
+
+        // Important: must return array for filter compatibility.
+        return $arg;
+    }
+
+    // Nothing matched → log and bail quietly.
+    $type = is_object($arg) ? get_class($arg) : gettype($arg);
+    bypf_invoice_log_admin('blocks legacy hook got unexpected arg type: ' . $type);
+}, 10, 1);
 
 function bypf_invoice_inspect_available_gateways($gateways)
 {
