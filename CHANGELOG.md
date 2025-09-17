@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.6.4] - 2025-09-16
+### Changed
+- Refactor: unified all PHP/JS strings to text domain `bypierofracasso-woocommerce-emails`.
+- Fix: load text domain on `init` to avoid early-translation notices.
+- Feature: enabled JS translations for Blocks handle via `wp_set_script_translations`.
+
+## [1.2.6.3] - 2025-09-15
+### Changed
+- Fixed early textdomain load, hardened Blocks registration (IntegrationRegistry + legacy filter), robust script handle, and added admin-only diagnostics.
+
 ## [1.2.6.2] - 2025-09-14
 ### Changed
 - Hardened Classic/Blocks registration using official WooCommerce APIs.

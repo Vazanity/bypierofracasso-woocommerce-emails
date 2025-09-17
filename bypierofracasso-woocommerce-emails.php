@@ -4,12 +4,12 @@ Plugin Name: Piero Fracasso Perfumes WooCommerce Emails
 Plugin URI: https://bypierofracasso.com/
 Description: Steuert alle WooCommerce-E-Mails und deaktiviert nicht benötigte Standardmails.
 
-Version: 1.2.6.2
+Version: 1.2.6.4
 
 Author: Piero Fracasso Perfumes
 Author URI: https://bypierofracasso.com/
 License: GPLv2 or later
-Text Domain: piero-fracasso-emails
+Text Domain: bypierofracasso-woocommerce-emails
 Domain Path: /languages
 */
 
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('BYPF_EMAILS_VERSION', '1.2.6.2');
+define('BYPF_EMAILS_VERSION', '1.2.6.4');
 define('PFP_VERSION', BYPF_EMAILS_VERSION);
 define('PFP_MAIN_FILE', __FILE__);
 define('PFP_GATEWAY_ID', 'pfp_invoice');
@@ -56,8 +56,20 @@ function bypf_invoice_log_admin($message, $level = 'debug')
         return;
     }
 
+    if (function_exists('error_log')) {
+        error_log('[PFP] ' . $message);
+    }
+
     bypf_log('[invoice] ' . $message, $level);
 }
+
+add_action('init', function () {
+    load_plugin_textdomain(
+        'bypierofracasso-woocommerce-emails',
+        false,
+        dirname(plugin_basename(__FILE__)) . '/languages'
+    );
+}, 0);
 
 function bypf_emails_load_autoloader()
 {
@@ -75,7 +87,7 @@ function bypf_emails_load_autoloader()
         }
         echo '<div class="notice notice-error"><p>' . esc_html__(
             'Missing dependencies for Piero Fracasso Perfumes WooCommerce Emails plugin. Please run composer install.',
-            'piero-fracasso-emails'
+            'bypierofracasso-woocommerce-emails'
         ) . '</p></div>';
     });
 
@@ -114,7 +126,7 @@ function bypf_emails_activation_notice()
     if (get_option('bypf_emails_wc_missing')) {
         echo '<div class="notice notice-error"><p>' . esc_html__(
             'WooCommerce must be active to use Piero Fracasso Perfumes WooCommerce Emails plugin.',
-            'piero-fracasso-emails'
+            'bypierofracasso-woocommerce-emails'
         ) . '</p></div>';
         delete_option('bypf_emails_wc_missing');
     }
@@ -218,11 +230,6 @@ function bypierofracasso_override_woocommerce_emails($template, $template_name, 
 }
 
 // Load translations
-function bypierofracasso_load_textdomain()
-{
-    load_plugin_textdomain('piero-fracasso-emails', false, dirname(plugin_basename(__FILE__)) . '/languages/');
-}
-
 // Add inline email styles
 function bypierofracasso_add_email_styles($email)
 {
@@ -236,44 +243,44 @@ function bypierofracasso_add_email_styles($email)
 function bypierofracasso_register_custom_statuses($statuses)
 {
     $statuses['wc-received'] = array(
-        'label' => _x('Received', 'Order status', 'piero-fracasso-emails'),
+        'label' => _x('Received', 'Order status', 'bypierofracasso-woocommerce-emails'),
         'public' => true,
         'exclude_from_search' => false,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
-        'label_count' => _n_noop('Received <span class="count">(%s)</span>', 'Received <span class="count">(%s)</span>', 'piero-fracasso-emails'),
+        'label_count' => _n_noop('Received <span class="count">(%s)</span>', 'Received <span class="count">(%s)</span>', 'bypierofracasso-woocommerce-emails'),
     );
     $statuses['wc-pending-payment'] = array(
-        'label' => _x('Pending Payment', 'Order status', 'piero-fracasso-emails'),
+        'label' => _x('Pending Payment', 'Order status', 'bypierofracasso-woocommerce-emails'),
         'public' => true,
         'exclude_from_search' => false,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
-        'label_count' => _n_noop('Pending Payment <span class="count">(%s)</span>', 'Pending Payment <span class="count">(%s)</span>', 'piero-fracasso-emails'),
+        'label_count' => _n_noop('Pending Payment <span class="count">(%s)</span>', 'Pending Payment <span class="count">(%s)</span>', 'bypierofracasso-woocommerce-emails'),
     );
     $statuses['wc-shipped'] = array(
-        'label' => _x('Shipped', 'Order status', 'piero-fracasso-emails'),
+        'label' => _x('Shipped', 'Order status', 'bypierofracasso-woocommerce-emails'),
         'public' => true,
         'exclude_from_search' => false,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
-        'label_count' => _n_noop('Shipped <span class="count">(%s)</span>', 'Shipped <span class="count">(%s)</span>', 'piero-fracasso-emails'),
+        'label_count' => _n_noop('Shipped <span class="count">(%s)</span>', 'Shipped <span class="count">(%s)</span>', 'bypierofracasso-woocommerce-emails'),
     );
     $statuses['wc-ready-for-pickup'] = array(
-        'label' => _x('Ready for Pickup', 'Order status', 'piero-fracasso-emails'),
+        'label' => _x('Ready for Pickup', 'Order status', 'bypierofracasso-woocommerce-emails'),
         'public' => true,
         'exclude_from_search' => false,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
-        'label_count' => _n_noop('Ready for Pickup <span class="count">(%s)</span>', 'Ready for Pickup <span class="count">(%s)</span>', 'piero-fracasso-emails'),
+        'label_count' => _n_noop('Ready for Pickup <span class="count">(%s)</span>', 'Ready for Pickup <span class="count">(%s)</span>', 'bypierofracasso-woocommerce-emails'),
     );
     $statuses['wc-invoice'] = array(
-        'label' => _x('Invoice', 'Order status', 'piero-fracasso-emails'),
+        'label' => _x('Invoice', 'Order status', 'bypierofracasso-woocommerce-emails'),
         'public' => true,
         'exclude_from_search' => false,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
-        'label_count' => _n_noop('Invoice <span class="count">(%s)</span>', 'Invoice <span class="count">(%s)</span>', 'piero-fracasso-emails'),
+        'label_count' => _n_noop('Invoice <span class="count">(%s)</span>', 'Invoice <span class="count">(%s)</span>', 'bypierofracasso-woocommerce-emails'),
     );
     return $statuses;
 }
@@ -281,20 +288,20 @@ function bypierofracasso_register_custom_statuses($statuses)
 // Make custom statuses available in WooCommerce
 function bypierofracasso_add_custom_order_statuses($order_statuses)
 {
-    $order_statuses['wc-received'] = _x('Received', 'Order status', 'piero-fracasso-emails');
-    $order_statuses['wc-pending-payment'] = _x('Pending Payment', 'Order status', 'piero-fracasso-emails');
-    $order_statuses['wc-shipped'] = _x('Shipped', 'Order status', 'piero-fracasso-emails');
-    $order_statuses['wc-ready-for-pickup'] = _x('Ready for Pickup', 'Order status', 'piero-fracasso-emails');
-    $order_statuses['wc-invoice'] = _x('Invoice', 'Order status', 'piero-fracasso-emails');
+    $order_statuses['wc-received'] = _x('Received', 'Order status', 'bypierofracasso-woocommerce-emails');
+    $order_statuses['wc-pending-payment'] = _x('Pending Payment', 'Order status', 'bypierofracasso-woocommerce-emails');
+    $order_statuses['wc-shipped'] = _x('Shipped', 'Order status', 'bypierofracasso-woocommerce-emails');
+    $order_statuses['wc-ready-for-pickup'] = _x('Ready for Pickup', 'Order status', 'bypierofracasso-woocommerce-emails');
+    $order_statuses['wc-invoice'] = _x('Invoice', 'Order status', 'bypierofracasso-woocommerce-emails');
     return $order_statuses;
 }
 
 // Ensure Bulk Actions Recognize Custom Statuses
 function bypierofracasso_add_bulk_order_statuses($actions)
 {
-    $actions['mark_wc-shipped'] = __('Change status to Shipped', 'piero-fracasso-emails');
-    $actions['mark_wc-ready-for-pickup'] = __('Change status to Ready for Pickup', 'piero-fracasso-emails');
-    $actions['mark_wc-invoice'] = __('Change status to Invoice', 'piero-fracasso-emails');
+    $actions['mark_wc-shipped'] = __('Change status to Shipped', 'bypierofracasso-woocommerce-emails');
+    $actions['mark_wc-ready-for-pickup'] = __('Change status to Ready for Pickup', 'bypierofracasso-woocommerce-emails');
+    $actions['mark_wc-invoice'] = __('Change status to Invoice', 'bypierofracasso-woocommerce-emails');
     return $actions;
 }
 
@@ -319,7 +326,7 @@ function bypierofracasso_maybe_set_invoice_status($order_id){
 //    $order = wc_get_order($order_id);
 //    if ($order && !$order->has_status('received')) { // Remove 'wc-' prefix
 //        bypf_log("Setting order $order_id to received after payment");
-//        $order->update_status('wc-received', __('Order set to Received after payment.', 'piero-fracasso-emails')); // Keep 'wc-' for update_status
+//        $order->update_status('wc-received', __('Order set to Received after payment.', 'bypierofracasso-woocommerce-emails')); // Keep 'wc-' for update_status
 //        $email = WC()->mailer()->get_emails()['WC_Email_Order_Received'];
 //        if ($email && $email->is_enabled()) {
 //            $email->trigger($order_id);
@@ -448,29 +455,18 @@ function bypierofracasso_manual_email_trigger()
 
 function bypierofracasso_woocommerce_emails_bootstrap()
 {
-    if (!did_action('woocommerce_loaded') && !class_exists('WooCommerce') && !function_exists('wc')) {
-        add_action('admin_notices', function () {
-            echo '<div class="notice notice-warning"><p>' . esc_html__(
-                'WooCommerce is required for Piero Fracasso Perfumes WooCommerce Emails plugin to work.',
-                'piero-fracasso-emails'
-            ) . '</p></div>';
-        });
-        return;
-    }
-
     if (!bypf_emails_load_autoloader()) {
         return;
     }
 
     require_once plugin_dir_path(__FILE__) . 'includes/class-email-manager.php';
-    require_once plugin_dir_path(__FILE__) . 'templates/emails/setting-wc-email.php';
 
     if (bypf_is_jimsoft_active()) {
         bypf_log('Piero Fracasso Emails: JimSoft extension detected; please deactivate it.', 'warning');
         add_action('admin_notices', function () {
             echo '<div class="notice notice-warning"><p>' . esc_html__(
                 'JimSoft QR invoice plugin is active. Please deactivate it; functionality is now provided by Piero Fracasso Perfumes WooCommerce Emails.',
-                'piero-fracasso-emails'
+                'bypierofracasso-woocommerce-emails'
             ) . '</p></div>';
         });
     }
@@ -481,7 +477,6 @@ function bypierofracasso_woocommerce_emails_bootstrap()
         new PFP_Email_Manager();
     }
 
-    bypierofracasso_load_textdomain();
     add_action('woocommerce_email_header', 'bypierofracasso_add_email_styles', 20);
     add_filter('woocommerce_locate_template', 'bypierofracasso_override_woocommerce_emails', 10, 3);
     add_filter('woocommerce_register_shop_order_post_statuses', 'bypierofracasso_register_custom_statuses');
@@ -502,33 +497,90 @@ function bypierofracasso_woocommerce_emails_bootstrap()
     }
 }
 
-add_action('plugins_loaded', 'bypierofracasso_woocommerce_emails_bootstrap', 20);
-
-add_action('plugins_loaded', function () {
-    if (!function_exists('WC')) {
-        return;
-    }
-
+function bypf_include_invoice_gateway_class()
+{
     $gateway_file = plugin_dir_path(PFP_MAIN_FILE) . 'includes/class-pfp-gateway-invoice.php';
     if (!class_exists('PFP_Gateway_Invoice') && file_exists($gateway_file)) {
         require_once $gateway_file;
     }
+}
 
-    add_filter('woocommerce_payment_gateways', function ($methods) {
-        if (!in_array('PFP_Gateway_Invoice', $methods, true)) {
-            $methods[] = 'PFP_Gateway_Invoice';
-            bypf_invoice_log_admin('woocommerce_payment_gateways: added PFP_Gateway_Invoice.');
-        }
+function bypf_include_invoice_blocks_class()
+{
+    $integration_file = plugin_dir_path(PFP_MAIN_FILE) . 'includes/class-pfp-invoice-blocks.php';
+    if (!class_exists('\PFP\Blocks\PFP_Invoice_Blocks') && file_exists($integration_file)) {
+        require_once $integration_file;
+    }
+}
 
-        return $methods;
-    });
-}, 20);
+function bypf_register_invoice_gateway($methods)
+{
+    if (!in_array('PFP_Gateway_Invoice', $methods, true)) {
+        $methods[] = 'PFP_Gateway_Invoice';
+        bypf_invoice_log_admin('registered classic gateway: pfp_invoice');
+    }
 
-add_action('init', function () {
-    if (is_admin() && (!function_exists('wp_doing_ajax') || !wp_doing_ajax())) {
+    return $methods;
+}
+
+function bypf_register_invoice_blocks_integration()
+{
+    bypf_include_invoice_blocks_class();
+
+    if (!class_exists('\PFP\Blocks\PFP_Invoice_Blocks')) {
+        bypf_invoice_log_admin('Blocks integration class unavailable; skipping registration.', 'warning');
         return;
     }
 
+    if (!class_exists('\Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry')) {
+        bypf_invoice_log_admin('Blocks IntegrationRegistry class missing; skipping registration.');
+        return;
+    }
+
+    \Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry::get_instance()->register(
+        new \PFP\Blocks\PFP_Invoice_Blocks()
+    );
+
+    bypf_invoice_log_admin('blocks integration registered');
+}
+
+function bypf_register_invoice_blocks_integration_legacy($class_names)
+{
+    bypf_include_invoice_blocks_class();
+
+    if (class_exists('\PFP\Blocks\PFP_Invoice_Blocks')) {
+        $class_names[] = '\PFP\Blocks\PFP_Invoice_Blocks';
+    }
+
+    return $class_names;
+}
+
+function bypf_invoice_blocks_missing_script_notice()
+{
+    echo '<div class="notice notice-error"><p>' . esc_html__(
+        "PFP Invoice: Blocks script 'pfp-invoice-blocks' is not registered. Check assets path and handle names.",
+        'bypierofracasso-woocommerce-emails'
+    ) . '</p></div>';
+}
+
+add_action('plugins_loaded', function () {
+    if (!function_exists('WC')) {
+        add_action('admin_notices', function () {
+            echo '<div class="notice notice-warning"><p>' . esc_html__(
+                'WooCommerce is required for Piero Fracasso Perfumes WooCommerce Emails plugin to work.',
+                'bypierofracasso-woocommerce-emails'
+            ) . '</p></div>';
+        });
+        return;
+    }
+
+    bypierofracasso_woocommerce_emails_bootstrap();
+
+    bypf_include_invoice_gateway_class();
+    add_filter('woocommerce_payment_gateways', 'bypf_register_invoice_gateway');
+}, 20);
+
+add_action('init', function () {
     wp_register_script(
         'pfp-invoice-blocks',
         plugins_url('assets/blocks/index.js', PFP_MAIN_FILE),
@@ -537,32 +589,15 @@ add_action('init', function () {
         true
     );
 
-    $label = __('Invoice (Swiss QR)', 'piero-fracasso-emails');
-    wp_add_inline_script('pfp-invoice-blocks', 'window.pfpInvoiceLabel = ' . wp_json_encode($label) . ';', 'before');
-});
-
-add_action('woocommerce_blocks_loaded', function () {
-    if (!class_exists('\Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry')) {
-        bypf_invoice_log_admin('Blocks IntegrationRegistry class missing; skipping registration.');
-        return;
-    }
-
-    $integration_file = plugin_dir_path(PFP_MAIN_FILE) . 'includes/class-pfp-invoice-blocks.php';
-    if (!class_exists('\PFP\Blocks\PFP_Invoice_Blocks') && file_exists($integration_file)) {
-        require_once $integration_file;
-    }
-
-    if (!class_exists('\PFP\Blocks\PFP_Invoice_Blocks')) {
-        bypf_invoice_log_admin('Blocks integration class unavailable; skipping registration.', 'warning');
-        return;
-    }
-
-    \Automattic\WooCommerce\Blocks\Payments\Integrations\IntegrationRegistry::get_instance()->register(
-        new \PFP\Blocks\PFP_Invoice_Blocks()
+    wp_set_script_translations(
+        'pfp-invoice-blocks',
+        'bypierofracasso-woocommerce-emails',
+        plugin_dir_path(PFP_MAIN_FILE) . 'languages'
     );
-
-    bypf_invoice_log_admin('Registered Blocks integration for invoice gateway.');
 });
+
+add_action('woocommerce_blocks_loaded', 'bypf_register_invoice_blocks_integration');
+add_filter('woocommerce_blocks_payment_method_type_registration', 'bypf_register_invoice_blocks_integration_legacy');
 
 function bypf_invoice_inspect_available_gateways($gateways)
 {

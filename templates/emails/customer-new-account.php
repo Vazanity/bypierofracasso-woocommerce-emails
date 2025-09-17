@@ -44,12 +44,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-16 font-weight-600 pb-5 font-space-0">
-                                                <?php echo __($new_account_subtitle); ?>
+                                                <?php echo __($new_account_subtitle, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-36 font-weight-400 font-space-0">
-                                                <?php echo __($email_heading); ?>
+                                                <?php echo __($email_heading, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -123,30 +123,30 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="font-primary font-191919 font-18 font-weight-600 font-space-0 pb-20">
                                                 <?php
                                                 if (isset($email->user_firstname) && !empty($email->user_firstname)) {
-                                                    echo __($new_account_greeting . " " . esc_html($email->user_firstname) . ',');
+                                                    echo __($new_account_greeting . " " . esc_html($email->user_firstname) . ',', 'bypierofracasso-woocommerce-emails');
                                                 } elseif (!empty($email->user_login)) {
-                                                    echo __($new_account_greeting . " " . esc_html($email->user_login) . ',');
+                                                    echo __($new_account_greeting . " " . esc_html($email->user_login) . ',', 'bypierofracasso-woocommerce-emails');
                                                 } else {
-                                                    echo __($new_account_greeting . " Customer,");
+                                                    echo __($new_account_greeting . " Customer,", 'bypierofracasso-woocommerce-emails');
                                                 }
                                                 ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="left" valign="middle" class="font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20">
-                                                <?php printf(esc_html__('Thanks for creating an account on %1$s. Your username is %2$s. You can access your account here', 'piero-fracasso-emails'), esc_html($blogname), '<strong>' . esc_html($email->user_login) . '</strong>'); ?>
+                                                <?php printf(esc_html__('Thanks for creating an account on %1$s. Your username is %2$s. You can access your account here', 'bypierofracasso-woocommerce-emails'), esc_html($blogname), '<strong>' . esc_html($email->user_login) . '</strong>'); ?>
                                             </td>
                                         </tr>
                                         <?php if ('yes' === get_option('woocommerce_registration_generate_password') && $email->password_generated): ?>
                                             <tr>
                                                 <td align="left" valign="middle" class="font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20">
-                                                    <?php printf(__('Your password has been automatically generated: %s', 'piero-fracasso-emails'), '<strong>' . esc_html($email->user_pass) . '</strong>'); ?>
+                                                    <?php printf(__('Your password has been automatically generated: %s', 'bypierofracasso-woocommerce-emails'), '<strong>' . esc_html($email->user_pass) . '</strong>'); ?>
                                                 </td>
                                             </tr>
                                         <?php endif; ?>
                                         <tr>
                                             <td align="left" valign="middle" class="font-primary font-595959 font-16 font-weight-400 font-space-0 pb-40">
-                                                <?php printf(__('Or you can verify using this Link: <br> <a style="color:#4B7BEC;" href="%s">%s</a>', 'piero-fracasso-emails'), esc_url(wc_get_page_permalink('myaccount')), esc_url(wc_get_page_permalink('myaccount'))); ?>
+                                                <?php printf(__('Or you can verify using this Link: <br> <a style="color:#4B7BEC;" href="%s">%s</a>', 'bypierofracasso-woocommerce-emails'), esc_url(wc_get_page_permalink('myaccount')), esc_url(wc_get_page_permalink('myaccount'))); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -155,7 +155,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
                                                             <a href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($new_account_btn, 'piero-fracasso-emails'); ?>
+                                                                <?php echo __($new_account_btn, 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -199,12 +199,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="left" valign="middle" class="font-primary font-191919 font-18 font-weight-600 font-space-0">
-                                                <?php echo __($new_account_regards_1); ?>
+                                                <?php echo __($new_account_regards_1, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="left" valign="middle" class="font-primary font-595959 font-16 font-weight-400 font-space-0">
-                                                <?php echo __($new_account_regards_2); ?>
+                                                <?php echo __($new_account_regards_2, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -281,7 +281,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="left" valign="middle" class="font-primary font-595959 font-16 font-weight-400 font-space-0">
-                                                <?php echo __($new_account_description); ?>
+                                                <?php echo __($new_account_description, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>

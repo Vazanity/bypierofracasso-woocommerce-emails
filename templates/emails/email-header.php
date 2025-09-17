@@ -73,7 +73,7 @@ include('setting-wc-email.php'); // All Customization in This File
                                         </tr>
                                         <tr>
                                             <td align="right" valign="middle" class="center-text font-primary font-12 font-weight-400 font-normal font-999999 text-decoration-none font-space-0">
-                                                <?php echo __('<a class="font-999999 font-underline" href="' . $top_offer_link . '">' . $top_offer_text . '</a>'); ?>
+                                                <?php echo __('<a class="font-999999 font-underline" href="' . $top_offer_link . '">' . $top_offer_text . '</a>', 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -114,9 +114,9 @@ include('setting-wc-email.php'); // All Customization in This File
                                         <tr>
                                             <?php
                                             if ($img = get_option('woocommerce_email_header_image')) {
-                                                echo __('<td align="center"><a href="' . get_home_url() . '"><img src="' . esc_url($img) . '" alt="' . get_bloginfo('name', 'display') . '" width="300px" style="width:' . $logoWidth . ';" class="block" /></a></td>');
+                                                echo __('<td align="center"><a href="' . get_home_url() . '"><img src="' . esc_url($img) . '" alt="' . get_bloginfo('name', 'display') . '" width="300px" style="width:' . $logoWidth . ';" class="block" /></a></td>', 'bypierofracasso-woocommerce-emails');
                                             } else {
-                                                echo __('<td align="center" class="font-FFFFFF font-primary font-36 font-weight-600"><a class="font-FFFFFF" href="' . get_home_url() . '">' . get_bloginfo('name', 'display') . '</a></td>');
+                                                echo __('<td align="center" class="font-FFFFFF font-primary font-36 font-weight-600"><a class="font-FFFFFF" href="' . get_home_url() . '">' . get_bloginfo('name', 'display') . '</a></td>', 'bypierofracasso-woocommerce-emails');
                                             }
                                             ?>
                                         </tr>

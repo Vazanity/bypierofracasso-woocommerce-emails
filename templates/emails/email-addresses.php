@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 $text_align = is_rtl() ? 'right' : 'left';
-$address    = ($order instanceof WC_Order) ? $order->get_formatted_billing_address() : __('No billing address available', 'piero-fracasso-emails');
+$address    = ($order instanceof WC_Order) ? $order->get_formatted_billing_address() : __('No billing address available', 'bypierofracasso-woocommerce-emails');
 $shipping   = ($order instanceof WC_Order) ? $order->get_formatted_shipping_address() : '';
 
 $before = '';
@@ -45,7 +45,7 @@ $after  = '';
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0">
                                                             <?php
-                                                            echo wp_kses_post($before . sprintf(__('Order Number : ', 'piero-fracasso-emails') . $after . '<br><span class="font-primary font-595959 font-16 font-weight-400 font-space-0"> #%s</span>', ($order instanceof WC_Order) ? $order->get_order_number() : 'N/A'));
+                                                            echo wp_kses_post($before . sprintf(__('Order Number : ', 'bypierofracasso-woocommerce-emails') . $after . '<br><span class="font-primary font-595959 font-16 font-weight-400 font-space-0"> #%s</span>', ($order instanceof WC_Order) ? $order->get_order_number() : 'N/A'));
                                                             ?>
                                                         </td>
                                                     </tr>
@@ -63,7 +63,7 @@ $after  = '';
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0">
                                                             <?php
-                                                            echo wp_kses_post($before . sprintf(__('Order Date : ', 'piero-fracasso-emails') . $after . '<br><span class="font-primary font-595959 font-16 font-weight-400 font-space-0 capitalize"><time datetime="%s">%s</time></span>', ($order instanceof WC_Order) ? $order->get_date_created()->format('c') : 'N/A', ($order instanceof WC_Order) ? wc_format_datetime($order->get_date_created()) : 'N/A'));
+                                                            echo wp_kses_post($before . sprintf(__('Order Date : ', 'bypierofracasso-woocommerce-emails') . $after . '<br><span class="font-primary font-595959 font-16 font-weight-400 font-space-0 capitalize"><time datetime="%s">%s</time></span>', ($order instanceof WC_Order) ? $order->get_date_created()->format('c') : 'N/A', ($order instanceof WC_Order) ? wc_format_datetime($order->get_date_created()) : 'N/A'));
                                                             ?>
                                                         </td>
                                                     </tr>
@@ -149,7 +149,7 @@ $after  = '';
                                                 <table width="250" border="0" cellpadding="0" cellspacing="0" align="left" class="row table-250 table-left">
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0">
-                                                            <?php echo wp_kses_post($before . sprintf(__('Payment Status : ', 'piero-fracasso-emails'))); ?>
+                                                            <?php echo wp_kses_post($before . sprintf(__('Payment Status : ', 'bypierofracasso-woocommerce-emails'))); ?>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -194,7 +194,7 @@ $after  = '';
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0">
                                                             <?php
                                                             $payment_method_display = ($order instanceof WC_Order) ? $order->get_payment_method_title() : 'N/A';
-                                                            echo wp_kses_post($before . sprintf(__('Payment Method : ', 'piero-fracasso-emails') . $after . '<br><span class="font-primary font-595959 font-16 font-weight-400 font-space-0 uppercase">' . $payment_method_display . '</span>'));
+                                                            echo wp_kses_post($before . sprintf(__('Payment Method : ', 'bypierofracasso-woocommerce-emails') . $after . '<br><span class="font-primary font-595959 font-16 font-weight-400 font-space-0 uppercase">' . $payment_method_display . '</span>'));
                                                             ?>
                                                         </td>
                                                     </tr>
@@ -280,7 +280,7 @@ $after  = '';
                                                 <table width="<?php echo !empty($shipping) ? '250' : '100%'; ?>" border="0" cellpadding="0" cellspacing="0" align="left" class="row table-<?php echo !empty($shipping) ? '250' : '100pc'; ?> table-left">
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-5">
-                                                            <?php printf(__('Billing Address :', 'piero-fracasso-emails')); ?>
+                                                            <?php printf(__('Billing Address :', 'bypierofracasso-woocommerce-emails')); ?>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -307,7 +307,7 @@ $after  = '';
                                                                     echo '<strong>Email:</strong> <a href="#" class="font-595959">' . $order->get_billing_email() . '</a> ';
                                                                 }
                                                             } else {
-                                                                echo __('No billing details available', 'piero-fracasso-emails');
+                                                                echo __('No billing details available', 'bypierofracasso-woocommerce-emails');
                                                             }
                                                             ?>
                                                         </td>
@@ -326,7 +326,7 @@ $after  = '';
                                                 <table width="250" border="0" cellpadding="0" cellspacing="0" align="left" class="row table-250 table-left">
                                                     <tr>
                                                         <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-5">
-                                                            <?php printf(__('Shipping Address :', 'piero-fracasso-emails')); ?>
+                                                            <?php printf(__('Shipping Address :', 'bypierofracasso-woocommerce-emails')); ?>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -350,7 +350,7 @@ $after  = '';
                                                                     echo '<br><strong>Phone:</strong> <a href="#" class="font-595959">' . $order->get_shipping_phone() . '</a> ';
                                                                 }
                                                             } else {
-                                                                echo __('No shipping details available', 'piero-fracasso-emails');
+                                                                echo __('No shipping details available', 'bypierofracasso-woocommerce-emails');
                                                             }
                                                             ?>
                                                         </td>

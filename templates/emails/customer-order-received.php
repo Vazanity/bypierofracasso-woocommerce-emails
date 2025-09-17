@@ -34,12 +34,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-16 font-weight-600 pb-5 font-space-0">
-                                                <?php echo __($order_received_subtitle); ?>
+                                                <?php echo __($order_received_subtitle, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-36 font-weight-400 font-space-0 pb-30">
-                                                <?php echo __($email_heading); ?>
+                                                <?php echo __($email_heading, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -48,7 +48,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-FFFFFF block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($order_received_btn, 'piero-fracasso-emails'); ?>
+                                                                <?php echo __($order_received_btn, 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -116,9 +116,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-20">
                                                 <?php
                                                 if ($order instanceof WC_Order) {
-                                                    echo __($order_received_greeting . " " . esc_html($order->get_billing_first_name()) . ',');
+                                                    echo __($order_received_greeting . " " . esc_html($order->get_billing_first_name()) . ',', 'bypierofracasso-woocommerce-emails');
                                                 } else {
-                                                    echo __($order_received_greeting . " Customer,");
+                                                    echo __($order_received_greeting . " Customer,", 'bypierofracasso-woocommerce-emails');
                                                 }
                                                 ?>
                                             </td>
@@ -126,12 +126,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         <tr>
                                             <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20" style="padding:0px;">
                                                 <?php
-                                                echo __($order_received_message);
+                                                echo __($order_received_message, 'bypierofracasso-woocommerce-emails');
                                                 if (isset($additional_content) && $additional_content) {
                                                     echo '<br><br>' . wp_kses_post(wptexturize($additional_content));
                                                 }
                                                 if ($order instanceof WC_Order && $order->get_customer_note() != "") {
-                                                    echo __('<br><br> <strong>Note</strong>: ', 'piero-fracasso-emails');
+                                                    echo __('<br><br> <strong>Note</strong>: ', 'bypierofracasso-woocommerce-emails');
                                                     echo wp_kses_post($order->get_customer_note());
                                                 }
                                                 ?>
@@ -181,7 +181,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <?php else : ?>
                                                 <tr>
                                                     <td align="left" class="font-primary font-595959 font-16 font-weight-400">
-                                                        <?php echo __('[Order Details Placeholder]', 'piero-fracasso-emails'); ?>
+                                                        <?php echo __('[Order Details Placeholder]', 'bypierofracasso-woocommerce-emails'); ?>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -222,7 +222,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($order_received_btn, 'piero-fracasso-emails'); ?>
+                                                                <?php echo __($order_received_btn, 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>

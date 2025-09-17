@@ -49,12 +49,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-16 font-weight-600 pb-5 font-space-0">
-                                                <?php echo __($customer_note_subtitle); ?>
+                                                <?php echo __($customer_note_subtitle, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="center" valign="middle" class="font-primary font-FFFFFF font-36 font-weight-400 font-space-0 pb-30">
-                                                <?php echo __($email_heading); ?>
+                                                <?php echo __($email_heading, 'bypierofracasso-woocommerce-emails'); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -63,7 +63,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                                     <tr>
                                                         <td align="center" class="bg-FFFFFF block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-4B7BEC font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($customer_note_btn, 'piero-fracasso-emails'); ?>
+                                                                <?php echo __($customer_note_btn, 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -141,9 +141,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="center-text font-primary font-191919 font-18 font-weight-600 font-space-0 pb-20">
                                                 <?php
                                                 if ($order instanceof WC_Order) {
-                                                    echo __($customer_note_greeting . " " . esc_html($order->get_billing_first_name()) . ',');
+                                                    echo __($customer_note_greeting . " " . esc_html($order->get_billing_first_name()) . ',', 'bypierofracasso-woocommerce-emails');
                                                 } else {
-                                                    echo __($customer_note_greeting . " Customer,");
+                                                    echo __($customer_note_greeting . " Customer,", 'bypierofracasso-woocommerce-emails');
                                                 }
                                                 ?>
                                             </td>
@@ -152,8 +152,8 @@ do_action('woocommerce_email_header', $email_heading, $email);
                                             <td align="left" valign="middle" class="center-text font-primary font-595959 font-16 font-weight-400 font-space-0 pb-20" style="padding:0px;">
                                                 <?php
                                                 if ($email->customer_note) {
-                                                    echo __(wp_kses_post(wptexturize($additional_content)));
-                                                    echo __(' <br> ') . wpautop(wptexturize(make_clickable($email->customer_note)));
+                                                    echo __(wp_kses_post(wptexturize($additional_content)), 'bypierofracasso-woocommerce-emails');
+                                                    echo __(' <br> ', 'bypierofracasso-woocommerce-emails') . wpautop(wptexturize(make_clickable($email->customer_note)));
                                                 }
                                                 ?>
                                             </td>
@@ -256,7 +256,7 @@ do_action('woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $
                                                     <tr>
                                                         <td align="center" class="bg-4B7BEC block btn border-radius-4">
                                                             <a href="<?php echo ($order instanceof WC_Order) ? esc_url($order->get_view_order_url()) : '#'; ?>" class="font-primary font-FFFFFF font-14 font-weight-600 font-space-0-5 block btn white-space">
-                                                                <?php echo __($customer_note_btn, 'piero-fracasso-emails'); ?>
+                                                                <?php echo __($customer_note_btn, 'bypierofracasso-woocommerce-emails'); ?>
                                                             </a>
                                                         </td>
                                                     </tr>

@@ -69,7 +69,7 @@ foreach ($items as $item_id => $item) :
 
                                                             <a href="<?php echo $url = get_permalink($item['product_id']); ?>">
                                                                 <?php
-                                                                    echo apply_filters('woocommerce_order_item_thumbnail', '<img src="' . esc_url($image_url) . '" alt="' . esc_attr__('Product image', 'piero-fracasso-emails') . '" class="border-radius-8" width="100" style="max-width:100px"', $item);
+                                                                    echo apply_filters('woocommerce_order_item_thumbnail', '<img src="' . esc_url($image_url) . '" alt="' . esc_attr__('Product image', 'bypierofracasso-woocommerce-emails') . '" class="border-radius-8" width="100" style="max-width:100px"', $item);
                                                                 ?>
                                                             </a>
 
